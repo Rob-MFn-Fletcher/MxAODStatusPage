@@ -1,0 +1,10 @@
+
+form {
+  text-align: center;
+}
+td { white-space:pre }
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
+body {text-align:center;}
