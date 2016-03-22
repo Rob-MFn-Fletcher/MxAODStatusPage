@@ -4,16 +4,37 @@
 
 [[ -z "$1" ]] && echo "NEED 1st arugment! htag" && return
 
-#datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
 htagNew=$1
-inputFileType=PowhegPy8_VBF125_small
-mcDir=mc_25ns
+[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+#inputFileType=PowhegPy8_VBF125_small
+inputFileType=$EXAMPLEFILE
+
+#mcDir=mc_25ns
 
 inputFileNew=$(eos ls $datasetDir/$htagNew/$mcDir/ | grep $inputFileType)
 
 echo $inputFileNew
 
-# take a look at CollectionTree->Print() for an MxAOD for this to make more sense:
+# take a look at CollectionTree->Print() for an MxAOD first for this to make more sense:
+# Here is an example:
+# *............................................................................*
+# *Br  253 :HGamTruthElectronsAuxDyn.e : vector<float>                         *
+# *Entries :    47289 : Total  Size=     695204 bytes  File Size  =     124181 *
+# *Baskets :      236 : Basket Size=      32000 bytes  Compression=   5.56     *
+# *............................................................................*
+# *Br  254 :HGamTruthElectronsAuxDyn.m : vector<float>                         *
+# *Entries :    47289 : Total  Size=     695204 bytes  File Size  =     122890 *
+# *Baskets :      236 : Basket Size=      32000 bytes  Compression=   5.62     *
+# *............................................................................*
+# *Br  255 :HGamTruthElectronsAuxDyn.recoLink :                                *
+# *         | vector<ElementLink<DataVector<xAOD::IParticle> > >               * CASES LIKE THIS MAKE IT HARDER
+# *Entries :    47289 : Total  Size=     982478 bytes  File Size  =     107786 *
+# *Baskets :      236 : Basket Size=      32000 bytes  Compression=   9.07     *
+# *............................................................................*
+
+
+
+
 
 # Massive bash command incoming.  First greps make a nice list, then sed command (unsigned)
 # makes it so that the variable type doesn't get broken up, the massive AWK command does
@@ -46,15 +67,3 @@ echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$ht
          sed 's/^.*\/I/Int_t/g' | sed 's/^.*\/B/Bool_t/g' | sed 's/^.*\/i/int/g'| \
          sed 's/^.*\/l/long/g'  | column -t | sed 's/unsigned_/unsigned /g' > allVars.txt
 
-#cat out.out | column -t > out1.out
-#
-#sed -i'.og' 's/^.*\/F/Float_t/g' out1.out
-#sed -i'.og' 's/^.*\/I/Int_t/g' out1.out
-#sed -i'.og' 's/^.*\/B/Bool_t/g' out1.out
-#sed -i'.og' 's/^.*\/i/int/g' out1.out
-#sed -i'.og' 's/^.*\/l/long/g' out1.out
-#
-#
-#cat out1.out | column -t > allVars.txt
-#rm out.out*
-#rm out1.out*

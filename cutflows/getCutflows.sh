@@ -1,10 +1,10 @@
 # dumps the cutflows of the mH=125 MxAODs to txt files, which are read by index.php
-
+[[ -z "$1" ]] && echo Please enter an htag as an argument! E.G source getCutflows.sh h011 && return
 #datasetDir=/Users/athompso/MxAODwebsite/datasets
 htag=$1
-datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
-mcDir=mc_25ns
-dataDir=data_25ns
+#datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
+#mcDir=mc_25ns
+#dataDir=data_25ns
 Samples=($(eos ls $datasetDir/$htag/$mcDir/ | grep 125))
 
 

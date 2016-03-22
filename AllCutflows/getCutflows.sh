@@ -1,5 +1,6 @@
 # dumps the cutflows of the mH=125 MxAODs to txt files, which are read by index.php
-[[ -z "$1" ]] && echo Please enter an htag as and argument! E.G source getCutflows.sh h011 && return
+[[ -z "$1" ]] && echo Please enter an htag as an argument! E.G source getCutflows.sh h011 h010 && return
+[[ -z "$2" ]] && echo Please enter an htag as an argument! E.G source getCutflows.sh h011 h010 && return
 htag=$1
 #datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
 #mcDir=mc_25ns
@@ -7,11 +8,9 @@ htag=$1
 #Samples=($(eos ls $datasetDir/$htag/$mcDir/ ))
 
 htagNew=$1
-num=${htagNew:1}
-num=$(echo $num | sed "s/^0*//g")
-htagPrevNum=$(($num - 1))
-htagPrevNum=$(printf %03d $htagPrevNum)
-htagOld=h$htagPrevNum
+htagOld=$2
+
+[[ -z "$datasetDir" ]] && echo Please source the setup script!! && return
 
 for htag in $htagNew $htagOld; do
   break 

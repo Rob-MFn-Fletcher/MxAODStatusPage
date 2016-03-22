@@ -1,21 +1,17 @@
-# run like source dumpVars h011
+# run like source getVarDiffs.sh h011 h010
 # script that compares the variables in the new htag to the variables in the previous htag,
 # and dumps each into a txt file that is read by the indes.php of the site
 
 
 [[ -z "$1" ]] && echo "NEED 1st arugment!" && return
+[[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
-#datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
 htagNew=$1
-num=${htagNew:1}
-num=$(echo $num | sed "s/^0*//g")
-htagPrevNum=$(($num - 1))
-htagPrevNum=$(printf %03d $htagPrevNum)
-htagOld=h$htagPrevNum
+htagOld=$2
 
-
-
-inputFileType=PowhegPy8_VBF125_small
+[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+#inputFileType=PowhegPy8_VBF125_small
+inputFileType=$EXAMPLEFILE
 
 
 inputFileOld=$(eos ls $datasetDir/$htagOld/$mcDir/ | grep $inputFileType)
@@ -38,7 +34,7 @@ varsNew=($(echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$dat
    | grep "Br " | awk '{print $3}' | sed 's/://g' ))
 [[ -z "${varsNew[@]}" ]] && echo CHECK INPUT FILE!!!!!! &&return
 
-[[ "${varsOld[@]}" == "${varsNew[@]}" ]] && echo variable lists are the same! That seems unlikely Check inputs? 
+[[ "${varsOld[@]}" == "${varsNew[@]}" ]] && echo variable lists are the same! That seems unlikely.. be weary. Maybe we actually have a stable list of variables now! 
 
 
 [[ -e removedVars.txt ]] && rm removedVars.txt 

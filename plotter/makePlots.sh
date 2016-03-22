@@ -1,5 +1,8 @@
 htag=h011
-#datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
+htagOld=h010
+
+htag=$1
+htagOld=$2
 
 num=${htag:1}
 num=$(echo $num | sed "s/^0*//g")
@@ -11,7 +14,7 @@ htagOld=h$htagPrevNum
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
   #[[ $DIR =~ AllSys ]] && continue # All Sys files might be folders, need to figure out how to handle
-  Samples+=($(eos ls $datasetDir/$htag/$DIR/ | grep MGPy8_HHDMmr310mx50br90_DMgamgam.MxAOD.r6282.h011.root))
+  Samples+=($(eos ls $datasetDir/$htag/$DIR/ ))
   #break
 done
 echo starting plots loop at $(date)
@@ -24,18 +27,10 @@ for fileName in ${Samples[@]}; do
     [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
   done 
   
-  
-  # folder files will not work properly and probably will cause a crash
-  #[[ ! -z $(eos ls $datasetDir/$htag/$DIR/$fileName/)  ]] && echo "MxAOD with multiple files found, skipping..." && continue
-  [[ $(eos ls $datasetDir/$htag/$sampleDir/$fileName | wc -l) -gt 1 ]] && FOLDER=TRUE
-  
-
   fileType=${fileName%.MxAOD*}
   fileOldName=$(eos ls $datasetDir/$htagOld/$sampleDir/ | grep ${fileType}.MxAOD)
   fileOld="root://eosatlas.cern.ch/$datasetDir/$htagOld/$sampleDir/$fileOldName"
  
-
-  #[[ -z "$fileOldName" ]] && echo old file of type $fileType not found, skipping plot... && continue
   echo running on sample: $fileName
 
   # need to make folder for plots if it is a new sample (root won't create the folder)
