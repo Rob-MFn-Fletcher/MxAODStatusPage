@@ -47,7 +47,7 @@ with open(fileOld,'r') as fO:
       if percentDiffDenom != 0:
         percentDiffVal=percentDiffNum/percentDiffDenom
       percentDiff.append(percentDiffVal)
-diffFile=re.sub(r'h[0-9][0-9][0-9]','diff', fileOld)
+diffFile=re.sub(r'h[0-9][0-9][0-9]','diff', fileNew)
 
 with open(diffFile,"w") as f:
   #f.write("                      " + "Difference\n")

@@ -1,16 +1,14 @@
+[[ -z "$1" ]] && echo "NEED 1st arugment!" && return
+[[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
-htag=h011
-datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
-mcDir=mc_25ns
-dataDir=data_25ns
-AllSysDir=AllSys
-PhotonSysDir=PhotonSys
+htagNew=$1
+htagOld=$2
 
-num=${htag:1}
-num=$(echo $num | sed "s/^0*//g")
-htagPrevNum=$(($num - 1))
-htagPrevNum=$(printf %03d $htagPrevNum)
-htagOld=h$htagPrevNum
+[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+
+htag=$1
+
+htagOld=h010
 
 
 eos ls $datasetDir/$htag/$mcDir/ &> MxAODs.txt
@@ -19,11 +17,15 @@ eos ls $datasetDir/$htag/$AllSysDir/ &>> MxAODs.txt
 eos ls $datasetDir/$htag/$PhotonSysDir/ &>> MxAODs.txt
 
 while read sample; do
-  file="root://eosatlas.cern.ch/$datasetDir/$htag/$mcDir/$sample"
+  echo $sample
+  for DIR in ${MXAODDIRS[@]}; do
+    [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$sample 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$sample" && sampleDir=$DIR
+  done 
+  file="root://eosatlas.cern.ch/$datasetDir/$htag/$sampleDir/$sample"
   base=$(basename ${file})
   fileType=${sample%.MxAOD*}
-  oldSample=$(eos ls $datasetDir/$htagOld/$mcDir/ | grep "${fileType}.MxAOD")
-  diffCutflowName=$(echo $oldSample | sed "s/h[0-9][0-9][0-9]/diff/g")
+  oldSample=$(eos ls $datasetDir/$htagOld/$sampleDir/ | grep "${fileType}.MxAOD")
+  diffCutflowName=$(echo $sample | sed "s/h[0-9][0-9][0-9]/diff/g")
   echo '<html>'                                             >pages/${sample}.php   
   echo '<html lang="en">'                                  >>pages/${sample}.php
   echo '<head>'                                            >>pages/${sample}.php

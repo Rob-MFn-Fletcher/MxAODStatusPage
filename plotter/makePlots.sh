@@ -1,14 +1,11 @@
-htag=h011
-htagOld=h010
+[[ -z "$1" ]] && echo "NEED 1st arugment!" && return
+[[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
+
+[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
 
 htag=$1
 htagOld=$2
 
-num=${htag:1}
-num=$(echo $num | sed "s/^0*//g")
-htagPrevNum=$(($num - 1))
-htagPrevNum=$(printf %03d $htagPrevNum)
-htagOld=h$htagPrevNum
 
 
 Samples=()

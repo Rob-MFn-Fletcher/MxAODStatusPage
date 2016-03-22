@@ -42,6 +42,14 @@ cd AllCutflows
 source getCutflows.sh $htag $htagOld
 cd ..
 
+echo Making webpages for ALL samples...
+source makePages $htag $htagOld
+
+echo Updating live search for $htag
+cd liveSearch
+source makeXMLforLiveSearch.sh
+cd ..
+
 echo updating ALL plots.  This will take a long time...
 cd plotter
 source makePlots.sh $htag $htagOld
