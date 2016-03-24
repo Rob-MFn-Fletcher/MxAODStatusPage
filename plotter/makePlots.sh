@@ -2,6 +2,7 @@
 [[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
 [[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+[[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo EOS not mounted!  Please mount EOS in the base directory \(maybe it failed during setup?\) && return
 
 htag=$1
 htagOld=$2
@@ -16,17 +17,22 @@ for DIR in ${MXAODDIRS[@]}; do
 done
 echo starting plots loop at $(date)
 echo
+
+[[ -e "err.log" ]] && rm err.log
+
 for fileName in ${Samples[@]}; do 
   #[[ -d "samples/$fileName" ]] && echo plots produced for $fileName, skipping... && continue
   fileNew=""
   sampleDir=""
   for DIR in ${MXAODDIRS[@]}; do
-    [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
+    #[[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
+    [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="$EOSMOUNTDIR/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
   done 
   
   fileType=${fileName%.MxAOD*}
   fileOldName=$(eos ls $datasetDir/$htagOld/$sampleDir/ | grep ${fileType}.MxAOD)
-  fileOld="root://eosatlas.cern.ch/$datasetDir/$htagOld/$sampleDir/$fileOldName"
+  #fileOld="root://eosatlas.cern.ch/$datasetDir/$htagOld/$sampleDir/$fileOldName"
+  fileOld="$EOSMOUNTDIR/$datasetDir/$htagOld/$sampleDir/$fileOldName"
  
   echo running on sample: $fileName
 
@@ -45,20 +51,12 @@ for fileName in ${Samples[@]}; do
   fi
 
   root -l -b -q "Root/plotAllVars.c(\"${fileOld}\",${nFilesOld},\"${fileNew}\",${nFilesNew})"  2>> err.log # lots of errors that don't matter...
-  #if [[ -z "$fileOldName" ]]; then 
-  #  root -l -b -q "Root/plotOnlyNew.c(\"${fileNew}\")" 2>> err.log
-  #else
-  #  #root -l -b -q "Root/plotter.c(\"${fileOld}\",\"${fileNew}\")" 2>> err.log
-  #  root -l -b -q "Root/plotBothReleases.c(\"${fileOld}\",${nFilesOld},\"${fileNew}\",${nFilesNew})"  2>> err.log
-  #fi
+  #root -l -b -q "Root/plotAllVars.c(\"${fileOld}\",${nFilesOld},\"${fileNew}\",${nFilesNew})"   # lots of errors that don't matter...
 
 
   cat err.log | grep -v 'Warning in <TClass::Init>:' | grep -v 'Error in <TBranchElement::InitInfo>:' > usefulErr.log
 
-
-
 done
 echo
 echo end of plots loop at $(date)
-
 

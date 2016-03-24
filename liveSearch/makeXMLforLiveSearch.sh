@@ -1,9 +1,15 @@
-htag=h011
+htag=$1
+[[ -z "$1" ]] && echo Please one htag as an argument! && return
 #source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh &> test.txt
-eos ls $datasetDir/$htag/$mcDir/ &> MxAODs.txt
-eos ls $datasetDir/$htag/$dataDir/ &>> MxAODs.txt
-eos ls $datasetDir/$htag/$AllSysDir/ &>> MxAODs.txt
-eos ls $datasetDir/$htag/$PhotonSysDir/ &>> MxAODs.txt
+#eos ls $datasetDir/$htag/$mcDir/ &> MxAODs.txt
+#eos ls $datasetDir/$htag/$dataDir/ &>> MxAODs.txt
+#eos ls $datasetDir/$htag/$AllSysDir/ &>> MxAODs.txt
+#eos ls $datasetDir/$htag/$PhotonSysDir/ &>> MxAODs.txt
+
+Samples=()
+for DIR in ${MXAODDIRS[@]}; do
+  Samples+=($(eos ls $datasetDir/$htag/$DIR/ ))
+done
 
 rootLink=root://eosatlas.cern.ch/$datasetDir/$htag
 
@@ -11,7 +17,8 @@ rootLink=root://eosatlas.cern.ch/$datasetDir/$htag
 echo '<?xml version="1.0" encoding="utf-8"?>' >MxAODs.xml
 echo '<pages>' >> MxAODs.xml
 
-while read sample; do
+#while read sample; do
+for sample in ${Samples[@]}; do
   [[ ! "$sample" =~ .root ]] && continue
   link=""
   if [[ "$sample" =~ AllSys ]]; then
@@ -31,8 +38,8 @@ while read sample; do
   echo '</link>'             >> MxAODs.xml
 
 
-
-done < "MxAODs.txt"
+done
+#done < "MxAODs.txt"
 
 echo '</pages>' >> MxAODs.xml
 

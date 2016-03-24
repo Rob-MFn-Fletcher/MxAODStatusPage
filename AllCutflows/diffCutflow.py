@@ -31,6 +31,7 @@ with open(fileOld,'r') as fO:
       print "new: " + str(len(fN_lines))
       print fO_lines
       print fN_lines
+      sys.exit(1)
     for i in range(2,len(fO_lines)):
       line_O=  fO_lines[i].split("  ")
       line_O= filter(None, line_O)
@@ -47,6 +48,7 @@ with open(fileOld,'r') as fO:
       if percentDiffDenom != 0:
         percentDiffVal=percentDiffNum/percentDiffDenom
       percentDiff.append(percentDiffVal)
+
 diffFile=re.sub(r'h[0-9][0-9][0-9]','diff', fileNew)
 
 with open(diffFile,"w") as f:

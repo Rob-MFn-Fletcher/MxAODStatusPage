@@ -4,6 +4,27 @@
 #include <iostream>
 #include <fstream>
 #include "plotVars.h"
+
+string increaseCut(string variableName,float MeanVal, float stdev,float &xmin, float &xmax){
+
+  xmin -= 2*stdev;
+  if(xmin<-10000) // case for variables like Energy where there is no reason to have a negative xmin
+  {
+    xmin = 0;
+  }
+  xmax +=2*stdev;
+  if(xmin==xmax)  // case for where there is no std dev for variables like m_ee in ggH125_small samples, so xmin==xmax and root gets confused
+  {
+    xmin = xmin - 1;
+    xmax = xmax + 1;
+  }
+
+  string lowCut =variableName+" > "+std::to_string(xmin);
+  string highCut=variableName+" < "+std::to_string(xmax);
+  string fullCut=lowCut+" && "+highCut;
+  return fullCut;
+}
+
 void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int nNewFiles)
 {
   // variables to plot are in defined in plotVars.h
@@ -21,7 +42,7 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
     // if its only 1 file, then its not a folder
     oldFileChain->Add(oldDatasetName.c_str());
   }
-  else // it's a folder! Negative numbers aren't actually possible 
+  else // it's a folder! Negative numbers aren't actually possible, please don't put them in :P 
   {
     for(int i = 1; i <= nOldFiles;i++)
     {
@@ -71,6 +92,8 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
    
   for(unsigned int i =0; i< variables.size();i++)
   {
+    //cout << variables[i] << endl;
+    //if (variables[i] != "HGamEventInfoAuxDyn.m_yy_truthVertex" ) continue;
     int barWidth = 70;
 
     std::cout << "[";
@@ -88,9 +111,9 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
     string baseFileName=newDatasetName.substr(found+1);
     TCanvas* c1 = new TCanvas;
 
-
     newFileChain->Draw(variables[i].c_str());
     TH1F *htemp = (TH1F*)gPad->GetPrimitive("htemp");
+    //cout << htemp << endl;
     htemp->SetLineColor( kRed);
     float MeanVal=htemp->GetMean();
     float stdev  =htemp->GetStdDev();
@@ -112,18 +135,29 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
     string highCut=variables[i]+" < "+std::to_string(xmax);
     string fullCut=lowCut+" && "+highCut;
 
-
     if(oldFileExists) // plot both if both exist
     {
       TBranch * varBranch = oldFileChain->GetBranch(variables[i].c_str());
       if(varBranch != 0)
       {
         //cout << "var exisits in h010! Plot Both on same plot" << endl;
+        
         oldFileChain->Draw(variables[i].c_str(),fullCut.c_str());
         htemp = (TH1F*)gPad->GetPrimitive("htemp");
-        //cout << htemp << endl;
+        int maxITER = 5;
+        int iter=0;
+        while( (htemp == 0 || htemp->Integral() < 5 ) && iter <= maxITER  )
+        {
+          fullCut = increaseCut(variables[i],MeanVal,stdev,xmin,xmax);
+          oldFileChain->Draw(variables[i].c_str(),fullCut.c_str());
+          htemp = (TH1F*)gPad->GetPrimitive("htemp");
+          iter++;
+          if(iter==maxITER) cout << "max iterations reached, might be no plot for " << variables[i] << endl;
+        }
         htemp->SetLineColor( kRed);
         htemp->SetTitle(variables[i].c_str());
+        c3 = new TCanvas;
+        htemp->Draw();
         newFileChain->Draw(variables[i].c_str(),fullCut.c_str(),"same");
       }
       else

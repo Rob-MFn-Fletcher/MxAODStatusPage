@@ -47,7 +47,7 @@ source makePages $htag $htagOld
 
 echo Updating live search for $htag
 cd liveSearch
-source makeXMLforLiveSearch.sh
+source makeXMLforLiveSearch.sh $htag
 cd ..
 
 echo updating ALL plots.  This will take a long time...
