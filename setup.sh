@@ -1,4 +1,5 @@
 # global vars used in scripts
+[[ ! -d eos ]] && mkdir eos
 export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
 export BASEDIR=$(pwd)
 export EOSMOUNTDIR=$BASEDIR
