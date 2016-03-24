@@ -3,7 +3,7 @@
 
 [[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
 [[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo EOS not mounted!  Please mount EOS in the base directory \(maybe it failed during setup?\) && return
-
+[[ ! -d samples ]] && mkdir samples
 htag=$1
 htagOld=$2
 
