@@ -1,14 +1,11 @@
 #!/bin/bash
+[[ -z "$1" ]] && echo "NEED 1st arugment of htag!" && return
+[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 asetup AthAnalysisBase,2.1.30,here
-
-datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
-mcDir=mc_25ns
-
 htag=$1
-inputFileType=PowhegPy8_VBF125_small
 
-inputFile=$(eos ls $datasetDir/$htag/$mcDir/ | grep $inputFileType)
+inputFile=$(eos ls $datasetDir/$htag/$mcDir/ | grep $EXAMPLEFILE)
 ./checkFileSummarize.py root://eosatlas.cern.ch/$datasetDir/$htag/$mcDir/$inputFile > fileSize.txt
 sed -i'.og' "1d" fileSize.txt
 sed -i'.og' "1d" fileSize.txt
