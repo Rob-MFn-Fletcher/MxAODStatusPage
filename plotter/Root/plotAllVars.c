@@ -25,8 +25,14 @@ string increaseCut(string variableName,float MeanVal, float stdev,float &xmin, f
   return fullCut;
 }
 
-void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int nNewFiles)
+void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDatasetName, unsigned int nNewFiles)
 {
+  if (newDatasetName=="")
+  {
+    cerr << "no new dataset name? what the hell do you want me to do? Returning..." << endl;
+    return;
+  }
+  if(oldDatasetName == "") nOldFiles=0;
   // variables to plot are in defined in plotVars.h
   std::vector<string> variables(plotVars, plotVars + sizeof plotVars / sizeof plotVars[0]);
 
@@ -44,7 +50,7 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
   }
   else // it's a folder! Negative numbers aren't actually possible, please don't put them in :P 
   {
-    for(int i = 1; i <= nOldFiles;i++)
+    for(unsigned int i = 1; i <= nOldFiles;i++)
     {
       size_t found = oldDatasetName.find_last_of("/");
       string baseFileName=oldDatasetName.substr(found+1);
@@ -113,6 +119,12 @@ void plotAllVars(string oldDatasetName,int nOldFiles, string newDatasetName, int
 
     newFileChain->Draw(variables[i].c_str());
     TH1F *htemp = (TH1F*)gPad->GetPrimitive("htemp");
+    if (htemp==0)
+    {
+      cout << "histo is empty for var " << variables[i] << ", must have no entries" << endl;
+      continue;
+    }
+    
     //cout << htemp << endl;
     htemp->SetLineColor( kRed);
     float MeanVal=htemp->GetMean();
