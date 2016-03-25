@@ -1,0 +1,25 @@
+use update script to update everything on the site.  
+e.g. source update h011 h010
+
+check out the setup script (setup.sh) for things to change like:
+  MxAOD types (MxAOD, MxAODAllSys, etc.)
+  folders for MxAOD types (mc_25ns, data_25ns, AllSys, etc.)
+  dataset directory on EOS
+  variables that are plotted
+  change in cutflow variables
+  
+An Explanation of the folders:
+  AllCutflows
+    As expected, it holds the scripts that make the cutflows for the new release, 
+    the release you are comparing to, and the difference between them
+  cutflows
+    this holds the cutflows for the front page of the website, though it should 
+    probably be combined with the AllCutflows folder
+  fileSize
+    this holds the scripts to give the file size stats (on the front page)
+  liveSearch
+    holds the nuts and bolts of the awesome search function
+  plotter
+    has the scripts for making all of the kinematic variable plots for each dataset
+  variables
+    has the scripts for making the variable lists on the front page
