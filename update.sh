@@ -5,16 +5,12 @@
 [[ -z "$1" ]] && echo Please two htags as an argument! E.G source update.sh h011 h010 && return
 [[ -z "$2" ]] && echo Please another htag as an argument! E.G source update.sh h011 h010 && return
 source setup.sh
-# May need to change these in the future
-export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD
-export MXAODTYPES=(MxAOD data AllSys PhotonSys)
-export MXAODDIRS=(mc_25ns data_25ns AllSys PhotonSys)
-export mcDir=mc_25ns
-export dataDir=data_25ns
-export AllSysDir=AllSys 
-export PhotonSysDir=PhotonSys 
+
+[[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo "EOS failed to mount in setup script! Change lxplus machines?" && return
+
 htagNew=$1
 htagOld=$2
+
 echo Updating for new htag: $htagNew
 echo Comparing to old htag: $htagOld
 
