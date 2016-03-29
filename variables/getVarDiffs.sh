@@ -26,11 +26,11 @@ containsElement () {
 
 # get the collection trees with the variable names + sed, grep, and awk magic to get clean list
 
-varsOld=($(echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagOld/$mcDir/$inputFileOld \
+varsOld=($(echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagOld/$mcDir/$inputFileOld 2> err.log \
    | grep "Br " | awk '{print $3}' | sed 's/://g' ))
 [[ -z "${varsOld[@]}" ]] && echo CHECK INPUT FILE!!!!!! &&return
 
-varsNew=($(echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew \
+varsNew=($(echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew 2>> err.log \
    | grep "Br " | awk '{print $3}' | sed 's/://g' ))
 [[ -z "${varsNew[@]}" ]] && echo CHECK INPUT FILE!!!!!! &&return
 

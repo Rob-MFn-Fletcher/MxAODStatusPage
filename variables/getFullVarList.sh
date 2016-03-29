@@ -46,7 +46,7 @@ echo $inputFileNew
 # of F, B, i, I, l.  I then columnize the two columns and return the unsigned variables
 # to their proper name.
 
-echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew | \
+echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew 2> err.log | \
     grep -A 1 "Br " | grep -v "Entries" |  grep -v "\-\-" | sed 's/unsigned /unsigned_/g' | \
     awk '{
              if ($5 ~ /:$/)               # find when xAOD:: variables are split across line
