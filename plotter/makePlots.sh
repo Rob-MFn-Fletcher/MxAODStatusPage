@@ -11,7 +11,6 @@ htagOld=$2
 
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
-  #[[ $DIR =~ AllSys ]] && continue # All Sys files might be folders, need to figure out how to handle
   Samples+=($(eos ls $datasetDir/$htag/$DIR/ ))
   #break
 done
@@ -25,7 +24,6 @@ for fileName in ${Samples[@]}; do
   fileNew=""
   sampleDir=""
   for DIR in ${MXAODDIRS[@]}; do
-    #[[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
     [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$fileName 2>/dev/null)"  ]] && fileNew="$EOSMOUNTDIR/$datasetDir/$htag/$DIR/$fileName" && sampleDir=$DIR
   done 
   
