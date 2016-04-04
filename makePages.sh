@@ -90,6 +90,6 @@ for sample in ${Samples[@]}; do
   #break 
 done 
 
-
+echo 
 echo ending at $(date)
 
