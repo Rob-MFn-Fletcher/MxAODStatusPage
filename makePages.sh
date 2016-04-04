@@ -5,11 +5,7 @@ htagNew=$1
 htagOld=$2
 
 [[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
-
-htag=$1
-
-htagOld=$2
-
+[[ ! -d pages ]] && mkdir pages
 
 Samples=()
 OldSamples=()
@@ -21,10 +17,8 @@ done
 
 for sample in ${Samples[@]}; do
   echo $sample
-  #for DIR in ${MXAODDIRS[@]}; do
-  #  [[ ! -z "$(eos ls $datasetDir/$htag/$DIR/$sample 2>/dev/null)"  ]] && fileNew="root://eosatlas.cern.ch/$datasetDir/$htag/$DIR/$sample" && sampleDir=$DIR
-  #done
   
+  # Clunky way to get which folder the sample is in
   if [[ "$sample" =~ $DATANAME ]]; then
     sampleDir=$dataDir
   else
@@ -33,16 +27,17 @@ for sample in ${Samples[@]}; do
     done
   fi
 
-  file="root://eosatlas.cern.ch/$datasetDir/$htag/$sampleDir/$sample"
+  file="root://eosatlas.cern.ch/$datasetDir/$htagNew/$sampleDir/$sample"  # Link to be displayed on the page
   base=$(basename ${file})
   fileType=${sample%.MxAOD*}
-  #oldSample=$(eos ls $datasetDir/$htagOld/$sampleDir/ | grep "${fileType}.MxAOD")
-  oldSample=$(printf -- '%s\n' "${OldSamples[@]}" | grep "${fileType}.MxAOD" | grep "\.${sampleType}\.")
+  oldSample=$(printf -- '%s\n' "${OldSamples[@]}" | grep "${fileType}.MxAOD" | grep "\.${sampleType}\.") # attempt to find old sample
   diffCutflowName=$(echo $sample | sed "s/h[0-9][0-9][0-9]/diff/g")
-  echo '<html>'                                             >pages/${sample}.php   
-  echo '<html lang="en">'                                  >>pages/${sample}.php
-  echo '<head>'                                            >>pages/${sample}.php
-  echo ' <meta charset="utf-8" />'                         >>pages/${sample}.php
+  
+  # simple way to make a lot of html files (one for each sample, so >300)
+  echo '<html>'                                             >pages/${sample}.php  # rewrite file if old file exists 
+  echo '<html lang="en">'                                  >>pages/${sample}.php  # append to file we just created
+  echo '<head>'                                            >>pages/${sample}.php  
+  echo ' <meta charset="utf-8" />'                         >>pages/${sample}.php  # not going to explain html, look it up, it sucks
   echo "  <title>$fileType</title>"                        >>pages/${sample}.php
   echo '    <style>'                                       >>pages/${sample}.php
   echo '    h1 {text-align:center;}'                       >>pages/${sample}.php
@@ -55,32 +50,28 @@ for sample in ${Samples[@]}; do
   echo '<p>'Location: $file'</p>'                          >>pages/${sample}.php
   echo '<table class="center">'                            >>pages/${sample}.php
   echo '<tr>'                                              >>pages/${sample}.php
-  echo '<td><p>'$htag'</p></td>'                           >>pages/${sample}.php
+  echo '<td><p>'$htagNew'</p></td>'                        >>pages/${sample}.php
   echo '<td><p>'$htagOld'</p></td>'                        >>pages/${sample}.php
   echo '<td><p>'difference'</p></td>'                      >>pages/${sample}.php
   echo '</tr>'                                             >>pages/${sample}.php
   echo '<tr>'                                              >>pages/${sample}.php
   echo '<td>''<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/cutflows/${sample}.txt\"' border="0"></object>''</td>' >>pages/${sample}.php
-  if [[ ! -z "$oldSample" ]]; then
+  if [[ ! -z "$oldSample" ]]; then # case for when there is an old sample
     echo '<td>''<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/cutflows/${oldSample}.txt\"' border="0"></object>''</td>' >>pages/${sample}.php
     echo '<td>''<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/cutflows/${diffCutflowName}.txt\"' border="0"></object>''</td>' >>pages/${sample}.php
-  else
+  else # there is no old sample!
     echo '<td>'"No similar sample for htag ${htagOld}!"'</td>'
     echo '<td>''</td>'
   fi
   echo '</tr>'                                             >>pages/${sample}.php
   echo '</table>'                                          >>pages/${sample}.php
  
-  for var in ${VARSFORPLOTS[@]}; do 
+  for var in ${VARSFORPLOTS[@]}; do # get plots from the plotter folder 
 
     echo '<object width="700" height="500" type="text/plain" 'data=\"../plotter/samples/${sample}/${sample}_${var}.png\"' border="0"></object>' >>pages/${sample}.php
   done
-#  echo '<p><object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/${sample}.txt\"' border="0"></object>' >>pages/${sample}.php
-#  [[ ! -z  $oldSample ]] && echo '<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/${oldSample}.txt\"' border="0"></object>' >>pages/${sample}.php
-#  echo '</p>'                                              >>pages/${sample}.php
   echo '</body>'                                           >>pages/${sample}.php
   echo '</html>'                                           >>pages/${sample}.php
-  #break
 done 
 
 
