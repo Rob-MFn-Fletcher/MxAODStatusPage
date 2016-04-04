@@ -10,14 +10,28 @@ htagOld=$2
 Samples=()
 OldSamples=()
 for DIR in ${MXAODDIRS[@]}; do
-  Samples+=($(eos ls $datasetDir/$htag/$DIR/ ))
+  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ ))
   OldSamples+=($(eos ls $datasetDir/$htagOld/$DIR/ ))
 done
 
+progress=$(( 0 ))
+barWidth=$(( 70 ))
 
 for sample in ${Samples[@]}; do
-  echo $sample
-  
+  pos=$(echo "scale=0; $barWidth * $progress" | bc)
+  posRound=$(echo "($pos + 0.5) / 1" | bc)
+  echo -ne '[' 
+  for i in $(seq 0 $barWidth); do
+    if   [[ "$i" -lt "$posRound" ]]; then 
+      echo -ne '='
+    elif [[ "$i" -eq "$posRound" ]]; then  
+      echo -ne '>'
+    else
+      echo -ne ' '
+    fi
+  done
+  progressRound=$(echo "($progress  * 100.0 + 0.5)/1" | bc)
+  echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
   # Clunky way to get which folder the sample is in
   if [[ "$sample" =~ $DATANAME ]]; then
     sampleDir=$dataDir
@@ -60,8 +74,8 @@ for sample in ${Samples[@]}; do
     echo '<td>''<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/cutflows/${oldSample}.txt\"' border="0"></object>''</td>' >>pages/${sample}.php
     echo '<td>''<object width="484" height="300" type="text/plain" 'data=\"../AllCutflows/cutflows/${diffCutflowName}.txt\"' border="0"></object>''</td>' >>pages/${sample}.php
   else # there is no old sample!
-    echo '<td>'"No similar sample for htag ${htagOld}!"'</td>'
-    echo '<td>''</td>'
+    echo '<td>'"No similar sample for htag ${htagOld}!"'</td>'  >>pages/${sample}.php
+    echo '<td>''</td>'                                          >>pages/${sample}.php
   fi
   echo '</tr>'                                             >>pages/${sample}.php
   echo '</table>'                                          >>pages/${sample}.php
@@ -72,6 +86,8 @@ for sample in ${Samples[@]}; do
   done
   echo '</body>'                                           >>pages/${sample}.php
   echo '</html>'                                           >>pages/${sample}.php
+  progress=$(echo "scale=5; $progress + 1.0/${#Samples[@]}" | bc)
+  #break 
 done 
 
 
