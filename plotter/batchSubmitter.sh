@@ -7,7 +7,9 @@ htagNew=$1
 htagOld=$2
 
 sed -i "s|^export BASEDIR=.*|export BASEDIR=${BASEDIR}|g" $BASEDIR/plotter/makePlotBatch.sh
-
+  varsStringArray=$(echo ${VARSFORPLOTS[@]} | sed "s/^/std::string___plotVars[${#VARSFORPLOTS[@]}]={\"/g" | sed 's/$/"};/g' | sed 's/ /","/g' | sed 's/___/ /g')
+echo $varsStringArray > $BASEDIR/plotter/Root/plotVars.h
+echo '// This file is produced automatically in makePlots.sh. To change the variables that are plotted, change the list in the variable VARSFORPLOTS in the setup script' >> $BASEDIR/plotter/Root/plotVars.h
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
   Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ ))
