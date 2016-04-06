@@ -1,3 +1,4 @@
+# Use this script instead of the batchSubmitter to run locally
 [[ -z "$1" ]] && echo "NEED 1st arugment!" && return
 [[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
