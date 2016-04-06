@@ -10,7 +10,7 @@ sed -i "s|^export BASEDIR=.*|export BASEDIR=${BASEDIR}|g" $BASEDIR/plotter/makeP
 
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
-  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep ggH125_small | grep -v Sys ))
+  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ ))
   #break
 done
 
