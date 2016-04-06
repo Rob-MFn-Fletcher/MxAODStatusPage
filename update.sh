@@ -34,9 +34,9 @@ cd fileSize
 source getFileSize.sh $htagNew
 cd ..
 
-echo updating ALL cutflows
+echo updating ALL cutflows...
 cd AllCutflows
-source getCutflows.sh $htagNew $htagOld
+source batchSubmitter.sh $htagNew $htagOld
 cd ..
 
 echo Making webpages for ALL samples...
