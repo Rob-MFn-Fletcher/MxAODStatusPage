@@ -23,29 +23,41 @@ cd cutflows
 source getCutflows.sh $htagNew
 cd ..
 
+echo
+
 echo Updating Variable Lists...
 cd variables
 source getVarDiffs.sh $htagNew $htagOld
 source getFullVarList.sh $htagNew
 cd ..
 
+echo
+
 echo Updating File sizes...
 cd fileSize
 source getFileSize.sh $htagNew
 cd ..
+
+echo
 
 echo updating ALL cutflows...
 cd AllCutflows
 source batchSubmitter.sh $htagNew $htagOld
 cd ..
 
+echo
+
 echo Making webpages for ALL samples...
-source makePages $htagNew $htagOld
+source makePages.sh $htagNew $htagOld
+
+echo
 
 echo Updating live search for $htagNew
 cd liveSearch
 source makeXMLforLiveSearch.sh $htagNew
 cd ..
+
+echo
 
 echo updating ALL plots...
 cd plotter/outputbatch
@@ -53,6 +65,6 @@ cd plotter/outputbatch
 source ../batchSubmitter.sh $htagNew $htagOld   # for lxplus batch submission (faster), sourced from output folder to avoid massive clutter since I can't figure out how to change the directory the output gets copied to.  -outdir -cwd -oo -eo etc seem to have no effect...
 cd ../../
 
+echo 
 
-
-echo Updated for $htag!
+echo Updated for $htag! Cutflows and Plots will be updated as the jobs finish
