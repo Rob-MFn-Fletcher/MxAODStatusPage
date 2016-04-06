@@ -6,7 +6,7 @@
 [[ -z "$2" ]] && echo Please another htag as an argument! E.G source update.sh h011 h010 && return
 source setup.sh
 
-[[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo "EOS failed to mount in setup script! Change lxplus machines?" && return
+#[[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo "EOS failed to mount in setup script! Change lxplus machines?" && return
 
 htagNew=$1
 htagOld=$2
@@ -47,10 +47,11 @@ cd liveSearch
 source makeXMLforLiveSearch.sh $htagNew
 cd ..
 
-echo updating ALL plots.  This will take a long time...
-cd plotter
-source makePlots.sh $htagNew $htagOld
-cd ..
+echo updating ALL plots...
+cd plotter/outputbatch
+#source makePlots.sh $htagNew $htagOld        # for local running (takes a long time)
+source ../batchSubmitter.sh $htagNew $htagOld   # for lxplus batch submission (faster), sourced from output folder to avoid massive clutter since I can't figure out how to change the directory the output gets copied to.  -outdir -cwd -oo -eo etc seem to have no effect...
+cd ../../
 
 
 
