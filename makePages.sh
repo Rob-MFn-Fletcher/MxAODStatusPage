@@ -57,7 +57,7 @@ for sample in ${Samples[@]}; do
   echo '    h1 {text-align:center;}'                       >>pages/${sample}.php
   echo '    p {text-align:center;}'                        >>pages/${sample}.php
   echo '    </style>'                                      >>pages/${sample}.php
-  echo '    <link rel="stylesheet" href="mystyle.css" />'  >>pages/${sample}.php
+  echo '    <link rel="stylesheet" href="../mystyle.css" />'  >>pages/${sample}.php
   echo '</head>'                                           >>pages/${sample}.php
   echo '<body bgcolor=white>  '                            >>pages/${sample}.php
   echo "<h1>$fileType Page</h1>"                           >>pages/${sample}.php
