@@ -1,10 +1,5 @@
 htag=$1
 [[ -z "$1" ]] && echo Please one htag as an argument! && return
-#source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh &> test.txt
-#eos ls $datasetDir/$htag/$mcDir/ &> MxAODs.txt
-#eos ls $datasetDir/$htag/$dataDir/ &>> MxAODs.txt
-#eos ls $datasetDir/$htag/$AllSysDir/ &>> MxAODs.txt
-#eos ls $datasetDir/$htag/$PhotonSysDir/ &>> MxAODs.txt
 
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
