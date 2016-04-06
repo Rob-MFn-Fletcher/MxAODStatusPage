@@ -51,7 +51,7 @@ function showResult(str) {
 <p><a href="#FileSize">File Size Stats</a> </p>
 <p><a href="#Cutflows">Cutflows</a> </p>
 
-<form>Search for your sample:
+<form>Search for your sample (click sample for specific sample page):
 <input type="text" size="30" onkeyup="showResult(this.value)">
 <div id="livesearch"></div>
 </form>
