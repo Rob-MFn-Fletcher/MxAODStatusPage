@@ -49,19 +49,46 @@ echo $inputFileNew
 echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew 2> err.log | \
     grep -A 1 "Br " | grep -v "Entries" |  grep -v "\-\-" | sed 's/unsigned /unsigned_/g' | sed 's/> > >/>_>_>/g' | \
     sed 's/> >/>_>/g' | awk '{
-             if ($5 ~ /:$/)               # find when xAOD:: variables are split across line
-                 print $3, $5 ,getline, $3;
-             else if ( $5 !~ /\*/)        # normal case, 1 inserted to match getline output
-                 print $3 ,1, $5 ;
-             else if ($5 ~ /\*/)          # case when variable might be split
-             {
-                 if ($5 == "*")          # case where entire type is on next line
-                     print $3, getline, $3;
-                 else if ($5 ~ /i\*/ || $5 ~ /F\*/ || $5 ~/I\*/ || $5 ~/B\*/) # refers to pointer, var not split
-                     print $3, 1, $5;
-                 else                     # var is split!
-                     print $3 , $5, getline,$3
-             }
+         var=$3
+         type=$5
+         if ($5 ~ /:$/)
+         {
+            getline
+            type=(type $3)
+            print var,type
+         }
+         else if ( $5 !~ /\*/)        # normal case, 1 inserted to match getline output
+         {
+            print var, type
+         }
+         else if ($5 ~ /\*/)          # case when variable might be split
+         {
+            if ($5 == "*")          # case where entire type is on next line
+            {
+                getline
+                type=""
+                type=(type $3)
+                if ($3 ~ /:$/) # one of the few triple line vars
+                {
+                    getline
+                    type=(type $3)
+                }
+                print var,type
+            }
+            else if ($5 ~ /i\*/ || $5 ~ /F\*/ || $5 ~/I\*/ || $5 ~/B\*/) # var not split
+                print var,substr(type,1,length(type)-1)
+            else if ($5 ~ />\*/) # var is not split, just has * at the end because of root padding
+                print var,substr(type,1,length(type)-1)
+            else # var is split
+            {
+                getline
+                if(type ~ /\*$/)
+                    type=substr(type,1,length(type)-1)
+                type=(type $3)
+                print var,type
+            }
+
+         }         
          }' | sed 's/\* 1 //g'  | sed 's/ 1 / /g'         | sed 's/: :/::/g' | \
          sed 's/^://g' | sort   | awk '{print $2,$1}'     | sed 's/^.*\/F/Float_t/g' | \
          sed 's/^.*\/I/Int_t/g' | sed 's/^.*\/B/Bool_t/g' | sed 's/^.*\/i/int/g'| \
