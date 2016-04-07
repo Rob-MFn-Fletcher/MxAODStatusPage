@@ -89,7 +89,7 @@ echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$ht
             }
 
          }         
-         }' | sed 's/\* 1 //g'  | sed 's/ 1 / /g'         | sed 's/: :/::/g' | \
+         }' |  \
          sed 's/^://g' | sort   | awk '{print $2,$1}'     | sed 's/^.*\/F/Float_t/g' | \
          sed 's/^.*\/I/Int_t/g' | sed 's/^.*\/B/Bool_t/g' | sed 's/^.*\/i/int/g'| \
          sed 's/^.*\/l/long/g'  | column -t | sed 's/unsigned_/unsigned /g' | \
