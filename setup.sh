@@ -1,7 +1,7 @@
 # global vars used in scripts
 
 export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD # location of the MxAODs on EOS
-export BASEDIR=/afs/cern.ch/user/a/athompso/www/                      # working directory, have to hard code for lxplus batch code
+export BASEDIR=/afs/cern.ch/user/a/athompso/www                      # working directory, have to hard code for lxplus batch code
 
 export EOSMOUNTDIR=root://eosatlas.cern.ch/                          # xrootd is much slower than using eosmount!!
 export MXAOD_MC_TYPES=(MxAOD MxAODAllSys MxAODPhotonSys)              # types of MC MxAODs
