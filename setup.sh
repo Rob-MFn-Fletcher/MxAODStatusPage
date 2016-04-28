@@ -1,7 +1,7 @@
 # global vars used in scripts
 
 export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD # location of the MxAODs on EOS
-export BASEDIR=/afs/cern.ch/user/a/athompso/www                      # working directory, have to hard code for lxplus batch code
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www                      # working directory, have to hard code for lxplus batch code
 
 export EOSMOUNTDIR=root://eosatlas.cern.ch/                          # xrootd is much slower than using eosmount, but more reliable for lxplus batch
 export MXAOD_MC_TYPES=(MxAOD MxAODAllSys MxAODPhotonSys)              # types of MC MxAODs
@@ -22,7 +22,7 @@ export VARSFORCUTFLOWS=("NxAOD=0" "NDxAOD=1" "ALLEVTS=2" "DUPLICATE=3" "TRIGGER=
 ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 localSetupROOT # used for plotting variables
-[[ ! "$1" == "-noAthena"  ]] asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
+[[ "$BASEDIR" == $(pwd)  ]] && asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
 
 #functions : 
 progress=$(( 0 ))
@@ -40,7 +40,7 @@ tickProgressBar() {
       echo -ne ' '
     fi
   done
-  progressRound=$(echo "($progress  * 100.0 + 0.5)/1" | bc) 
+  progressRound=$(echo "($progress * 100  + 0.5)/1" | bc) 
   echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
   progress=$(echo "scale=5; $progress + 1.0/$1" | bc)
 }
@@ -58,7 +58,7 @@ endProgressBar() {
       echo -ne ' '
     fi
   done
-  progressRound=$(echo "(100  * 100.0 + 0.5)/1" | bc) 
+  progressRound=$(echo "(100  + 0.5)/1" | bc) 
   echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
   echo
 }
