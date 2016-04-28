@@ -2,7 +2,7 @@
 [[ -z "$2" ]] && echo "NEED 2nd arugment! newHtag e.g. h011" && exit 1
 [[ -z "$3" ]] && echo "NEED 3rd arugment! oldHtag e.g. h010" && exit 1
 # This base dir is automatically set by batchSubmitter, changing it will do nothing since it will be reset
-export BASEDIR=/afs/cern.ch/user/a/athompso/www/
+export BASEDIR=/afs/cern.ch/user/a/athompso/www
 fileName=$1
 htagNew=$2
 htagOld=$3
@@ -30,6 +30,7 @@ fileType=${fileName%.MxAOD*}
 fileOldName=$(eos ls $datasetDir/$htagOld/$sampleDir/ | grep ${fileType}.MxAOD)
 #fileOld="root://eosatlas.cern.ch/$datasetDir/$htagOld/$sampleDir/$fileOldName"
 fileOld="$EOSMOUNTDIR/$datasetDir/$htagOld/$sampleDir/$fileOldName"
+
 
 echo running on sample: $fileName
 
