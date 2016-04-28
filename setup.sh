@@ -24,4 +24,49 @@ export VARSFORCUTFLOWS=("NxAOD=0" "NDxAOD=1" "ALLEVTS=2" "DUPLICATE=3" "TRIGGER=
 ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 localSetupROOT # used for plotting variables
-[[ "$BASEDIR" == $(pwd)  ]] && asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
+#[[ "$BASEDIR" == $(pwd)  ]] && asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
+
+#functions : 
+progress=$(( 0 ))
+tickProgressBar() {
+  barWidth=$(( 70 ))
+  pos=$(echo "scale=0; $barWidth * $progress" | bc)
+  posRound=$(echo "($pos + 0.5) / 1" | bc)
+  echo -ne '['
+  for i in $(seq 0 $barWidth); do
+    if   [[ "$i" -lt "$posRound" ]]; then
+      echo -ne '='
+    elif [[ "$i" -eq "$posRound" ]]; then
+      echo -ne '>'
+    else
+      echo -ne ' '
+    fi
+  done
+  progressRound=$(echo "($progress  * 100.0 + 0.5)/1" | bc) 
+  echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
+  progress=$(echo "scale=5; $progress + 1.0/$1" | bc)
+}
+endProgressBar() {
+  barWidth=$(( 70 ))
+  pos=$(echo "scale=0; $barWidth * 100" | bc)
+  posRound=$(echo "($pos + 0.5) / 1" | bc)
+  echo -ne '['
+  for i in $(seq 0 $barWidth); do
+    if   [[ "$i" -lt "$posRound" ]]; then
+      echo -ne '='
+    elif [[ "$i" -eq "$posRound" ]]; then
+      echo -ne '>'
+    else
+      echo -ne ' '
+    fi
+  done
+  progressRound=$(echo "(100  * 100.0 + 0.5)/1" | bc) 
+  echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
+  echo
+}
+resetProgressBar() {
+  progress=$(( 0 ))
+  progressRound=$(( 0 ))
+}
+
+
