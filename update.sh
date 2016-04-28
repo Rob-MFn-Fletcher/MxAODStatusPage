@@ -60,6 +60,7 @@ cd ..
 echo
 
 echo updating ALL plots...
+[[ ! -d plotter/outputbatch ]] && mkdir plotter/outputbatch
 cd plotter/outputbatch
 #source makePlots.sh $htagNew $htagOld        # for local running (takes a long time)
 source ../batchSubmitter.sh $htagNew $htagOld   # for lxplus batch submission (faster), sourced from output folder to avoid massive clutter since I can't figure out how to change the directory the output gets copied to.  -outdir -cwd -oo -eo etc seem to have no effect...
