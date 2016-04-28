@@ -2,7 +2,10 @@
 [[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
 [[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
-[[ ! -d outputbatch ]] && mkdir outputbatch
+#[[ ! -d outputbatch ]] && mkdir outputbatch
+
+[[ ! -d $BASEDIR/plotter/samples ]] && mkdir $BASEDIR/plotter/samples
+
 htagNew=$1
 htagOld=$2
 
@@ -16,7 +19,8 @@ for DIR in ${MXAODDIRS[@]}; do
   Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ ))
 done
 
-logFileSize=$(ls -l $BASEDIR/plotter/submit.out | awk '{print $5}')
+logFileSize=""
+[[ -e $BASEDIR/plotter/submit.out ]] && logFileSize=$(ls -l $BASEDIR/plotter/submit.out | awk '{print $5}')
 [[ ! -z $logFileSize ]] && [[ $logFileSize -gt 1000000  ]] && rm $BASEDIR/plotter/submit.out
 
 fileNew=""
