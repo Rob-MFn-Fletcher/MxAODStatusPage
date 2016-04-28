@@ -168,7 +168,6 @@ void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDataset
         }
         htemp->SetLineColor( kRed);
         htemp->SetTitle(variables[i].c_str());
-        c3 = new TCanvas;
         htemp->Draw();
         newFileChain->Draw(variables[i].c_str(),fullCut.c_str(),"same");
       }
