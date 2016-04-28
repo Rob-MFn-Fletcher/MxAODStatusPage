@@ -13,7 +13,7 @@ inputFileType=$EXAMPLEFILE
 
 inputFileNew=$(eos ls $datasetDir/$htagNew/$mcDir/ | grep $inputFileType)
 
-echo $inputFileNew
+echo Using $inputFileNew for variable lists...
 
 # take a look at CollectionTree->Print() for an MxAOD first for this to make more sense:
 # Here is an example:
