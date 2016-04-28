@@ -5,7 +5,7 @@
 export BASEDIR=/afs/cern.ch/user/a/athompso/www/
 
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh
-source $BASEDIR/setup.sh
+source $BASEDIR/setup.sh -noAthena
 
 echo started $0 at $(date)
 htagNew=$1

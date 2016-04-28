@@ -7,7 +7,7 @@ fileName=$1
 htagNew=$2
 htagOld=$3
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh
-source $BASEDIR/setup.sh
+source $BASEDIR/setup.sh -noAthena
 
 #source $BASEDIR/plotter/makePlotSingle.sh $fileName $htagNew $htagOld
 
