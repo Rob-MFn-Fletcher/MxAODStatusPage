@@ -2,12 +2,12 @@
 [[ -z "$2" ]] && echo "NEED 2nd arugment! newHtag e.g. h011" && exit 1
 [[ -z "$3" ]] && echo "NEED 3rd arugment! oldHtag e.g. h010" && exit 1
 # This base dir is automatically set by batchSubmitter, changing it will do nothing since it will be reset
-export BASEDIR=/afs/cern.ch/user/a/athompso/www
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www
 fileName=$1
 htagNew=$2
 htagOld=$3
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh
-source $BASEDIR/setup.sh -noAthena
+source $BASEDIR/setup.sh
 
 #source $BASEDIR/plotter/makePlotSingle.sh $fileName $htagNew $htagOld
 
