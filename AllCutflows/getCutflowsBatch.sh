@@ -2,10 +2,10 @@
 [[ -z "$1" ]] && echo "NEED 1st arugment! newHtag e.g. h011" && exit 1
 [[ -z "$2" ]] && echo "NEED 2nd arugment! oldHtag e.g. h010" && exit 1
 # This base dir is automatically set by batchSubmitter, changing it will do nothing since it will be reset
-export BASEDIR=/afs/cern.ch/user/a/athompso/www/
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www
 
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh
-source $BASEDIR/setup.sh -noAthena
+source $BASEDIR/setup.sh
 
 echo started $0 at $(date)
 htagNew=$1
