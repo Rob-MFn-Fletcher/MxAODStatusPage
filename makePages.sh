@@ -14,24 +14,8 @@ for DIR in ${MXAODDIRS[@]}; do
   OldSamples+=($(eos ls $datasetDir/$htagOld/$DIR/ ))
 done
 
-progress=$(( 0 ))
-barWidth=$(( 70 ))
-
+resetProgressBar
 for sample in ${Samples[@]}; do
-  pos=$(echo "scale=0; $barWidth * $progress" | bc)
-  posRound=$(echo "($pos + 0.5) / 1" | bc)
-  echo -ne '[' 
-  for i in $(seq 0 $barWidth); do
-    if   [[ "$i" -lt "$posRound" ]]; then 
-      echo -ne '='
-    elif [[ "$i" -eq "$posRound" ]]; then  
-      echo -ne '>'
-    else
-      echo -ne ' '
-    fi
-  done
-  progressRound=$(echo "($progress  * 100.0 + 0.5)/1" | bc)
-  echo -ne '] '$(echo "scale=0; $progressRound" | bc) " %\r"
   # Clunky way to get which folder the sample is in
   if [[ "$sample" =~ $DATANAME ]]; then
     sampleDir=$dataDir
@@ -48,6 +32,7 @@ for sample in ${Samples[@]}; do
   diffCutflowName=$(echo $sample | sed "s/h[0-9][0-9][0-9]/diff/g")
   
   # simple way to make a lot of html files (one for each sample, so >300)
+  # it would be faster to have a template and use sed, but oh well it's not that slow
   echo '<html>'                                             >pages/${sample}.php  # rewrite file if old file exists 
   echo '<html lang="en">'                                  >>pages/${sample}.php  # append to file we just created
   echo '<head>'                                            >>pages/${sample}.php  
@@ -86,10 +71,10 @@ for sample in ${Samples[@]}; do
   done
   echo '</body>'                                           >>pages/${sample}.php
   echo '</html>'                                           >>pages/${sample}.php
-  progress=$(echo "scale=5; $progress + 1.0/${#Samples[@]}" | bc)
+  tickProgressBar ${#Samples[@]}
   #break 
 done 
-
-echo 
+endProgressBar
+#echo 
 echo ending at $(date)
 
