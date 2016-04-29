@@ -3,6 +3,7 @@
 
 [[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
 [[ ! -d outputbatch ]] && mkdir outputbatch
+[[ ! -d cutflows ]] && mkdir cutflows
 htagNew=$1
 htagOld=$2
 
