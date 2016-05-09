@@ -20,7 +20,7 @@ for htag in $htagNew $htagOld; do
   #break 
   Samples=()
   for DIR in ${MXAODDIRS[@]}; do
-    Samples+=($(eos ls $datasetDir/$htag/$DIR/ ))
+    Samples+=($(eos ls $datasetDir/$htag/$DIR/ | grep .root ))
     #break
   done
   
@@ -41,8 +41,10 @@ for htag in $htagNew $htagOld; do
       nFiles=$(eos ls $datasetDir/$htag/$sampleDir/$fileName | wc -l)
       if [[ $fileName =~ $DATANAME ]]; then
         root -l -q -b "$BASEDIR/AllCutflows/printCutflowData.c(\"${file}\")" 2>err.log 1> cutflows/${fileName}.txt
+        #root -l -q -b "$BASEDIR/AllCutflows/printCutflowData.c(\"${file}\")"
       else
         root -l -q -b "$BASEDIR/AllCutflows/printCutflow.c(\"${file}\",${nFiles},\"${cutFlowName}\")"  2>err.log 1> cutflows/${fileName}.txt
+        #root -l -q -b "$BASEDIR/AllCutflows/printCutflow.c(\"${file}\",${nFiles},\"${cutFlowName}\")"
       fi
       sed -i'.og' "1d" cutflows/${fileName}.txt
       sed -i'.og' "s/^ *//g" cutflows/${fileName}.txt
@@ -50,11 +52,10 @@ for htag in $htagNew $htagOld; do
       cp cutflows/${fileName}.txt $BASEDIR/AllCutflows/cutflows/
   done
   
-
 done
 Samples=()
 for DIR in ${MXAODDIRS[@]}; do
-  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/  ))
+  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root ))
   #break
 done
 
