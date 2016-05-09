@@ -22,7 +22,7 @@ export VARSFORCUTFLOWS=("NxAOD=0" "NDxAOD=1" "ALLEVTS=2" "DUPLICATE=3" "TRIGGER=
 ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 localSetupROOT # used for plotting variables
-[[ "$BASEDIR" == $(pwd)  ]] && asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
+#[[ "$BASEDIR" == $(pwd)  ]] && asetup AthAnalysisBase,2.1.30,here # used for checking file size, dont run on lx batch
 
 #functions : 
 progress=$(( 0 ))
