@@ -47,6 +47,7 @@ function showResult(str) {
 
     <p> Last updated for htag: : <?php $line = fgets(fopen('CurrentHtag.txt', 'r')); echo $line ?> </p>
 
+<p><a href="dataValidation/dataValidation.php">Data Validation</a><p>
 <p><a href="#Variables">Variables</a> </p>
 <p><a href="#FileSize">File Size Stats</a> </p>
 <p><a href="#Cutflows">Cutflows</a> </p>
