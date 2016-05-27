@@ -8,9 +8,8 @@
 
 [[ -z "$datasetDir" ]] && echo "please source the setup script" && return
 [[ ! -d outputbatch ]] && mkdir outputbatch
-[[ ! -d cutflows ]] && mkdir cutflows
 htagNew=$1
-[[ ! -d cutflows/$htagNew ]] && mkdir cutflows/$htagNew
+[[ ! -d cutflows/$htagNew ]] && mkdir -p cutflows/$htagNew
 
 sed -i "s|^export BASEDIR=.*|export BASEDIR=${BASEDIR}|g" $BASEDIR/AllCutflows/getCutflowsBatch.sh
 
