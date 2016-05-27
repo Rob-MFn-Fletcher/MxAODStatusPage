@@ -35,9 +35,10 @@ echo submitting ${#Samples[@]} lxplus batch jobs for plots...
 rm -r $BASEDIR/plotter/outputbatch/*
 resetProgressBar
 
+echo SUBMITOUT > $BASEDIR/plotter/submit.out
 for fileName in ${Samples[@]}; do
   # generously submitted to the 1nd queue (cput time 1 day), could split up by time, size, etc. Most are finished in ~15 minutes
-  bsub -q 8nh $BASEDIR/plotter/makePlotBatch.sh $fileName $htagNew  >> $BASEDIR/plotter/submit.out
+  bsub -R "swp > 20000" -R "rusage[mem=2000]" -q 8nh $BASEDIR/plotter/makePlotBatch.sh $fileName $htagNew  >> $BASEDIR/plotter/submit.out
   tickProgressBar ${#Samples[@]}
 done
 endProgressBar

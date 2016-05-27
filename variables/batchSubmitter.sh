@@ -20,4 +20,4 @@ sed -i "s|^export BASEDIR=.*|export BASEDIR=${BASEDIR}|g" $BASEDIR/variables/get
 
 echo Submitting batch job for variables... This job takes 30mins-1h to finish, variables are updated as the job runs
 
-bsub -q 8nh $BASEDIR/variables/getFullVarListBatch.sh $htagNew
+bsub -R "swp > 10000" -R "rusage[mem=1500]" -q 8nh $BASEDIR/variables/getFullVarListBatch.sh $htagNew
