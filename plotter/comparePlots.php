@@ -3,7 +3,7 @@
   $compSample=$_GET["q"];  // q for "query" htag
   $currSample=$_GET["c"];  // c for "current" htag
 
-  $command="source " . $base . "/plotter/comparePlots.sh " . $currSample . " " . $compSample . " 2>&1";
+  $command="source " . $base . "/plotter/comparePlots.sh ". $base . " ". $currSample . " " . $compSample . " 2>&1";
 
   $outpt=shell_exec($command);
   //echo $outpt;
