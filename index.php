@@ -1,8 +1,9 @@
 <!-- 
 HGam Status Site
 Author: Tony Thompson
-i fucking hate html
+i fucking hate html. PHP is neat tho
 
+Redirects the home page to latest release (h012pre throws it off though)
 -->
 
 <?php
