@@ -120,7 +120,7 @@ for DIR in ${SampleDirs[@]}; do
     fi
   done
   extra=""
-  [[ ! "$totalMxAODeventsRunOver" -eq "$totalDAODevents"  ]] && extra='--NotOK!!!!'
+  [[ ! "$totalMxAODeventsRunOver" -eq "$totalDAODeventsAMI"  ]] && extra='--NotOK!!!!'
   [[ ! "${totalMxAODPreSel}" -eq "$totalMxAODisPassedPreFlag" ]] && extra='--NotOK!!!!'
   echo TOTAL $totalAODeventsAMI $totalAODeventsBookkeeper $totalDAODeventsAMI $totalDAODeventsBookkeeper ${totalMxAODeventsRunOver} ${totalMxAODPreSel} ${totalMxAODisPassedPreFlag}$extra | tee -a $uncolumnizedOutput #>> temp.out
   
