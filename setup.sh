@@ -3,7 +3,7 @@
 export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD # location of the MxAODs on EOS
 
 # should also set BASEDIR in html/vars.php for correct website working
-export BASEDIR=/afs/cern.ch/user/a/athompso/www                      # working directory, have to hard code for lxplus batch code
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www                      # working directory, have to hard code for lxplus batch code
 [[ ! -d $BASEDIR/tmp ]] && mkdir $BASEDIR/tmp
 
 export EOSMOUNTDIR=root://eosatlas.cern.ch/                          # xrootd is much slower than using eosmount, but more reliable for lxplus batch
@@ -20,7 +20,7 @@ export PRESELECTION_NUM=10 # +1 from AMIBIGUITY above because of overflowbin, us
 
 ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
-#localSetupROOT # used for plotting variables
+localSetupROOT # used for plotting variables
 
 #functions : 
 progress=$(( 0 ))
