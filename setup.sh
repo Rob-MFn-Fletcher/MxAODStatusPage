@@ -4,6 +4,7 @@ export datasetDir=/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD # location
 
 # should also set BASEDIR in html/vars.php for correct website working
 export BASEDIR=/afs/cern.ch/user/a/athompso/www                      # working directory, have to hard code for lxplus batch code
+[[ ! -d $BASEDIR/tmp ]] && mkdir $BASEDIR/tmp
 
 export EOSMOUNTDIR=root://eosatlas.cern.ch/                          # xrootd is much slower than using eosmount, but more reliable for lxplus batch
 #export COLLECTION_TREE_NAME="CollectionTree"                          # tree where kinematic variables are located in MxAOD (Not implemented...)
