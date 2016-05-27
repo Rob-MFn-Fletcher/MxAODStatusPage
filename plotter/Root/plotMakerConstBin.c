@@ -91,6 +91,7 @@ void plotMakerConstBin(string htag,string newDatasetName, unsigned int nNewFiles
     //string baseFileName=newDatasetName.substr(found+1);
     
     //cout << "1" << endl;
+    TCanvas * c1 =new TCanvas("c1");
     if(newFileChain->Draw(variables[i].c_str(),"") == -1)
     {
       cout << "Draw command failed!" << endl;
@@ -110,6 +111,7 @@ void plotMakerConstBin(string htag,string newDatasetName, unsigned int nNewFiles
     htemp->SetLineColor( kRed);
     float MeanVal=htemp->GetMean();
     float stdev  =htemp->GetStdDev();
+    delete c1;
     float xmin = MeanVal-2*stdev;
     long xminRound=floor(xmin/1000)*1000;
     if(xmin<-10000) // case for variables like Energy where there is no reason to have a negative xmin
@@ -130,8 +132,7 @@ void plotMakerConstBin(string htag,string newDatasetName, unsigned int nNewFiles
 
 
     long nBins=(xmaxRound-xminRound)/1000;
-    TH1F * hist = new TH1F("hist",variables[i].c_str(),nBins,xminRound,xmaxRound);  
-
+    TCanvas * c2 =new TCanvas("c2");
     string plotVar=variables[i]+">>htemp("+to_string(nBins)+","+to_string(xminRound)+","+to_string(xmaxRound)+")";
     newFileChain->Draw(plotVar.c_str(),fullCut.c_str(),"");
     htemp = (TH1F*)gPad->GetPrimitive("htemp");
@@ -149,7 +150,7 @@ void plotMakerConstBin(string htag,string newDatasetName, unsigned int nNewFiles
     //}
     htemp->SetNameTitle(variables[i].c_str(),variables[i].c_str());
     htemp->Write();
-
+    delete c2;
     progress += 1.0/variables.size();
 
   }
