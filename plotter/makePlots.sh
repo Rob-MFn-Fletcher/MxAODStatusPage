@@ -2,7 +2,7 @@
 [[ -z "$1" ]] && echo "NEED 1st arugment!" && return
 [[ -z "$2" ]] && echo "NEED 2nd arugment!" && return
 
-[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+[[ -z "$datasetDir" ]] && echo "please source the setup script" && return
 [[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo EOS not mounted!  Please mount EOS in the base directory \(maybe it failed during setup?\) && return
 [[ ! -d samples ]] && mkdir samples
 htag=$1

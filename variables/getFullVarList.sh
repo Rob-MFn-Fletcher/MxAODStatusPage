@@ -3,15 +3,31 @@
 
 
 [[ -z "$1" ]] && echo "NEED 1st arugment! htag" && return
-
+[[ ! -d htags ]] && mkdir htags
 htagNew=$1
-[[ -z "$EXAMPLEFILE" ]] && echo "please source the setup script" && return
+[[ ! -d htags/$htagNew ]] && mkdir htags/$htagNew
+[[ -z "$datasetDir" ]] && echo "please source the setup script" && return
 #inputFileType=PowhegPy8_VBF125_small
-inputFileType=$EXAMPLEFILE
+#inputFileType=$EXAMPLEFILE
 
 #mcDir=mc_25ns
 
-inputFileNew=$(eos ls $datasetDir/$htagNew/$mcDir/ | grep $inputFileType)
+#inputFileNew=$(eos ls $datasetDir/$htagNew/$mcDir/ | grep $inputFileType)
+# get the first file from the mc directory
+
+SampleDirs=()
+SampleDirs+=($(eos ls $datasetDir/$htagNew/))
+
+Samples=()
+for DIR in ${SampleDirs[@]}; do
+  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root | grep '\.MxAOD\.'))
+done
+
+inputFileNew=${Samples[0]}
+
+for DIR in ${SampleDirs[@]}; do
+  [[ ! -z "$(eos ls $datasetDir/$htagNew/$DIR/$inputFileNew 2>/dev/null)"  ]] && filePath="$EOSMOUNTDIR/$datasetDir/$htagNew/$DIR/$inputFileNew" && sampleDir=$DIR
+done
 
 echo Using $inputFileNew for variable lists...
 
@@ -46,7 +62,7 @@ echo Using $inputFileNew for variable lists...
 # of F, B, i, I, l.  I then columnize the two columns and return the unsigned variables
 # to their proper name.
 
-echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$mcDir/$inputFileNew 2> err.log | \
+echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$htagNew/$sampleDir/$inputFileNew 2> err.log | \
     grep -A 1 "Br " | grep -v "Entries" |  grep -v "\-\-" | sed 's/unsigned /unsigned_/g' | sed 's/> > >/>_>_>/g' | \
     sed 's/> >/>_>/g' | awk '{
          var=$3
@@ -93,5 +109,5 @@ echo "CollectionTree->Print()" | root -l root://eosatlas.cern.ch/$datasetDir/$ht
          sed 's/^://g' | sort   | awk '{print $2,$1}'     | sed 's/^.*\/F/Float_t/g' | \
          sed 's/^.*\/I/Int_t/g' | sed 's/^.*\/B/Bool_t/g' | sed 's/^.*\/i/int/g'| \
          sed 's/^.*\/l/long/g'  | column -t | sed 's/unsigned_/unsigned /g' | \
-         sed 's/>_>_>/> > >/g'  | sed 's/>_>/> >/g' > allVars.txt
+         sed 's/>_>_>/> > >/g'  | sed 's/>_>/> >/g' > htags/$htagNew/allVars.txt
 
