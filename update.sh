@@ -9,15 +9,13 @@
 
 htagNew=$1
 
-echo Updating for new htag: $htagNew
 
 if [[ $htagNew == ALL ]]; then
   htagNew=$(eos ls $datasetDir/ | grep ^h[0-9][0-9][0-9] | grep -v stage)
 fi
 
 for htag in ${htagNew[@]}; do
-echo $htag
-continue
+echo Updating for new htag: $htag
 currentDir=$(pwd)
 
 echo Updating Variable Lists...
@@ -30,9 +28,10 @@ echo
 
 
 echo updating ALL cutflows...
-cd AllCutflows
-source batchSubmitter.sh $htag
-cd ..
+[[ ! -d AllCutflows/outputbatch ]] && mkdir AllCutflows/outputbatch
+cd AllCutflows/outputbatch
+source ../batchSubmitter.sh $htag
+cd ../../
 
 echo
 cd samplePage
