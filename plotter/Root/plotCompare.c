@@ -93,7 +93,7 @@ void plotCompare(string currDatasetName,string currHtag, string compDatasetName,
     currHist->Draw("same");
     leg->Draw("same");
    
-    string filename="/afs/cern.ch/user/a/athompso/www/tmp/"+currBaseFileName+"_"+variables[i]+"_"+compBaseFileName+".png";
+    string filename="/afs/cern.ch/user/h/hgamma/www/tmp/"+currBaseFileName+"_"+variables[i]+"_"+compBaseFileName+".png";
     c1->Print(filename.c_str());
     //cout << htemp << endl;
     progress += 1.0/variables.size();
