@@ -8,7 +8,7 @@ htagNew=$1
 [[ ! -d htags/$htagNew ]] && mkdir htags/$htagNew
 
 # This base dir is automatically set by batchSubmitter, changing it will do nothing since it will be reset
-export BASEDIR=/afs/cern.ch/user/a/athompso/www
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh
 source $BASEDIR/setup.sh
 
@@ -18,7 +18,7 @@ source $BASEDIR/setup.sh
 # get the first file from the mc directory
 
 SampleDirs=()
-SampleDirs+=($(eos ls $datasetDir/$htagNew/))
+SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep -v root))
 
 Samples=()
 for DIR in ${SampleDirs[@]}; do

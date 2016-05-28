@@ -12,7 +12,7 @@ varsStringArray=$(echo ${VARSFORPLOTS[@]} | sed "s/^/std::string___plotVars[${#V
 echo $varsStringArray > $BASEDIR/plotter/Root/plotVars.h
 echo '// This file is produced automatically in makePlots.sh. To change the variables that are plotted, change the list in the variable VARSFORPLOTS in the setup script' >> $BASEDIR/plotter/Root/plotVars.h
 SampleDirs=()
-SampleDirs+=($(eos ls $datasetDir/$htagNew/))
+SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep -v root))
 
 Samples=()
 for DIR in ${SampleDirs[@]}; do
