@@ -8,7 +8,7 @@ htag=$1
 #cp livesearch.php htags/$htag/
 
 SampleDirs=()
-SampleDirs+=($(eos ls $datasetDir/$htag/))
+SampleDirs+=($(eos ls $datasetDir/$htag/ | grep -v root))
 
 MxAODList=htags/$htag/MxAODs.xml
 
