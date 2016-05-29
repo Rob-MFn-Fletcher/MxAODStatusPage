@@ -54,15 +54,17 @@ else
   done
 fi
 
-echo table is columnized at the end in the output file in $columnizedOutput
-echo Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $uncolumnizedOutput
+#echo table is columnized at the end in the output file in $columnizedOutput
+#echo Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $uncolumnizedOutput
+printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $columnizedOutput
 
 echo 'samples where not all DAOD events were run over( DAOD_AMI != NevtsRunOverMxAOD )' >$samplesMissingEventsOutput
-echo 'The Following samples have no parent in '$dataList :  > $samplesMissingParentsOutput
+echo 'The Following samples have no parent in '"$dataList :"  > $samplesMissingParentsOutput
 #echo 'The Following samples have disagreements between the cutflow and the file: '
 
 for sample in ${Samples[@]}; do
   sampleType=${sample%.MxAOD*}
+  sampleType=$(echo $sampleType | sed 's/mc.*\.//g')
   [[ ! -z "$(eos ls $datasetDir/$htagNew/$DIR/$sample 2>/dev/null)"  ]] && filePath="$EOSMOUNTDIR/$datasetDir/$htagNew/$DIR/$sample" && sampleDir=$DIR
      
 
@@ -70,7 +72,7 @@ for sample in ${Samples[@]}; do
   MxAODparentName=${MxAODparentName%?}
   MxAODparentName=${MxAODparentName#*:}
   #[[ -z "$MxAODparentName" ]] && echo no Parent for $sampleType in mc.txt file $mcList, going on... | tee -a ../data/${htagNew}/temp.out  && continue
-  [[ -z "$MxAODparentName" ]] && echo $sample > $samplesMissingParentsOutput && continue
+  [[ -z "$MxAODparentName" ]] && echo $sample >> $samplesMissingParentsOutput && continue
   if [[ "$MxAODparentName" =~ DAOD_HIGG1D1 ]]; then 
     DxAODname=${MxAODparentName}
     
@@ -96,7 +98,8 @@ for sample in ${Samples[@]}; do
     [[ "$nEventsDxAOD_AMI" -gt "$nEventsRunOverMxAOD"  ]] && extra='!!!!' && echo ${sample} >> $samplesMissingEventsOutput
     [[ ! "$nEventsPreSelMxAOD" -eq "${nEventsIsPassedPre}" ]] && extra='!!!!'
     
-    echo ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $uncolumnizedOutput
+    #echo ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $uncolumnizedOutput
+    printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $columnizedOutput
   elif [[ "$MxAODparentName" =~ \.AOD\. ]]; then  
     AODname=$MxAODparentName
     #echo $AODname
@@ -108,13 +111,14 @@ for sample in ${Samples[@]}; do
     nEventsPreSelMxAOD=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent($PRESELECTION_NUM)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsPreSelMxAOD=$(printf '%.0f' $nEventsPreSelMxAOD)
     [[ ! "$nEventsAOD_AMI" -eq "$nEventsRunOverMxAOD"  ]] && echo ${sample} >> $samplesMissingEventsOutput 
-    echo $sampleType $nEventsAOD_AMI $nEventsAOD_Bookkeeper N/A N/A ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre} | tee -a $uncolumnizedOutput
+    #echo $sampleType $nEventsAOD_AMI $nEventsAOD_Bookkeeper N/A N/A ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre} | tee -a $uncolumnizedOutput
+    printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' $sampleType $nEventsAOD_AMI $nEventsAOD_Bookkeeper N/A N/A ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre} | tee -a $columnizedOutput
   fi
 done
 
 [[ "$(cat $samplesMissingParentsOutput | wc -l)" -eq 1  ]] && echo None >> $samplesMissingParentsOutput
 [[ "$(cat $samplesMissingEventsOutput | wc -l)" -eq 1  ]] && echo None >> $samplesMissingEventsOutput
 
-cat $uncolumnizedOutput |  column -t > $columnizedOutput
+#cat $uncolumnizedOutput |  column -t > $columnizedOutput
 
 
