@@ -3,8 +3,8 @@
   <li><a class="active" href="/atlas-hgamma/mainPage.php?h=<?php
       include('vars.php');
       $dir = $base . "/variables/htags/";
-      $pages = scandir($dir,1);
-      echo $pages[0];?>">Home
+      $page=shell_exec("ls $dir | grep -v pre | tail -n 1");
+      echo $page;?>">Home
     </a></li>
   <li> 
 <FORM NAME="nav"><DIV>
