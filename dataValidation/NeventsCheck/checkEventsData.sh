@@ -17,7 +17,7 @@ fi
 
 
 SampleDirs=()
-SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep data | grep -v invpb))
+SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep data | grep -v root | grep -v -i nogrl ))
 
 Samples=()
 for dir in ${SampleDirs[@]}; do
@@ -68,7 +68,7 @@ for DIR in ${SampleDirs[@]}; do
   totalMxAODPreSel=$((0))  && totalMxAODPassed=$((0)) #&& #totalMxAODisPassedFlag=$((0)) && 
   totalMxAODisPassedPreFlag=$((0)) && totalAODeventsBookkeeper=$((0)) && totalDAODeventsBookkeeper=$((0))
   
-  echo table is columnized at the end in the output file in $columnizedOutput
+  #echo table is columnized at the end in the output file in $columnizedOutput
   echo 'samples where not all DAOD events were run over( DAOD_AMI > NevtsRunOverMxAOD )' >$samplesMissingEventsOutput
   echo 'The Following samples have no parent in '$dataList :  > $samplesMissingParentsOutput
  
@@ -82,9 +82,13 @@ for DIR in ${SampleDirs[@]}; do
     MxAODparentName=$(cat $dataList | grep "$runNumber" | awk '{print $2}')
     MxAODparentName=${MxAODparentName%?}
     MxAODparentName=${MxAODparentName#*:}
-    [[ -z "$MxAODparentName" ]] && echo $runNumber > $samplesMissingParentsOutput && continue
+    [[ -z "$MxAODparentName" ]] && echo $runNumber >> $samplesMissingParentsOutput && continue
     if [[ "$MxAODparentName" =~ DAOD_HIGG1D1 ]]; then # data is always DAOD
       DxAODname=${MxAODparentName}
+      
+      nEventsDxAOD_AMI=0 && nEventsDxAOD_Bookkeeper=0 && nEventsAOD_AMI=0 && nEventsAOD_Bookkeeper=0
+      nEventsRunOverMxAOD=0 && nEventsIsPassedPre=0 && nEventsPreSelMxAOD=0 
+      
       nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" | grep ' DAOD_HIGG1D1' | awk '{print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
       nEventsDxAOD_Bookkeeper=$(echo "CutFlow_Run${runNumber#00}->GetBinContent(2)" | root -l $RunSampleDirXrootd/$SAMPLE 2>err.log |  grep "Double" | awk '{print $2}' )
       nEventsDxAOD_Bookkeeper=$(printf '%.0f' $nEventsDxAOD_Bookkeeper)
@@ -120,12 +124,12 @@ for DIR in ${SampleDirs[@]}; do
     fi
   done
   extra=""
-  [[ ! "$totalMxAODeventsRunOver" -eq "$totalDAODeventsAMI"  ]] && extra='--NotOK!!!!'
-  [[ ! "${totalMxAODPreSel}" -eq "$totalMxAODisPassedPreFlag" ]] && extra='--NotOK!!!!'
+  [[ ! "$totalMxAODeventsRunOver" -eq "$totalDAODeventsAMI"  ]] && extra='--NOT_AMI_MATCH'
+  [[ ! "${totalMxAODPreSel}" -eq "$totalMxAODisPassedPreFlag" ]] && extra='--!!!!'
   echo TOTAL $totalAODeventsAMI $totalAODeventsBookkeeper $totalDAODeventsAMI $totalDAODeventsBookkeeper ${totalMxAODeventsRunOver} ${totalMxAODPreSel} ${totalMxAODisPassedPreFlag}$extra | tee -a $uncolumnizedOutput #>> temp.out
   
   Sample=()
-  Sample+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root | grep -v -i grl ))
+  Sample+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root  ))
   #echo ${Sample[0]}
   if [[ ! -z "${Sample[0]}" ]] ; then
     #echo $EOSMOUNTDIR/$datasetDir/$htagNew/data_25ns/${Sample[0]}
