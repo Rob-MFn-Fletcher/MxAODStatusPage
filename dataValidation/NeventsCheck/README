@@ -1,0 +1,28 @@
+
+The checkEventsMC and checkEventsData loop through all of the standard MxAOD files,
+checking if the number of events that were ran over matches the number of events
+on AMI.  This data is then displayed on the sample validation page on the website.
+
+The scripts are ran like
+source setup.sh # will ask for your grid proxy password if you don't have one setup
+source checkEventsMC.sh h012pre2 Inputfiles/mc_h012pre2.txt
+ 
+Where the first argument is the htag and the 2nd is a txt file like those in 
+HGamTools/data/input/* that are of the format 
+PowhegPy8_ggH125 mc15_13TeV:mc15_13TeV.341000.PowhegPythia8EvtGen_CT10_AZNLOCTEQ6L1_ggH125_gamgam.merge.DAOD_HIGG1D1.e3806_s2608_r6765_r6282_p2421/
+as in
+[SAMPLE NAME] [SAMPLE DAOD with scope and /]
+
+This file should contain all of the files [use the data.txt with checkEventsData
+and mc.txt with checkEventsMC.sh] that were made using the htag that is the
+first arugment.
+
+The output of these scripts is saved in ../data/HTAG/
+
+
+These scripts take a LONG TIME to run since pyami is so slow.  It is possible to 
+run these on lxplus batch, but you would need to create a grid proxy on your 
+current node, copy the grid proxy that is created (e.g. /tmp/x509up_u38354 )
+to the node that the script is running on (the /tmp/ directory also).  
+
+

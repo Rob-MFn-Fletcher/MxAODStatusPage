@@ -1,3 +1,10 @@
+/*
+ * Dumps the cutflow of an MxAOD to stdout, code taken from HGamTools
+ *
+ *
+ * Combines all cutflows in a data MxAOD into a single cutflow.
+ * */
+
 #include <string>
 #include <cmath>
 #include <vector>

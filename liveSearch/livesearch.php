@@ -1,7 +1,8 @@
 <?php
 //shell_exec('cgi-bin/txtToXml.sh');
 $xmlDoc=new DOMDocument();
-$xmlDoc->load("MxAODs.xml");
+$currHtag=$_GET["h"];
+$xmlDoc->load("htags/".$currHtag."/MxAODs.xml");
 
 $x=$xmlDoc->getElementsByTagName('link');
 
@@ -20,12 +21,12 @@ if (strlen($q)>0) {
         if ($hint=="") {
           $hint="<a href='" . 
           $z->item(0)->childNodes->item(0)->nodeValue . 
-          "' target='_blank'>" . 
+          "' target='_self'>" . 
           $y->item(0)->childNodes->item(0)->nodeValue . "</a>";
         } else {
           $hint=$hint . "<br /><a href='" . 
           $z->item(0)->childNodes->item(0)->nodeValue . 
-          "' target='_blank'>" . 
+          "' target='_self'>" . 
           $y->item(0)->childNodes->item(0)->nodeValue . "</a>";
         }
       }

@@ -72,9 +72,9 @@ for inputDataset in fileNames:
     totalSizes= [0] * len(catNames)
     totalNvar = [0] * len(catNames)
 
-    for name in names:
-        with open("variables.txt", "a") as f:
-            f.write("="+name+"= <br />\n")
+    #for name in names:
+    #    with open("variables.txt", "a") as f:
+    #        f.write("="+name+"= <br />\n")
     
     
     for i in range(0, len(sizes)):

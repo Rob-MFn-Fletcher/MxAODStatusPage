@@ -1,60 +1,48 @@
-# run like source update.sh NEWHTAG OLDTAG
-# e.g. source update h011 h010
-# need both htags in order to compare
+# run like source update.sh NEW_HTAG
+# e.g. source update h011 
+# can also use ALL option to update for all htags on EOS
 
-[[ -z "$1" ]] && echo Please two htags as an argument! E.G source update.sh h011 h010 && return
-[[ -z "$2" ]] && echo Please another htag as an argument! E.G source update.sh h011 h010 && return
-source setup.sh
+[[ -z "$1" ]] && echo Please two htags as an argument! E.G source update.sh h011  && return
+[[ -z "$datasetDir" ]] && source setup.sh
 
 #[[ ! -d "$EOSMOUNTDIR/$datasetDir" ]] && echo "EOS failed to mount in setup script! Change lxplus machines?" && return
 
 htagNew=$1
-htagOld=$2
-
-echo Updating for new htag: $htagNew
-echo Comparing to old htag: $htagOld
 
 
-echo $htagNew > CurrentHtag.txt
+if [[ $htagNew == ALL ]]; then
+  htagNew=$(eos ls $datasetDir/ | grep ^h[0-9][0-9][0-9] | grep -v stage)
+fi
 
+for htag in ${htagNew[@]}; do
+echo Updating for new htag: $htag
 currentDir=$(pwd)
-echo Updating Front Page Cutflows...
-cd cutflows
-source getCutflows.sh $htagNew
-cd ..
-
-echo
 
 echo Updating Variable Lists...
 cd variables
-source getVarDiffs.sh $htagNew $htagOld
-source getFullVarList.sh $htagNew
+#source getFullVarList.sh $htagNew
+source batchSubmitter.sh $htag
 cd ..
 
 echo
 
-echo Updating File sizes...
-cd fileSize
-source getFileSize.sh $htagNew
-cd ..
-
-echo
 
 echo updating ALL cutflows...
-cd AllCutflows
-source batchSubmitter.sh $htagNew $htagOld
+[[ ! -d AllCutflows/outputbatch ]] && mkdir AllCutflows/outputbatch
+cd AllCutflows/outputbatch
+source ../batchSubmitter.sh $htag
+cd ../../
+
+echo
+cd samplePage
+echo getting file locations...
+source getFileLocations.sh $htag
 cd ..
-
 echo
 
-echo Making webpages for ALL samples...
-source makePages.sh $htagNew $htagOld
-
-echo
-
-echo Updating live search for $htagNew
+echo Updating live search for $htag
 cd liveSearch
-source makeXMLforLiveSearch.sh $htagNew
+source makeXMLforLiveSearch.sh $htag
 cd ..
 
 echo
@@ -63,9 +51,14 @@ echo updating ALL plots...
 [[ ! -d plotter/outputbatch ]] && mkdir plotter/outputbatch
 cd plotter/outputbatch
 #source makePlots.sh $htagNew $htagOld        # for local running (takes a long time)
-source ../batchSubmitter.sh $htagNew $htagOld   # for lxplus batch submission (faster), sourced from output folder to avoid massive clutter since I can't figure out how to change the directory the output gets copied to.  -outdir -cwd -oo -eo etc seem to have no effect...
+source ../batchSubmitter.sh $htag   # for lxplus batch submission (faster), sourced from output folder to avoid massive clutter since I can't figure out how to change the directory the output gets copied to.  -outdir -cwd -oo -eo etc seem to have no effect...
 cd ../../
 
-echo 
+#echo 
+#echo Updating File sizes...
+#cd fileSize
+#source getFileSize.sh $htagNew
+#cd ..
 
 echo Updated for $htag! Cutflows and Plots will be updated as the jobs finish
+done

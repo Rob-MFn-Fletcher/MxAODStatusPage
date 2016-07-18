@@ -21,50 +21,21 @@ string increaseCut(string variableName,float MeanVal, float stdev,float &xmin, f
 
   string lowCut =variableName+" > "+std::to_string(xmin);
   string highCut=variableName+" < "+std::to_string(xmax);
-  string fullCut=lowCut+" && "+highCut;
+  string fullCut=lowCut+" && "+highCut+" && HGamEventInfoAuxDyn.isPassedPreselection";
   return fullCut;
 }
 
-void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDatasetName, unsigned int nNewFiles)
+void plotMakerConstBin(string htag,string newDatasetName, unsigned int nNewFiles)
 {
   if (newDatasetName=="")
   {
     cerr << "no new dataset name? what the hell do you want me to do? Returning..." << endl;
     return;
   }
-  if(oldDatasetName == "") nOldFiles=0;
   // variables to plot are in defined in plotVars.h
   std::vector<string> variables(plotVars, plotVars + sizeof plotVars / sizeof plotVars[0]);
 
-  TChain * oldFileChain=new TChain("CollectionTree");
-  bool oldFileExists = true;
   
-  if( nOldFiles == 0 )
-  {
-    oldFileExists=false;
-  }
-  else if( nOldFiles == 1 )
-  {
-    // if its only 1 file, then its not a folder
-    oldFileChain->Add(oldDatasetName.c_str());
-  }
-  else // it's a folder! Negative numbers aren't actually possible, please don't put them in :P 
-  {
-    for(unsigned int i = 1; i <= nOldFiles;i++)
-    {
-      size_t found = oldDatasetName.find_last_of("/");
-      string baseFileName=oldDatasetName.substr(found+1);
-      size_t f = baseFileName.find(".root");
-      string fileNum="";
-      if(i < 10)         fileNum="00"+std::to_string(i);
-      else if (i < 100)  fileNum="0"+std::to_string(i);
-      else               fileNum=std::to_string(i);
-      // MxAODs on EOS that are folders have .00x.root instead of .root at the end
-      baseFileName.replace(f, baseFileName.length(), "."+fileNum+".root");
-      string path=oldDatasetName+"/"+baseFileName;
-      oldFileChain->Add(path.c_str());
-    }
-  }
   TChain * newFileChain=new TChain("CollectionTree");
   if(nNewFiles == 0)
   {
@@ -95,7 +66,10 @@ void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDataset
   }
 
   float progress=0.0;
-   
+    size_t found = newDatasetName.find_last_of("/");
+    string baseFileName=newDatasetName.substr(found+1);
+  string outfilename="samples/"+htag+"/"+baseFileName;
+  TFile f(outfilename.c_str(),"recreate"); 
   for(unsigned int i =0; i< variables.size();i++)
   {
     //cout << variables[i] << endl;
@@ -113,80 +87,70 @@ void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDataset
     std::cout.flush(); 
    
 
-    size_t found = newDatasetName.find_last_of("/");
-    string baseFileName=newDatasetName.substr(found+1);
-    TCanvas* c1 = new TCanvas;
-
-    newFileChain->Draw(variables[i].c_str());
+    //size_t found = newDatasetName.find_last_of("/");
+    //string baseFileName=newDatasetName.substr(found+1);
+    
+    //cout << "1" << endl;
+    TCanvas * c1 =new TCanvas("c1");
+    if(newFileChain->Draw(variables[i].c_str(),"") == -1)
+    {
+      cout << "Draw command failed!" << endl;
+      progress += 1.0/variables.size();
+      continue;
+    }
+    //cout << "2" << endl;
     TH1F *htemp = (TH1F*)gPad->GetPrimitive("htemp");
     if (htemp==0)
     {
       cout << "histo is empty for var " << variables[i] << ", must have no entries" << endl;
       continue;
     }
+    //cout << "2" << endl;
     
     //cout << htemp << endl;
     htemp->SetLineColor( kRed);
     float MeanVal=htemp->GetMean();
     float stdev  =htemp->GetStdDev();
+    delete c1;
     float xmin = MeanVal-2*stdev;
+    long xminRound=floor(xmin/1000)*1000;
     if(xmin<-10000) // case for variables like Energy where there is no reason to have a negative xmin
     {
-      xmin = 0;
+      xminRound = 0;
     }
     float xmax = MeanVal+2*stdev;
+    long xmaxRound=floor(xmax/1000)*1000;
     if(xmin==xmax)  // case for where there is no std dev for variables like m_ee in ggH125_small samples, so xmin==xmax and root gets confused
     {
-      xmin = xmin - 1;
-      xmax = xmax + 1;
+      xmin = xmin - 1000;
+      xmax = xmax + 1000;
     }
 
-    TCanvas* c2 = new TCanvas;
-    std::to_string(1);
     string lowCut=variables[i]+" > "+std::to_string(xmin);
     string highCut=variables[i]+" < "+std::to_string(xmax);
-    string fullCut=lowCut+" && "+highCut;
-
-    if(oldFileExists) // plot both if both exist
-    {
-      TBranch * varBranch = oldFileChain->GetBranch(variables[i].c_str());
-      if(varBranch != 0)
-      {
-        //cout << "var exisits in h010! Plot Both on same plot" << endl;
-        
-        oldFileChain->Draw(variables[i].c_str(),fullCut.c_str());
-        htemp = (TH1F*)gPad->GetPrimitive("htemp");
-        int maxITER = 5;
-        int iter=0;
-        while( (htemp == 0 || htemp->Integral() < 5 ) && iter <= maxITER  )
-        {
-          fullCut = increaseCut(variables[i],MeanVal,stdev,xmin,xmax);
-          oldFileChain->Draw(variables[i].c_str(),fullCut.c_str());
-          htemp = (TH1F*)gPad->GetPrimitive("htemp");
-          iter++;
-          if(iter==maxITER) cout << "max iterations reached, might be no plot for " << variables[i] << endl;
-        }
-        htemp->SetLineColor( kRed);
-        htemp->SetTitle(variables[i].c_str());
-        htemp->Draw();
-        newFileChain->Draw(variables[i].c_str(),fullCut.c_str(),"same");
-      }
-      else
-      {
-        //cout << "var does not exist in h010! Plot only new" << endl;
-        newFileChain->Draw(variables[i].c_str(),fullCut.c_str(),"");
-      } 
-    }
-    else // only new file exists, plot that 
-    {
-      newFileChain->Draw(variables[i].c_str(),fullCut.c_str(),"");
-    } 
+    string fullCut=lowCut+" && "+highCut+" && HGamEventInfoAuxDyn.isPassedPreselection";
 
 
-    string plotName="samples/"+baseFileName+"/"+baseFileName+"_"+variables[i]+".png";
-    c2->Print(plotName.c_str());
-    delete c1; 
-    delete c2; 
+    long nBins=(xmaxRound-xminRound)/1000;
+    TCanvas * c2 =new TCanvas("c2");
+    string plotVar=variables[i]+">>htemp("+to_string(nBins)+","+to_string(xminRound)+","+to_string(xmaxRound)+")";
+    newFileChain->Draw(plotVar.c_str(),fullCut.c_str(),"");
+    htemp = (TH1F*)gPad->GetPrimitive("htemp");
+    //cout << "3" << endl;
+    int maxITER = 5;
+    int iter=0;
+    //while( (htemp == 0 || htemp->Integral() < 5 ) && iter <= maxITER  )
+    //{
+    //  fullCut = increaseCut(variables[i],MeanVal,stdev,xmin,xmax);
+    //  newFileChain->Draw(variables[i].c_str(),fullCut.c_str());
+    //  htemp = (TH1F*)gPad->GetPrimitive("htemp");
+    //  iter++;
+    // 
+    //  if(iter==maxITER) cout << "max iterations reached, might be no plot for " << variables[i] << endl;
+    //}
+    htemp->SetNameTitle(variables[i].c_str(),variables[i].c_str());
+    htemp->Write();
+    delete c2;
     progress += 1.0/variables.size();
 
   }
@@ -201,5 +165,5 @@ void plotAllVars(string oldDatasetName,unsigned int nOldFiles, string newDataset
   std::cout << "] " << int(1 * 100.0) << " %\r";
   std::cout.flush(); 
   cout << endl;
-
+  f.Close();
 }
