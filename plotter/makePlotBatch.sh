@@ -1,7 +1,7 @@
 [[ -z "$1" ]] && echo "NEED 1st arugment! SampleName e.g. PowhegPy8_ggH125_small.MxAOD.p2421.h011.root" && exit 1
 [[ -z "$2" ]] && echo "NEED 2nd arugment! newHtag e.g. h011" && exit 1
 # This base dir is automatically set by batchSubmitter, changing it will do nothing since it will be reset
-export BASEDIR=/afs/cern.ch/user/a/athompso/www
+export BASEDIR=/afs/cern.ch/user/h/hgamma/www
 fileName=$1
 htagNew=$2
 source /afs/cern.ch/project/eos/installation/atlas/etc/setup.sh

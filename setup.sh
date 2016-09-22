@@ -10,7 +10,7 @@ export EOSMOUNTDIR=root://eosatlas.cern.ch/                          # xrootd is
 #export COLLECTION_TREE_NAME="CollectionTree"                          # tree where kinematic variables are located in MxAOD (Not implemented...)
 
 # Variables to be plotted and compared between samples
-export VARSFORPLOTS=(HGamEventInfoAuxDyn.E_y1 HGamEventInfoAuxDyn.E_y2 HGamEventInfoAuxDyn.met_TST HGamEventInfoAuxDyn.m_jj HGamEventInfoAuxDyn.m_yy HGamEventInfoAuxDyn.m_yy_zCommon HGamEventInfoAuxDyn.pT_hard HGamEventInfoAuxDyn.pT_j1 HGamEventInfoAuxDyn.pT_j2 HGamEventInfoAuxDyn.pT_jj HGamEventInfoAuxDyn.pTt_yy HGamEventInfoAuxDyn.pT_y1 HGamEventInfoAuxDyn.pT_y2 HGamEventInfoAuxDyn.pT_yy HGamEventInfoAuxDyn.sumet_TST)
+export VARSFORPLOTS=(HGamEventInfoAuxDyn.E_y1 HGamEventInfoAuxDyn.E_y2 HGamEventInfoAuxDyn.met_TST HGamEventInfoAuxDyn.m_jj HGamEventInfoAuxDyn.m_yy HGamEventInfoAuxDyn.m_yy_zCommon HGamEventInfoAuxDyn.pT_hard HGamEventInfoAuxDyn.pT_j1 HGamEventInfoAuxDyn.pT_j2 HGamEventInfoAuxDyn.pT_jj HGamEventInfoAuxDyn.pTt_yy HGamEventInfoAuxDyn.pT_y1 HGamEventInfoAuxDyn.pT_y2 HGamEventInfoAuxDyn.pT_yy HGamEventInfoAuxDyn.sumet_TST HGamPhotonsAuxDyn.ptcone20 HGamPhotonsAuxDyn.topoetcone20)
 
 # Variables for outputing the cutflows.  Only ALLEVTS is used in the code, code is copied from HGamTools
 export VARSFORCUTFLOWS=("NxAOD=0" "NDxAOD=1" "ALLEVTS=2" "DUPLICATE=3" "GRL=4" "TRIGGER=5" "DQ=6" "VERTEX=7" "TWO_LOOSE_GAM=8" "AMBIGUITY=9" "TRIG_MATCH=10" "GAM_TIGHTID=11" "GAM_ISOLATION=12" "RELPTCUTS=13" "MASSCUT=14" "PASSALL=15")

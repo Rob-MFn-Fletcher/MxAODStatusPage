@@ -77,6 +77,7 @@ for DIR in ${SampleDirs[@]}; do
   #echo runNumber NeventsAOD_AMI NeventsAOD_Bookkeeper NeventsDAOD_AMI NeventsDAOD_Bookkeeper NeventsRunOverMxAOD NeventsPassedPreCutflowMxAOD NeventsIsPassedPreFlagMxAOD
   
   for SAMPLE in ${Samples[@]}; do
+    echo "Running over $SAMPLE"
     runNumber=${SAMPLE%.physics_Main*}
     runNumber=${runNumber#*TeV.}
     MxAODparentName=$(cat $dataList | grep "$runNumber" | awk '{print $2}')

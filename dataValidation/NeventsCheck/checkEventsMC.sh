@@ -26,7 +26,7 @@ SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep -v data | grep -v Sys | grep 
 
 Samples=()
 for DIR in ${SampleDirs[@]}; do
-  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root  | grep -v Sys))
+  Samples+=($(eos ls $datasetDir/$htagNew/$DIR/ | grep .root  | grep -v Sys ))
 done
 
 # output text files
@@ -63,6 +63,7 @@ echo 'The Following samples have no parent in '"$dataList :"  > $samplesMissingP
 #echo 'The Following samples have disagreements between the cutflow and the file: '
 
 for sample in ${Samples[@]}; do
+  #echo $sampleType
   sampleType=${sample%.MxAOD*}
   sampleType=$(echo $sampleType | sed 's/mc.*\.//g')
   [[ ! -z "$(eos ls $datasetDir/$htagNew/$DIR/$sample 2>/dev/null)"  ]] && filePath="$EOSMOUNTDIR/$datasetDir/$htagNew/$DIR/$sample" && sampleDir=$DIR
@@ -77,22 +78,29 @@ for sample in ${Samples[@]}; do
     DxAODname=${MxAODparentName}
     
     nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" | grep ' DAOD_HIGG1D1' | awk '{print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
+    #echo "got AMI DAOD"
+    #echo echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" '|' root -l $filePath '2>>err.log'
     nEventsDxAOD_Bookkeeper=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
+    
     nEventsDxAOD_Bookkeeper=$(printf '%.0f' $nEventsDxAOD_Bookkeeper)
-
+    #echo got BK DAOD
 
     nEventsAOD_AMI=$(ami show dataset prov $DxAODname | grep ' AOD ' | awk '{print $8}' | head -n 1)
+    #echo got AOD MI
     nEventsAOD_Bookkeeper=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(1)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsAOD_Bookkeeper=$(printf '%.0f' $nEventsAOD_Bookkeeper)
-    
+    #echo got AOD BK
+
     nEventsRunOverMxAOD=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(3)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsRunOverMxAOD=$(printf '%.0f' $nEventsRunOverMxAOD) # answer is in scientific notation, fix that!
-    
+    #echo got NERO MxAOD
+
     nEventsIsPassedPre=$(echo "CollectionTree->GetEntries(\"HGamEventInfoAuxDyn.isPassedBasic && HGamEventInfoAuxDyn.isPassedPreselection\")" | root -l $filePath 2>>err.log | grep Long | sed 's/^(.*)//g')
-  
+    #echo got NEIPP
+
     nEventsPreSelMxAOD=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent($PRESELECTION_NUM)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsPreSelMxAOD=$(printf '%.0f' $nEventsPreSelMxAOD)
-  
+    #echo got NEPSM 
     extra=""
     [[ ! "$nEventsDxAOD_AMI" -eq "$nEventsRunOverMxAOD"  ]] && extra='!!!!' 
     [[ "$nEventsDxAOD_AMI" -gt "$nEventsRunOverMxAOD"  ]] && extra='!!!!' && echo ${sample} >> $samplesMissingEventsOutput
