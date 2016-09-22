@@ -17,9 +17,9 @@
     <body bgcolor=white>
         <div id="jumbotron">
             <ul>
-            <li><img src="/atlas-hgamma/img/higgs.png"></li>
-            <li>HGam MxAOD Status</li>    
-            <li><img src="/atlas-hgamma/img/higgs.png"></li>
+            <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
+            <li>HGam MxAOD Status</li>
+            <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
         </div>
         <?php include_once('html/navbar.php'); ?>
 
