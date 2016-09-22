@@ -5,8 +5,8 @@
             include("../html/vars.php");
             $currHtag=$_GET["h"];
         ?>
-        <script type="text/javascript" src="js/livesearch.js"/>
-        <script type="text/javascript" src="js/navbar.js"/>
+        <script type="text/javascript" src="js/livesearch.js"></script>
+        <script type="text/javascript" src="js/navbar.js"></script>
         <meta charset="utf-8" />
         <title>HGam MxAOD Status</title>
         <style>
@@ -23,7 +23,7 @@
         </div>
         <!--
         <?php include_once('html/navbar.php'); ?>
-    -->
+        -->
         <nav>
           <ul>
             <li><a href="#">Link 1</a></li>
