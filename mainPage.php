@@ -15,7 +15,13 @@
         <link rel="stylesheet" href="css/mystyle.css" />
     </head>
     <body bgcolor=white>
-        <?php include_once('html/navbar.php'); ?> 
+        <div id="jumbotron">
+            <ul>
+            <li><img src="/atlas-hgamma/img/higgs.png"></li>
+            <li>HGam MxAOD Status</li>    
+            <li><img src="/atlas-hgamma/img/higgs.png"></li>
+        </div>
+        <?php include_once('html/navbar.php'); ?>
 
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
