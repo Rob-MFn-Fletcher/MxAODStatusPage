@@ -15,8 +15,7 @@
         <link rel="stylesheet" href="mystyle.css" />
     </head>
     <body bgcolor=white>
-        <!--<?php include_once('html/navbar.php'); ?> -->
-
+        <?php include_once('html/navbar.php'); ?> 
 
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
