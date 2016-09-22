@@ -12,7 +12,7 @@
         h1 {text-align:center;}
         p {text-align:center;}
         </style>
-        <link rel="stylesheet" href="mystyle.css" />
+        <link rel="stylesheet" href="css/mystyle.css" />
     </head>
     <body bgcolor=white>
         <?php include_once('html/navbar.php'); ?> 
@@ -22,7 +22,7 @@
         <p><a href="dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>">Data Validation</a><p>
 
         <form>Search for your sample (click sample for specific sample page):
-        <input type="text" size="30" onkeyup="showResult(this.value)">
+        <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
         <div id="livesearch"></div>
         </form>
 

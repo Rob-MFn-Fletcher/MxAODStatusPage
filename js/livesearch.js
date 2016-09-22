@@ -1,5 +1,5 @@
 
-function showResult(str) {
+function showResult(str,currHtag) {
   if (str.length==0) {
     document.getElementById("livesearch").innerHTML="";
     document.getElementById("livesearch").style.border="0px";
@@ -17,6 +17,6 @@ function showResult(str) {
       document.getElementById("livesearch").style.border="1px solid #A5ACB2";
     }
   }
-  xmlhttp.open("GET","liveSearch/livesearch.php?q="+str+"&h="+"<?php echo "$currHtag";  ?>",true);
+  xmlhttp.open("GET","liveSearch/livesearch.php?q="+str+"&h="+currHtag,true);
   xmlhttp.send();
 }
