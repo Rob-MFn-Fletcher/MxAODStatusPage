@@ -1,4 +1,3 @@
-<h1><img src="/atlas-hgamma/img/higgs.png" style="width:35px;height:35px;"> HGam MxAOD Status <img src="/atlas-hgamma/img/higgs.png" style="width:35px;height:35px;"> </h1>
 <ul>
   <li><a class="active" href="/atlas-hgamma/mainPage.php?h=<?php
       include('vars.php');
@@ -6,7 +5,7 @@
       $page=shell_exec("ls $dir | grep -v pre | tail -n 1");
       echo $page;?>">Home
     </a></li>
-  <li> 
+  <li>
 <FORM NAME="nav"><DIV>
 <SELECT NAME="SelectURL" onChange=
 "document.location.href=
@@ -26,6 +25,6 @@ echo $html;
 ?>
 
 </SELECT><DIV>
-</FORM> 
+</FORM>
   </li>
 </ul>

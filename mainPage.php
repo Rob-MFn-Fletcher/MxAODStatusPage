@@ -5,7 +5,8 @@
             include("../html/vars.php");
             $currHtag=$_GET["h"];
         ?>
-        <script type="text/javascript" src="js/livesearch.js"></script>
+        <script type="text/javascript" src="js/livesearch.js"/>
+        <script type="text/javascript" src="js/navbar.js"/>
         <meta charset="utf-8" />
         <title>HGam MxAOD Status</title>
         <style>
@@ -16,12 +17,38 @@
     </head>
     <body bgcolor=white>
         <div id="jumbotron">
-            <ul>
-            <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
-            <li>HGam MxAOD Status</li>
-            <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
+            <img class="higgs" src="/atlas-hgamma/img/higgs.png">
+            HGam MxAOD Status
+            <img class="higgs" src="/atlas-hgamma/img/higgs.png">
         </div>
+        <!--
         <?php include_once('html/navbar.php'); ?>
+    -->
+        <nav>
+          <ul>
+            <li><a href="#">Link 1</a></li>
+            <li>
+              <a href="#">Link 2</a>
+              <ul class="fallback">
+                <li><a href="#">Sub-Link 1</a></li>
+                <li><a href="#">Sub-Link 2</a></li>
+                <li><a href="#">Sub-Link 3</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#">Link 3</a>
+              <ul class="fallback">
+                <li><a href="#">Sub-Link 1</a></li>
+                <li><a href="#">Sub-Link 2</a></li>
+                <li><a href="#">Sub-Link 3</a></li>
+                <li><a href="#">Sub-Link 4</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Link 4</a></li>
+            <li><a href="#">Link 5</a></li>
+            <li><a href="#">Link 6</a></li>
+          </ul>
+        </nav>
 
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
