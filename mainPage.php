@@ -51,5 +51,3 @@ function showResult(str) {
 
   </body>
 </html>
-
-
