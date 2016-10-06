@@ -1,5 +1,6 @@
 #jumbotron {
     display: inline-block;
+    width: 90%;
 }
 #jumbotron .higgs {
     width: 35px;

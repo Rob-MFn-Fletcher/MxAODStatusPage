@@ -18,7 +18,7 @@
     <body bgcolor=white>
         <div id="jumbotron">
             <img class="higgs" src="/atlas-hgamma/img/higgs.png">
-            HGam MxAOD Status
+            <p> HGam MxAOD Status </p>
             <img class="higgs" src="/atlas-hgamma/img/higgs.png">
         </div>
         <!--
@@ -26,7 +26,7 @@
         -->
         <nav>
           <ul>
-            <li><a href="#">Link 1</a></li>
+            <li><a href="#">Home</a></li>
             <li>
               <a href="#">Link 2</a>
               <ul class="fallback">
