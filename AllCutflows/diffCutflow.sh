@@ -1,4 +1,4 @@
-# lololololololol this same script was 60 lines long in python and didn't work files with different cuts. BASH4EVER 
+# lololololololol this same script was 60 lines long in python and didn't work files with different cuts. BASH4EVER
 #
 # This script takes two files formatted in the following way:
 #                 PowhegPy8_ggH125_small
@@ -25,27 +25,32 @@ file1=$1
 file2=$2
 
 # Replaces any instance of <string> <string> with <string>_<string> then prints the results line by line
-cuts=$(tail -n +3 $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g' | awk '{print $1}') 
+# This just gets the first column of the cutflow and stores it.
+cuts=$(tail -n +3 $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g' | awk '{print $1}')
 
 #Check to make sure the files have the same number of lines -> same number of cuts
 if [[ ! "$(cat $file1 | wc -l)" -eq "$(cat $file2 | wc -l)" ]]; then
   echo "warning! files have different cuts.  Comparing similar cuts..."
 fi
+
+# The %-26s stuff aligns the text to certain places. This first one aligns 'Event Selection'
+# to the left then follows it with spaces so that the total string length is 26 characters.
 printf '%-26s %-14s %s \n' 'Event Selection' 'Absolute Diff' 'Percent Diff'
-for cut in ${cuts[@]}; do 
+for cut in ${cuts[@]}; do
   file1CutValue=$(cat $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g' | grep -F $cut |  awk '{print $(NF-2)}')
   file2CutValue=$(cat $file2 | sed 's/\(\S\) \(\S\)/\1_\2/g' | grep -F $cut | awk '{print $(NF-2)}')
   #echo Cut: $cut File1Cut: $file1CutValue File2Cut: $file2CutValue
-  #echo Searched for $cut in 
+  #echo Searched for $cut in
   #cat $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g'
-  
+
+  # -z : True if length of string is zero
   [[ -z "$file2CutValue" ]] && continue
   absDiff=$(echo "scale=0; $file1CutValue - $file2CutValue" | bc)
 
   percentDiffNum=$(echo "scale=0; $file1CutValue - $file2CutValue" | bc)
   percentDiffDenom=$(echo "scale=0; 0.50 * ( $file1CutValue + $file2CutValue )" | bc)
   percentDiffVal=0
-  if [[ ! $percentDiffDenom == 0 ]]; then 
+  if [[ ! $percentDiffDenom == 0 ]]; then
     percentDiffVal=$(echo "scale=5; $percentDiffNum/$percentDiffDenom" | bc)
   fi
 

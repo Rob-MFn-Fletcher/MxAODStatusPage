@@ -35,7 +35,7 @@ echo Submitting batch job for cutflows... This job takes 30mins-1h to finish, cu
 echo SUBMITOUT > $BASEDIR/AllCutflows/submit.out
 for fileName in ${Samples[@]}; do
   echo $fileName
-  #bsub -R "swp > 20000" -R "rusage[mem=500]" -q 8nh $BASEDIR/AllCutflows/getCutflowBatch.sh $fileName $htagNew  >> $BASEDIR/AllCutflows/submit.out
+  bsub -R "swp > 20000" -R "rusage[mem=500]" -q 8nh $BASEDIR/AllCutflows/getCutflowBatch.sh $fileName $htagNew  >> $BASEDIR/AllCutflows/submit.out
   tickProgressBar ${#Samples[@]}
 done
 endProgressBar
