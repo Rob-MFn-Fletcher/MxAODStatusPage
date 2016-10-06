@@ -24,8 +24,10 @@
 file1=$1
 file2=$2
 
-cuts=$(tail -n +3 $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g' | awk '{print $1}')
+# Replaces any instance of <string> <string> with <string>_<string> then prints the results line by line
+cuts=$(tail -n +3 $file1 | sed 's/\(\S\) \(\S\)/\1_\2/g' | awk '{print $1}') 
 
+#Check to make sure the files have the same number of lines -> same number of cuts
 if [[ ! "$(cat $file1 | wc -l)" -eq "$(cat $file2 | wc -l)" ]]; then
   echo "warning! files have different cuts.  Comparing similar cuts..."
 fi
