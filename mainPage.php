@@ -36,7 +36,7 @@
               </ul>
             </li>
             <li>
-              <a href="#">Link 3</a>
+              <a href="dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>">Data Validation</a>
               <ul class="fallback">
                 <li><a href="#">Sub-Link 1</a></li>
                 <li><a href="#">Sub-Link 2</a></li>
@@ -44,15 +44,12 @@
                 <li><a href="#">Sub-Link 4</a></li>
               </ul>
             </li>
-            <li><a href="#">Link 4</a></li>
-            <li><a href="#">Link 5</a></li>
-            <li><a href="#">Link 6</a></li>
+            <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
           </ul>
         </nav>
 
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
-        <p><a href="dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>">Data Validation</a><p>
 
         <form>Search for your sample (click sample for specific sample page):
         <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">

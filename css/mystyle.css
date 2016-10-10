@@ -3,11 +3,21 @@
     width: 90%;
 }
 #jumbotron .higgs {
+    display: inline;
     width: 35px;
     height: 35px;
 }
 
-nav {background:#FFF;float:left;}
+/******************
+**   Nav bar
+*******************/
+nav {
+    background:#FFF;
+    float:left;
+}
+nav #currentTag {
+    float:right;
+}
 nav ul {text-align:center;}
 nav ul li {float:left;display:inline;}
 nav ul li:hover {background:#E6E6E6;}
