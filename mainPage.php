@@ -17,9 +17,11 @@
     </head>
     <body bgcolor=white>
         <div id="jumbotron">
-            <img class="higgs" src="/atlas-hgamma/img/higgs.png">
-            <p> HGam MxAOD Status </p>
-            <img class="higgs" src="/atlas-hgamma/img/higgs.png">
+            <ul>
+                <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
+                <li><p> HGam MxAOD Status </p></li>
+                <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
+            </ul>
         </div>
         <!--
         <?php include_once('html/navbar.php'); ?>

@@ -1,9 +1,9 @@
 #jumbotron {
-    display: inline-block;
+    display: inline;
+    text-align: center;
     width: 90%;
 }
 #jumbotron .higgs {
-    display: inline;
     width: 35px;
     height: 35px;
 }
