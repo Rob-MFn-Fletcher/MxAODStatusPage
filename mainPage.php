@@ -20,25 +20,29 @@
     </head>
     <body bgcolor=white>
         <div id="jumbotron">
-                <img class="higgs" src="/atlas-hgamma/img/higgs.png">
-                <p> HGam MxAOD Status </p>
-                <img class="higgs" src="/atlas-hgamma/img/higgs.png">
+            <h2>
+                <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
+                <p>HGam MxAOD Status<p> 
+                <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
+            </h2>
         </div>
 
 
 
 
 
-        <nav class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                  <a class="navbar-brand" href="#">WebSiteName</a>
+                  <a class="navbar-brand" href="#">MxAOD Status</a>
                 </div>
                 <ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a href="#">Page 1</a></li>
-                  <li><a href="#">Page 2</a></li>
-                  <li><a href="#">Page 3</a></li>
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#">Htags</a></li>
+                  <li><a href="#">Data Validation</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
                 </ul>
             </div>
         </nav>
@@ -69,14 +73,15 @@
             <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
           </ul>
         </nav>
--->
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
+-->
 
 
         <form>Search for your sample (click sample for specific sample page):
         <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
         <div id="livesearch"></div>
         </form>
+
 
     </body>
 </html>

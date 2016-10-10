@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     //Calculate the height of <header>
     //Use outerHeight() instead of height() if have padding
-    var aboveHeight = $('header').outerHeight();
+    var aboveHeight = $('#jumbotron').height();
 
 //when scroll
     $(window).scroll(function(){
@@ -20,7 +20,7 @@ $(document).ready(function() {
 
         // when scroll up or less than aboveHeight,
         //    remove the “fixed” class, and the padding-top
-            $('nav').removeClass('fixed').next()
+            $('nav').removeClass('navbar-fixed-top').next()
             .css('padding-top','0');
             }
         });
