@@ -9,24 +9,16 @@
         <script type="text/javascript" src="js/navbar.js"></script>
         <meta charset="utf-8" />
         <title>HGam MxAOD Status</title>
-        <style>
-        h1 {text-align:center;}
-        p {text-align:center;}
-        </style>
         <link rel="stylesheet" href="css/mystyle.css" />
     </head>
     <body bgcolor=white>
         <div id="jumbotron">
-            <ul>
-                <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
-                <li><p> HGam MxAOD Status </p></li>
-                <li><img class="higgs" src="/atlas-hgamma/img/higgs.png"></li>
-            </ul>
+            <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
+            <h2> HGam MxAOD Status </h2>
+            <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
         </div>
-        <!--
-        <?php include_once('html/navbar.php'); ?>
-        -->
-        <nav>
+
+        <div class="nav">
           <ul>
             <li><a href="#">Home</a></li>
             <li>
@@ -46,17 +38,16 @@
                 <li><a href="#">Sub-Link 4</a></li>
               </ul>
             </li>
-            <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
+            <li id="currentTag"><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
           </ul>
-        </nav>
+        </div>
 
-        <p> Selected htag: <?php echo $currHtag;  ?> </p>
-
-
-        <form>Search for your sample (click sample for specific sample page):
-        <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
-        <div id="livesearch"></div>
-        </form>
+        <div>
+            <form>Search for your sample (click sample for specific sample page):
+            <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
+            <div id="livesearch"></div>
+            </form>
+        <div>
 
     </body>
 </html>
