@@ -1,4 +1,4 @@
 <?php 
-  $base='/afs/cern.ch/user/h/hgamma/www'; 
-  $baseRel='/atlas-hgamma'; 
+  $base='/afs/cern.ch/user/r/rfletche/www/MxAODsite'; 
+  $baseRel='/rfletche/MxAODsite'; 
 ?>
