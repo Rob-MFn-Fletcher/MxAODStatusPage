@@ -1,5 +1,5 @@
 #jumbotron {
-    display: inline;
+    display: inline-block;
     text-align: center;
     width: 90%;
 }
