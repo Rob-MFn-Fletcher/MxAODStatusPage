@@ -1,0 +1,5 @@
+LSFJOB_*
+*.swp
+*.log
+*.out
+.asetup.save
