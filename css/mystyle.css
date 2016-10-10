@@ -35,9 +35,6 @@
 .nav ul li ul.fallback {display:none;}
 .nav ul li:hover ul.fallback {display:block;}
 
-body{
-    clear:both;
-}
 form {
   text-align: center;
 }
