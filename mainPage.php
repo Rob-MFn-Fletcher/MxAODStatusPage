@@ -22,7 +22,7 @@
         <div id="jumbotron">
             <h2>
                 <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
-                <p>HGam MxAOD Status<p> 
+                <p>HGam MxAOD Status<p>
                 <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
             </h2>
         </div>
@@ -37,8 +37,13 @@
                   <a class="navbar-brand" href="#">MxAOD Status</a>
                 </div>
                 <ul class="nav navbar-nav">
-                  <li><a href="#">Home</a></li>
-                  <li><a href="#">Htags</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">HTags
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu" id="htags-dropdown">
+                            <li id="default"><a href="#">List populating...</a></li>
+                        </ul>
+                    </li>
                   <li><a href="#">Data Validation</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
