@@ -7,7 +7,7 @@
     h1 {text-align:center;}
     p {text-align:center;}
     </style>
-    <link rel="stylesheet" href="../mystyle.css" />
+    <link rel="stylesheet" href="../css/mystyle.css" />
 </head>
 
 <?php
