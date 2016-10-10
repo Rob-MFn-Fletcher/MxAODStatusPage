@@ -3,7 +3,12 @@
     text-align: center;
     width: 90%;
 }
+#jumbotron h2{
+    float:left;
+}
 #jumbotron .higgs {
+    display: inline-block;
+    float: left;
     width: 35px;
     height: 35px;
 }
@@ -11,24 +16,28 @@
 /******************
 **   Nav bar
 *******************/
-nav {
+.nav {
     background:#FFF;
     float:left;
+    width: 100%;
 }
-nav #currentTag {
+.nav #currentTag {
     float:right;
 }
-nav ul {text-align:center;}
-nav ul li {float:left;display:inline;}
-nav ul li:hover {background:#E6E6E6;}
-nav ul li a {display:block;padding:15px 25px;color:#444;}
-nav ul li ul {position:absolute;width:110px;background:#FFF;}
-nav ul li ul li {width:110px;}
-nav ul li ul li a {display:block;padding:15px 10px;color:#444;}
-nav ul li ul li:hover a {background:#F7F7F7;}
-nav ul li ul.fallback {display:none;}
-nav ul li:hover ul.fallback {display:block;}
+.nav ul {text-align:center;}
+.nav ul li {float:left;display:inline;}
+.nav ul li:hover {background:#E6E6E6;}
+.nav ul li a {display:block;padding:15px 25px;color:#444;}
+.nav ul li ul {position:absolute;width:110px;background:#FFF;}
+.nav ul li ul li {width:110px;}
+.nav ul li ul li a {display:block;padding:15px 10px;color:#444;}
+.nav ul li ul li:hover a {background:#F7F7F7;}
+.nav ul li ul.fallback {display:none;}
+.nav ul li:hover ul.fallback {display:block;}
 
+body{
+    clear:both;
+}
 form {
   text-align: center;
 }
@@ -37,27 +46,3 @@ table.center {
     margin-left:auto;
     margin-right:auto;
   }
-body {text-align:center;}
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-}
-
-li {
-    float: left;
-}
-
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-li a:hover {
-    background-color: #111;
-}
