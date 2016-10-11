@@ -2,8 +2,13 @@
 **  jumbotron
 *****************/
 #jumbotron {
+    padding-top: 0px;
     width: 100%;
     height: 100px;
+}
+#jumbotron h2{
+    padding: 30px;
+    margin: 0px;
 }
 #jumbotron p{
     float: left;
@@ -19,7 +24,6 @@
 **   Nav bar
 *******************/
 nav .navbar-header {
-    height: 60px;
     border-right: 2px solid grey;
 }
 

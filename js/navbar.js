@@ -4,8 +4,8 @@
 var scrolling = function(){
     //Calculate the height of <header>
     //Use outerHeight() instead of height() if have padding
-    var aboveHeight = $('#jumbotron').height();
-    var navHeight = $('nav').css('height');
+    var aboveHeight = $('#jumbotron').outerHeight();
+    var navHeight = $('nav').outerHeight(true);
 
 //when scroll
     $(window).scroll(function(){
@@ -29,21 +29,18 @@ var scrolling = function(){
 // that lists all directories in variables/htags.
 var fillHTags = function(){
     $.ajax({
-        url: '../php/getHtags.php',
+        url: 'php/getHtags.php',
         type: 'get',
         success: function(htags_json){
             //Put the li elements in the menu
             var htags_array = JSON.parse(htags_json);
             console.log("Success: Got Htags from server")
             console.log(JSON.stringify(htags_array, null, 2));
-            $('#htags-dropdown').removeElementById('default'); // remove the default li item.
+            $('#default-htags').remove(); // remove the default li item.
             for( var htag in htags_array){   // Add each element in the array to the ul.
-                var menuText = $.createTextNode(htag);
-                var menuItem = $.createElement('li');
-                menuItem.appendChild(menuText);
-                $('#htags-dropdown').appendChild(menuItem);
-            }
-        };,
+                $('#htags-dropdown').append('<li><a href="'+'#'+'">'+htags_array[htag]+'</a></li>');
+            }                              // link goes here ^
+        },
         failure: function(){
             console.log("Failed to get the htags")
         }
