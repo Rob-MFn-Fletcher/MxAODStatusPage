@@ -5,6 +5,7 @@ var scrolling = function(){
     //Calculate the height of <header>
     //Use outerHeight() instead of height() if have padding
     var aboveHeight = $('#jumbotron').height();
+    var navHeight = $('nav').css('height');
 
 //when scroll
     $(window).scroll(function(){
@@ -14,7 +15,7 @@ var scrolling = function(){
         // add padding top to the #content
             //(value is same as the height of the nav)
             $('nav').addClass('navbar-fixed-top').css('top','0').next()
-            .css('padding-top','60px');
+            .css('padding-top',navHeight);
             } else {
         // when scroll up or less than aboveHeight,
         //    remove the “fixed” class, and the padding-top
@@ -34,7 +35,7 @@ var fillHTags = function(){
             //Put the li elements in the menu
             var htags_array = JSON.parse(htags_json);
             console.log("Success: Got Htags from server")
-            console.log("".stringify(htags_array, null, 2));
+            console.log(JSON.stringify(htags_array, null, 2));
             $('#htags-dropdown').removeElementById('default'); // remove the default li item.
             for( var htag in htags_array){   // Add each element in the array to the ul.
                 var menuText = $.createTextNode(htag);
