@@ -43,23 +43,25 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">HTags
                         <span class="caret"></span></a>
                         <ul class="dropdown-menu" id="htags-dropdown">
-                            <li id="default"><a href="#">List populating...</a></li>
+                            <li id="default-htags"><a href="#">List populating...</a></li>
                         </ul>
                     </li>
                   <li><a href="#">Data Validation</a></li>
                 </ul>
-                <div class="col-sm-3 col-md-3">
+                <div class="col-sm-4 col-md-4 navbar-right">
                     <form class="navbar-form" role="search">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search" name="q">
+                        <input type="text" class="form-control" placeholder="Search MxAODs" name="q">
+                        <!--
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                         </div>
+                        -->
                     </div>
                     </form>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#"><h3>Selected htag: <?php echo $currHtag;  ?></h3></a></li>
+                  <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
                 </ul>
             </div>
         </nav>
