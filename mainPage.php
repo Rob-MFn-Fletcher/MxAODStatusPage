@@ -60,18 +60,8 @@
             </div>
         </nav>
 
-
-
-<!--
         <div id="content">
-            <form>Search for your sample (click sample for specific sample page):
-            <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
-            <div id="livesearch"></div>
-            </form>
-        </div>
--->
-        <div id="content">
-            <div id="livesearch">
+            <div id="livesearch" class="col-md-6">
 
             </div>
         </div>
