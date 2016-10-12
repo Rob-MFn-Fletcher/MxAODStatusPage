@@ -1,8 +1,9 @@
 
 function showResult(str,currHtag) {
   if (str.length==0) {
-    document.getElementById("livesearch").innerHTML="";
-    document.getElementById("livesearch").style.border="0px";
+    $.("#livesearch").innerHTML="";
+    $.("#livesearch").style.border="0px";
+    $.("#livesearch").slideToggle();
     return;
   }
   if (window.XMLHttpRequest) {
