@@ -1,9 +1,8 @@
 
 function showResult(str,currHtag) {
   if (str.length==0) {
-    $.("#livesearch").innerHTML="";
-    $.("#livesearch").style.border="0px";
-    $.("#livesearch").slideToggle();
+    $("#livesearch").innerHTML="";
+    //$("#livesearch").style.border="0px";
     return;
   }
   if (window.XMLHttpRequest) {
@@ -15,7 +14,8 @@ function showResult(str,currHtag) {
   xmlhttp.onreadystatechange=function() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200) {
       document.getElementById("livesearch").innerHTML=xmlhttp.responseText;
-      document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+      //document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+      $('#livesearch').slideDown(1000)
     }
   }
   xmlhttp.open("GET","liveSearch/livesearch.php?q="+str+"&h="+currHtag,true);

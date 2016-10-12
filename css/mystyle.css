@@ -27,30 +27,37 @@
 /******************
 **   Nav bar
 *******************/
+.navbar{
+    margin-bottom: 0px;
+}
 nav .navbar-header {
     border-right: 2px solid grey;
 }
 
 nav #search-bar {
-    width: 350px;
-    padding-right:30px;
+    width: 300px;
 }
-nav .input-group {
-    padding-right: 15px;
-}
-/*
 .navbar-form {
     overflow: auto;
+    margin-right: 0px;
 }
-.navbar-form .form-control {
-    display: inline-block;
-    width: 100%; 
-    vertical-align: middle;
+
+/***********************
+ * search bar
+***********************/
+#livesearch {
+    display: none;
+    background-color: white;
+    float: right;
+    margin-right: 5px;
+    border: 1px solid black;
+    border-top: 0px;
+    z-index: 10000;
+    height: 90%;
+    position: absolute;
+    top: 145px;
+    right: 5px;
 }
-.navbar-form .form-group {
-    display: inline;
-}
-*/
 /************************
 **  Main content
 ************************/

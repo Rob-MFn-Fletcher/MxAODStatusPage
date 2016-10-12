@@ -54,7 +54,7 @@
                     </form>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a>Selected htag: <?php echo $currHtag;  ?></a></li>
+                  <li><a><strong>Selected htag: <?php echo $currHtag;  ?></strong></a></li>
                 </ul>
 
             </div>
@@ -63,6 +63,9 @@
         <div id="content">
             <div id="livesearch" class="col-md-6">
 
+            </div>
+            <div>
+            Content ContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContentContent
             </div>
         </div>
 
