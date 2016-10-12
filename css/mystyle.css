@@ -2,7 +2,8 @@
 **  jumbotron
 *****************/
 #jumbotron {
-    background-image: url("../img/bubblechamber.jpeg");
+    background-image: url("../img/bubblechamber.jpg");
+    background-size: contain;
     padding-top: 0px;
     width: 100%;
     height: 100px;
@@ -11,6 +12,7 @@
 #jumbotron h2{
     padding: 30px;
     margin: 0px;
+    color: black;
 }
 #jumbotron p{
     float: left;

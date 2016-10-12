@@ -4,7 +4,7 @@
 var scrolling = function(){
     //Calculate the height of <header>
     //Use outerHeight() instead of height() if have padding
-    var aboveHeight = $('#jumbotron').outerHeight();
+    var aboveHeight = $('#jumbotron').outerHeight(true);
     var navHeight = $('nav').outerHeight(true);
 
 //when scroll
