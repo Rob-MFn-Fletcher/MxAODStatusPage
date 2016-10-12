@@ -18,7 +18,7 @@
         <title>HGam MxAOD Status</title>
         <link rel="stylesheet" href="css/mystyle.css" />
     </head>
-    <body bgcolor=white>
+    <body>
 
         <!---  Jumbotron header  -->
         <div id="jumbotron">
@@ -28,9 +28,6 @@
                 <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
             </h2>
         </div>
-
-
-
 
         <!-- Navigation bar -->
         <nav class="navbar navbar-inverse">
@@ -51,7 +48,7 @@
                 <div class="col-sm-4 col-md-4 navbar-right">
                     <form class="navbar-form" role="search">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search MxAODs" name="q">
+                        <input type="text" class="form-control" placeholder="Search MxAODs" name="q" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
                         <!--
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
@@ -68,12 +65,18 @@
 
 
 
-
+<!--
         <div id="content">
             <form>Search for your sample (click sample for specific sample page):
             <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
             <div id="livesearch"></div>
             </form>
+        </div>
+-->
+        <div id="content">
+            <div id="livesearch">
+
+            </div>
         </div>
 
 
