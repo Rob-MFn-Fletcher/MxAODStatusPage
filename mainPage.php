@@ -45,21 +45,18 @@
                     </li>
                   <li><a href="#">Data Validation</a></li>
                 </ul>
-                <div class="col-sm-4 col-md-4 navbar-right">
-                    <form class="navbar-form" role="search">
+
+                <div class="nav navbar-nav navbar-right">
+                    <form class="navbar-form navbar-right"  role="search">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search MxAODs" name="q" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
-                        <!--
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                        </div>
-                        -->
+                        <input type="text" id="search-bar" class="form-control has-search-icon" placeholder="Search MxAODs" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">
                     </div>
                     </form>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">Selected htag: <?php echo $currHtag;  ?></a></li>
+                  <li><a>Selected htag: <?php echo $currHtag;  ?></a></li>
                 </ul>
+
             </div>
         </nav>
 

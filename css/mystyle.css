@@ -31,6 +31,26 @@ nav .navbar-header {
     border-right: 2px solid grey;
 }
 
+nav #search-bar {
+    width: 350px;
+    padding-right:30px;
+}
+nav .input-group {
+    padding-right: 15px;
+}
+/*
+.navbar-form {
+    overflow: auto;
+}
+.navbar-form .form-control {
+    display: inline-block;
+    width: 100%; 
+    vertical-align: middle;
+}
+.navbar-form .form-group {
+    display: inline;
+}
+*/
 /************************
 **  Main content
 ************************/
