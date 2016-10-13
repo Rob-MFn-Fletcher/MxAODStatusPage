@@ -47,6 +47,12 @@ var fillHTags = function(){
     });
 };
 
+var getHtagContent = function(){
+    $('#htags-dropdown li').click(function(){
+        var selectedTag = $(this).text();
+    })
+};
+
 $(document).ready(function() {
     scrolling();
     fillHTags();
