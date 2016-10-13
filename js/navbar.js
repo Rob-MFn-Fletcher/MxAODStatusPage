@@ -56,4 +56,7 @@ var getHtagContent = function(){
 $(document).ready(function() {
     scrolling();
     fillHTags();
+    $(document).click(function(){
+      $("#livesearch").hide();
+    });
 });

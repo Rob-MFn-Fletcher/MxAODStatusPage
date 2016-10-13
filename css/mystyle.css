@@ -54,9 +54,11 @@ nav #search-bar {
     border-top: 0px;
     z-index: 10000;
     max-height: 50%;
+    max-width: 35%;
     position: absolute;
     top: 145px;
     right: 5px;
+    overflow-y: scroll;
 }
 /************************
 **  Main content
