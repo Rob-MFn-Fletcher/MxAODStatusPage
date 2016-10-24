@@ -2,7 +2,6 @@
 function showResult(str,currHtag) {
   if (str.length==0) {
     $("#livesearch").innerHTML="";
-    //$("#livesearch").style.border="0px";
     return;
   }
   if (window.XMLHttpRequest) {
