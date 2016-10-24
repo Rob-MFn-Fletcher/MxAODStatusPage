@@ -61,7 +61,7 @@ $(document).ready(function() {
     console.log("Trying to set current Htag to "+currHtag);
     scrolling();
     fillHTags();
-    getHTagContent();
+    getHtagContent();
     $(document).click(function(){
       $("#livesearch").hide();
     });
