@@ -38,8 +38,16 @@ var fillHTags = function(){
             console.log(JSON.stringify(htags_array, null, 2));
             $('#default-htags').remove(); // remove the default li item.
             for( var htag in htags_array){   // Add each element in the array to the ul.
-                $('#htags-dropdown').append('<li><a href="#">'+htags_array[htag]+'</a></li>');
+                $('#htags-dropdown').append('<li><a href="#" onclick="return false;">'+htags_array[htag]+'</a></li>');
             }                              // link goes here ^
+            $("ul#htags-dropdown li a").click(function(e){
+                e.preventDefault();
+                var selectedTag = $(this).text();
+                //window.location.search = $.query.set('h', "h013");
+                currHtag = selectedTag;
+                $("#current-Htag a strong").text("Selected Tag: "+currHtag);
+                console.log("Clicked a new Htag: "+ currHtag);
+            });
         },
         failure: function(){
             console.log("Failed to get the htags")
@@ -48,13 +56,15 @@ var fillHTags = function(){
 };
 
 var getHtagContent = function(){
-    $('#htags-dropdown li a').click(function(e){
+/*
+    $("ul#htags-dropdown li a").click(function(e){
         e.preventDefault();
         var selectedTag = $(this).text();
         widow.location.search = $.query.set('h', selectedTag);
         currHtag = selectedTag;
         console.log("Clicked a new Htag: "+ currHtag);
-    })
+    });
+*/
 };
 
 $(document).ready(function() {
@@ -63,7 +73,7 @@ $(document).ready(function() {
     scrolling();
     fillHTags();
     getHtagContent();
-    $(document).click(function(){
-      $("#livesearch").hide();
-    });
+    //$(document).click(function(){
+    //  $("#livesearch").hide();
+   // });
 });
