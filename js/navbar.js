@@ -48,15 +48,17 @@ var fillHTags = function(){
 };
 
 var getHtagContent = function(){
-    $('#htags-dropdown li').click(function(){
+    $('#htags-dropdown li a').click(function(){
         var selectedTag = $(this).text();
         widow.location.search = $.query.set('h', selectedTag);
         currHtag = selectedTag;
+        console.log("Clicked a new Htag: "+ currHtag);
     })
 };
 
 $(document).ready(function() {
     $('#current-Htag').append('<a><strong>Selected Tag: '+currHtag+'</strong></a>')
+    console.log("Trying to set current Htag to "+currHtag);
     scrolling();
     fillHTags();
     getHTagContent();
