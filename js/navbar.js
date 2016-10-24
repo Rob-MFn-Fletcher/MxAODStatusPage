@@ -38,7 +38,7 @@ var fillHTags = function(){
             console.log(JSON.stringify(htags_array, null, 2));
             $('#default-htags').remove(); // remove the default li item.
             for( var htag in htags_array){   // Add each element in the array to the ul.
-                $('#htags-dropdown').append('<li><a href="">'+htags_array[htag]+'</a></li>');
+                $('#htags-dropdown').append('<li><a href="#">'+htags_array[htag]+'</a></li>');
             }                              // link goes here ^
         },
         failure: function(){
@@ -48,7 +48,8 @@ var fillHTags = function(){
 };
 
 var getHtagContent = function(){
-    $('#htags-dropdown li').click(function(){
+    $('#htags-dropdown li a').click(function(e){
+        e.preventDefault();
         var selectedTag = $(this).text();
         widow.location.search = $.query.set('h', selectedTag);
         currHtag = selectedTag;
