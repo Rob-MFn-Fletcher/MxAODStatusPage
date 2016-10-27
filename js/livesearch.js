@@ -1,5 +1,6 @@
 
 function showResult(str,currHtag) {
+  console.log("showResult called with str: "+str+" currHtag: "+currHtag);
   if (str.length==0) {
     $("#livesearch").innerHTML="";
     return;
