@@ -25,6 +25,10 @@ var scrolling = function(){
         });
 };
 
+var getHtagsContent = function(htag){
+
+};
+
 // Get the Htags that should be in the drop down menu. Call a PHP script
 // that lists all directories in variables/htags.
 var fillHTags = function(){
@@ -55,25 +59,12 @@ var fillHTags = function(){
     });
 };
 
-var getHtagContent = function(){
-/*
-    $("ul#htags-dropdown li a").click(function(e){
-        e.preventDefault();
-        var selectedTag = $(this).text();
-        widow.location.search = $.query.set('h', selectedTag);
-        currHtag = selectedTag;
-        console.log("Clicked a new Htag: "+ currHtag);
-    });
-*/
-};
-
 $(document).ready(function() {
     $('#current-Htag').append('<a><strong>Selected Tag: '+currHtag+'</strong></a>')
     console.log("Trying to set current Htag to "+currHtag);
     scrolling();
     fillHTags();
-    getHtagContent();
-    //$(document).click(function(){
-    //  $("#livesearch").hide();
-   // });
+    $(document).click(function(){
+      $("#livesearch").hide();
+    });
 });
