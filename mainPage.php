@@ -7,7 +7,7 @@
             include("../html/vars.php");
             $currHtag=$_GET["h"];
         ?>
-    -->
+        -->
         <!-- Global Variable to hold the current H tag. Think of a way to do this without a global. Might be a little better. -->
         <script type="text/javascript">
             var currHtag = "h013";
@@ -29,9 +29,7 @@
         <!---  Jumbotron header  -->
         <div id="jumbotron">
             <h2>
-                <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
-                <p>HGam MxAOD Status<p>
-                <img class="higgs" src="/rfletche/MxAODsite/img/higgs.png">
+                HGam MxAOD Status
             </h2>
         </div>
 
@@ -66,10 +64,13 @@
             </div>
         </nav>
 
+        <!--%%%%%%%%%  Main Page Content  %%%%%%%%%-->
         <div id="content">
-            <div id="cutflow">
+            <div id="cutflow-container">
+                <h1>Cutflow</h1>
             </div>
-            <div id="plots">
+            <div id="plots-container">
+                <h1>Comparison Plots</h1>
             </div>
         </div>
 

@@ -56,7 +56,8 @@ nav #search-bar {
     max-height: 50%;
     max-width: 35%;
     position: absolute;
-    top: 145px;
+    /*top: 145px;*/
+    top: 100px;
     right: 5px;
     overflow-y: scroll;
 }
