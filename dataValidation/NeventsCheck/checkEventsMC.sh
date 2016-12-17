@@ -6,6 +6,7 @@
 
 htagNew=$1
 dataList=$2
+testFile=$3
 
 [[ ! -d ../data/${htagNew} ]] && mkdir -p ../data/${htagNew}
 
@@ -22,7 +23,7 @@ fi
 [[ ! -z "$(which ami 2>&1 | grep 'no ami')" ]] && source setup.sh
 
 SampleDirs=()
-SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep -v data | grep -v Sys | grep -v debug))
+SampleDirs+=($(eos ls $datasetDir/$htagNew/ | grep -v data | grep -v Sys | grep -v debug | grep -v .txt))
 
 Samples=()
 for DIR in ${SampleDirs[@]}; do
@@ -33,6 +34,7 @@ done
 MissingSamplesFile="../data/${htagNew}/MissingSamples_MC.txt"
 uncolumnizedOutput="../data/${htagNew}/temp_MC.out"
 columnizedOutput="../data/${htagNew}/ValidationTable_MC.txt"
+testOuput="./testOutput.txt"
 samplesMissingParentsOutput="../data/${htagNew}/samplesMissingParents_MC.txt"
 samplesMissingEventsOutput="../data/${htagNew}/samplesMissingEvents_MC.txt"
 
@@ -56,17 +58,29 @@ fi
 
 #echo table is columnized at the end in the output file in $columnizedOutput
 #echo Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $uncolumnizedOutput
-printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $columnizedOutput
-
+if [[ ! -s $columnizedOutput ]]; then
+    echo "Output file does not exist. Making it."
+    printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' Sample AOD_AMI AOD_Bookkeeper DAOD_AMI DAOD_Bookkeeper NevtsRunOverMxAOD NevtsPassedPreCutflowMxAOD NevtsIsPassedPreFlagMxAOD | tee $columnizedOutput
+fi
 echo 'samples where not all DAOD events were run over( DAOD_AMI != NevtsRunOverMxAOD )' >$samplesMissingEventsOutput
 echo 'The Following samples have no parent in '"$dataList :"  > $samplesMissingParentsOutput
 #echo 'The Following samples have disagreements between the cutflow and the file: '
 
 for sample in ${Samples[@]}; do
-  #echo $sampleType
   sampleType=${sample%.MxAOD*}
   sampleType=$(echo $sampleType | sed 's/mc.*\.//g')
+
+  # If the sample type is already in the output then dont re-run
+  check=$(cat $columnizedOutput | grep "$sampleType")
+  [[ ! -z "$check" ]] && echo "Sample $sampleType already exists in output. Skipping..." && continue 
+
   [[ ! -z "$(eos ls $datasetDir/$htagNew/$DIR/$sample 2>/dev/null)"  ]] && filePath="$EOSMOUNTDIR/$datasetDir/$htagNew/$DIR/$sample" && sampleDir=$DIR
+  # If you provide a test sample name then only run over that one sample
+  if [[ ! -z "$testFile" ]]; then
+    if [ "$testFile" != "$sampleType" ]; then
+        continue
+    fi
+  fi
      
 
   MxAODparentName=$(cat $dataList | grep "$sampleType\ " | awk '{print $2}')
@@ -77,7 +91,7 @@ for sample in ${Samples[@]}; do
   if [[ "$MxAODparentName" =~ DAOD_HIGG1D1 ]]; then 
     DxAODname=${MxAODparentName}
     
-    nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" | grep ' DAOD_HIGG1D1' | awk '{print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
+    nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" | grep ' DAOD_HIGG1D1' | awk '{if ($6=='0') print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
     #echo "got AMI DAOD"
     #echo echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" '|' root -l $filePath '2>>err.log'
     nEventsDxAOD_Bookkeeper=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
@@ -108,7 +122,14 @@ for sample in ${Samples[@]}; do
     
     #echo ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $uncolumnizedOutput
     printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $columnizedOutput
-  elif [[ "$MxAODparentName" =~ \.AOD\. ]]; then  
+    if [[ ! -z "$extra" ]]; then
+      echo "EOSMOUNTDIR: $EOSMOUNTDIR"
+      echo "datasetDir: $datasetDir"
+      echo "DIR: $DIR"
+      echo "Sample: $sample"
+      echo "File path is: $filePath"
+    fi
+    elif [[ "$MxAODparentName" =~ \.AOD\. ]]; then  
     AODname=$MxAODparentName
     #echo $AODname
     nEventsAOD_AMI=$(ami show dataset prov $AODname | grep ' AOD '  | awk '{print $8}' | head -n 1)

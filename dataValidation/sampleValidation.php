@@ -19,6 +19,11 @@ i fucking hate html
   <?php include_once('../html/navbar.php'); $currHtag=$_GET["h"]; ?>
   <h1>HGam MxAOD Sample Validation</h1>
     <p> Selected htag: <?php echo $currHtag;  ?> </p>
+    <p> Note: In h014 there are two files that will not display the correct number of events. This is a known issue and is being worked on. The files are:</p>
+    <ul>
+        <li>mc15c.Sherpa_2DP20_myy_100_165_3jets.MxAODDetailed.p2666.h014.root/</li>
+        <li>mc15c.Sherpa_2DP20_myy_165_200_3jets.MxAODDetailed.p2812.h014.root/</li>
+    </ul>
 <h2>Data</h2>
 <?php
   include("../html/vars.php");
