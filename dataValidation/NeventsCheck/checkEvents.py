@@ -106,7 +106,10 @@ def runMC(args):
 
         # Append the dictionary to a list of samples
         jsonMCSamplesOutput.append(combInfo)
-    ## end for sample
+    pass ## end sample loop
+
+    #Output to file for use on website.
+    json.dump(jsonMCSamplesOutput, "../data/%s/ValidationTable_MC.txt".format(args.htag))
 
     ### End runMC() function
 
