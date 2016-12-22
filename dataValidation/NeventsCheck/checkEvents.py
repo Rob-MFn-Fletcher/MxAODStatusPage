@@ -2,7 +2,7 @@
 
 """
 import argparse
-from ROOT import TFile,TH1
+from ROOT import TFile,TH1,TTree
 import pyAMI.client
 import pyAMI.atlas.api as AtlasAPI
 from sendEmail import sendEmail
@@ -30,7 +30,7 @@ def getAMIProv(sample):
     """
     amiEvents = {}
     # Get the provenance from AMI
-    sample.rstrip('/') # 
+    sample.rstrip('/') #
     prov = AtlasAPI.get_dataset_prov(client, sample)
     # Loop over all of the datasets in the provenance
     for dataset in prov['node']:
