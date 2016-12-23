@@ -6,9 +6,7 @@ from ROOT import TFile,TH1,TTree
 import pyAMI.client
 import pyAMI.atlas.api as AtlasAPI
 from sendEmail import sendEmail
-import json
-import os
-import re
+import json, os, re
 from glob import glob
 
 # Setup a few things that we only want to initialize once.
@@ -113,6 +111,22 @@ def readInputFile(inFile):
 
     return inputFiles
 
+def makeEmail(args, errorSamples):
+    """Make an email message and send it using the sendmail module
+
+    Expects a dictionary with samples as keys and a list of errors as
+    values. Loop over samples and add the errors to the message then send.
+    """
+    addrs = args.email
+    subject = "Data Validation Script Result"
+    message = "Data Validation Script Completed. Results below:\n"
+    if not errorSamples: message += "No Errors detected!\n"
+    for sample in errorSamples:
+        message += "Errors for sample %s:\n".format(sample)
+        for error in errorSamples[sample]:
+            message += "    -- %s".format(error)
+
+    sendEmail(addrs, subject, message)
 
 def runMC(args):
     """Run over MC files.
@@ -122,6 +136,9 @@ def runMC(args):
     from the mc* folder, calls functions to get root and AMI data then writes to
     a file.
     """
+    errorSamples = {} # keep track of samples with mismatches or errors
+    jsonOutput = [] # Final Json output file.
+
     # Make the htag directory to hold the output.
     outHtagDir = "../data/"+args.htag
     if not os.path.exists(outHtagDir):
@@ -148,26 +165,35 @@ def runMC(args):
     mxaod_multi_samples = glob(mxaodSamplesDir[0]+'*/')
 
     #loop over samples and get information
-    jsonOutput = []
     for sample in mxaodSamples:
         # Deal with the dirs of root files later. Skip for now.
-        if sample in mxaod_multi_samples:
-            continue
+        if sample in mxaod_multi_samples: continue
+
+        sampleType = re.search('mc.*\.(.*)\.MxAOD.*').group(1) #The short name of the sample
+        # If we used the test arg, only run over that sample
+        if args.t and not (args.t == sampleType): continue
 
         rootInfo = getROOTInfo(sample)
 
         # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
         # will return 'Sherpa_ADDyy_MS3500_1800M'
-        sampleType = re.search('mc.*\.(.*)\.MxAOD.*').group(1)
         amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
 
         # Combine these dictionaries into a single dictionary to write out.
         combInfo = dict(rootInfo.items() + amiInfo.items())
+        combInfo['sampleType'] = sampleType
 
         # If there are mismatches in the nEvents set the color to red. White otherwise.
         color = validColor(combInfo)
         combInfo["color"] = color
 
+        # If there was a mismatch, put an error message in a dict to email later.
+        if color == "red":
+            if not errorSamples[sampleType]: errorSamples[sampleType] = []
+            errorSamples[sampleType].append("NEvents mismatch")
+
+        # email when done
+        makeEmail(args, errorSamples)
         # Append the dictionary to a list of samples
         jsonOutput.append(combInfo)
     pass ## end sample loop
@@ -213,6 +239,7 @@ if __name__=="__main__":
         args.v = True
 
     # setup a few directories, global vars etc...
+    args.email = "rob.fletcher@cern.ch" #email this address when done.
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
         raise IOError("eos does not appear to be mounted. Did you run the setup script? (souce setup.sh)")
