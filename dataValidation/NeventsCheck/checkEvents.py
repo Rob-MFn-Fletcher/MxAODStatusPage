@@ -60,13 +60,14 @@ def getROOTInfo(sample):
     rootEvents['NevtsPassedPreCutflowMxAOD'] = 0  # Ambiguity cut in the cutflow
 
     rfile = TFile(sample)
-    # loop over everything in the file and get cutflow hitos
+    # loop over everything in the file and get cutflow histos
     for key in rfile.GetListOfKeys():
         name = key.GetName()
         if not "CutFlow" in name: continue #skip things that are not a cutflow histo
         if ("Dalitz" in name or "weighted" in name): continue #skip the Dalitz and weighted histos
         hist = key.ReadObj()
         # Get events from the Cutflow histogram and add them to the totals.
+        # Adding to the totals are for data where there are histos for each run in one file.
         rootEvents['AOD_Bookkeeper'] += hist.GetBinContent(1)
         rootEvents['DxAOD_Bookkeeper'] += hist.GetBinContent(2)
         rootEvents['NevtsRunOverMxAOD'] += hist.GetBinContent(3)
@@ -84,12 +85,20 @@ def validColor(combInfo):
     """Compare the appropriate events numbers and return a color code.
 
     Compare event numbers from AMI and the MxAOD. Returns a color (e.g. "red")
-    that will be used to color the row on the website. The color will be determined
+    and an error string that will be used to color the row on the website. The color will be determined
     by the result of the comparison of event numbers between AMI and ROOT files.
 
     """
     colorCode = ""
-    return colorCode
+    error = ""
+    if not (DAOD_AMI == nEventsRunOverMxAOD): colorCode = "red"
+    if DAOD_AMI > nEventsRunOverMxAOD:
+        colorCode = "red"
+        error = "Sample missing events in MxAOD"
+    if not (nEventsPreSelMxAOD == nEventsIsPassedPre):
+        colorCode = "red"
+        error = "Cutflow histogram preselection and IsPassedPreselection flags dissagree."
+    return colorCode, error
 
 def readInputFile(inFile):
     """Read the input file in and parse the text as a dictionary.
@@ -112,7 +121,7 @@ def readInputFile(inFile):
     return inputFiles
 
 def makeEmail(args, errorSamples):
-    """Make an email message and send it using the sendmail module
+    """Make an email message and send it using the sendEmail.py module in this directory.
 
     Expects a dictionary with samples as keys and a list of errors as
     values. Loop over samples and add the errors to the message then send.
@@ -135,6 +144,9 @@ def runMC(args):
     two different funtions are used. This one runs over MC. It gets all samples
     from the mc* folder, calls functions to get root and AMI data then writes to
     a file.
+
+    TODO: Handle the cases where the sample name is actually a directory with
+    multiple root files in it.
     """
     errorSamples = {} # keep track of samples with mismatches or errors
     jsonOutput = [] # Final Json output file.
@@ -169,14 +181,14 @@ def runMC(args):
         # Deal with the dirs of root files later. Skip for now.
         if sample in mxaod_multi_samples: continue
 
+        # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
+        # will return 'Sherpa_ADDyy_MS3500_1800M'
         sampleType = re.search('mc.*\.(.*)\.MxAOD.*').group(1) #The short name of the sample
         # If we used the test arg, only run over that sample
         if args.t and not (args.t == sampleType): continue
 
         rootInfo = getROOTInfo(sample)
 
-        # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
-        # will return 'Sherpa_ADDyy_MS3500_1800M'
         amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
 
         # Combine these dictionaries into a single dictionary to write out.
@@ -184,13 +196,14 @@ def runMC(args):
         combInfo['sampleType'] = sampleType
 
         # If there are mismatches in the nEvents set the color to red. White otherwise.
-        color = validColor(combInfo)
+        # Also returns error string to explain which thing failed.
+        color, error = validColor(combInfo)
         combInfo["color"] = color
 
         # If there was a mismatch, put an error message in a dict to email later.
         if color == "red":
             if not errorSamples[sampleType]: errorSamples[sampleType] = []
-            errorSamples[sampleType].append("NEvents mismatch")
+            errorSamples[sampleType].append(error)
 
         # email when done
         makeEmail(args, errorSamples)
@@ -199,7 +212,7 @@ def runMC(args):
     pass ## end sample loop
 
     #Output to file for use on website.
-    with open("../data/%s/ValidationTable_MC.txt".format(args.htag)) as outfile:
+    with open("../data/%s/ValidationTable_MC.json".format(args.htag)) as outfile:
         json.dump(jsonOutput, outfile, indent=2)
 
     ### End runMC() function
@@ -211,6 +224,7 @@ def runData(args):
     /runs folder inside each of those. This is differnt than what MC looks like so
     we need a different function. For the most part this is the same as the runMC() function.
     """
+    print "Run Data not yet implemented. Skipping."
     pass
 
 
@@ -239,7 +253,7 @@ if __name__=="__main__":
         args.v = True
 
     # setup a few directories, global vars etc...
-    args.email = "rob.fletcher@cern.ch" #email this address when done.
+    args.email = "rob.fletcher@cern.ch" #email this address when done. Can be a list.
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
         raise IOError("eos does not appear to be mounted. Did you run the setup script? (souce setup.sh)")
