@@ -241,7 +241,7 @@ def validHTag(htag):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("htag", type=validHTag, help="The htag to run over")
-    parser.add_argument("input", required=True, help="Input file to use. These are in the same format as the MxAOD sample input files.")
+    parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
     parser.add_argument("-v", action='store_true', help="More verbose output.")
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
