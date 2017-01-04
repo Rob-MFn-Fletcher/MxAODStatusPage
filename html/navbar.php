@@ -1,5 +1,5 @@
 <h1><img src="/atlas-hgamma/img/higgs.png" style="width:35px;height:35px;"> HGam MxAOD Status <img src="/atlas-hgamma/img/higgs.png" style="width:35px;height:35px;"> </h1>
-<ul>
+<ul class="menu">
   <li><a class="active" href="/atlas-hgamma/mainPage.php?h=<?php
       include('vars.php');
       $dir = $base . "/variables/htags/";

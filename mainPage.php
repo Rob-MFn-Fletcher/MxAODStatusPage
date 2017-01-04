@@ -21,9 +21,9 @@
 
         <?php
             if ($currHtag == "h014"){
-                echo "<p><a href=\"dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>\">Data Validation</a><p>";
+                echo "<p><a href=\"dataValidation/sampleValidation.php?&h=$currHtag\">Data Validation</a><p>";
             } else {
-                echo "<p><a href=\"dataValidation/old.sampleValidation.php?&h=<?php echo $currHtag;  ?>\">Data Validation</a><p>";
+                echo "<p><a href=\"dataValidation/old.sampleValidation.php?&h=$currHtag\">Data Validation</a><p>";
             }
         ?>
 

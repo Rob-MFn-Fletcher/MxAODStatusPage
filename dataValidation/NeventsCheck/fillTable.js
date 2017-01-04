@@ -5,9 +5,10 @@ function fillTable(data, tableID){
     header += "</tr></thead>";
     $(tableID).append(header);
     $(tableID).append("<tbody>");
-
-    for (var sample in data){
-        var colorClass = "";
+    
+    for (var entry in data){
+        var sample = data[entry];
+        var colorClass = "default";
         if (sample['color'] === "red"){
             colorClass = "danger";
         }
@@ -28,8 +29,9 @@ function fillTable(data, tableID){
 
 }
 $(document).ready(function(e){
-    var htag = "<?php echo $currHtag; ?>";
-    $.getJSON("../data/"+htag+"/ValidationTable_MC.json", function(result){
+    //var htag = <?php echo $currHtag; ?>;
+    console.log(htag);
+    $.getJSON("data/"+htag+"/ValidationTable_MC.json", function(result){
         fillTable(result, "#mc-table");
     });
     //$.getJSON("../data/"+htag+"/ValidationTable_Data.json", function(result){
