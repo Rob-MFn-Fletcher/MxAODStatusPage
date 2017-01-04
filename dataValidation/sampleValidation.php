@@ -30,15 +30,58 @@ Author: Rob Fletcher
 <?php
   include("../html/vars.php");
 ?>
+
 <div id="data-container">
     <h2>Data</h2>
-
+    <div id="data-table-container">
+        <table class="table table-hover" id="data-table" >
+        </table>
+    </div>
+    <div id="data-missing-samples" class="col-sm-6">
+        <div id="data-missing-samples-content">
+        <h3> Missing data Samples </h3>
+        </div>
+    </div>
+    <div id="data-missing-input" class="col-sm-6">
+        <div id="data-missing-input-content">
+        <h3> Missing input</h3>
+        </div>
+    </div>
 </div>
+
+<div class="data-container">
+    <h2>Data</h2>
+    <div class="data-table-container">
+        <table class="table table-hover data-table" >
+        </table>
+    </div>
+    <div id="data-missing-samples" class="col-sm-6 data-missing-samples">
+        <div class="data-missing-samples-content">
+        <h3> Missing data Samples </h3>
+        </div>
+    </div>
+    <div id="data-missing-input" class="col-sm-6 data-missing-input">
+        <div id="data-missing-input-content">
+        <h3> Missing input</h3>
+        </div>
+    </div>
+</div>
+
 <div id="mc-container">
     <h2>MC</h2>
-    <div id="mc">
+    <div id="mc-table-container">
         <table class="table table-hover" id="mc-table" >
         </table>
+    </div>
+    <div id="mc-missing-samples" class="col-sm-6">
+        <div id="mc-missing-samples-content">
+        <h3> Missing MC Samples </h3>
+        </div>
+    </div>
+    <div id="mc-missing-input" class="col-sm-6">
+        <div id="mc-missing-input-content">
+        <h3> Missing input</h3>
+        </div>
     </div>
 </div>
 
