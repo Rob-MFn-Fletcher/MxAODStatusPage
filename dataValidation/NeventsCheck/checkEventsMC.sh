@@ -72,7 +72,7 @@ for sample in ${Samples[@]}; do
 
   # If the sample type is already in the output then dont re-run
   check=$(cat $columnizedOutput | grep "$sampleType")
-  [[ ! -z "$check" ]] && echo "Sample $sampleType already exists in output. Skipping..." && continue 
+  [[ ! -z "$check" ]] && [[ -z "$testFile" ]] && echo "Sample $sampleType already exists in output. Skipping..." && continue 
 
   [[ ! -z "$(eos ls $datasetDir/$htagNew/$DIR/$sample 2>/dev/null)"  ]] && filePath="$EOSMOUNTDIR/$datasetDir/$htagNew/$DIR/$sample" && sampleDir=$DIR
   # If you provide a test sample name then only run over that one sample
@@ -81,9 +81,11 @@ for sample in ${Samples[@]}; do
         continue
     fi
   fi
+  #echo "Running over sample: $sampleType"
+  [[ "$sampleType" == "Pythia8_2DP20_Mass_5000_inf" ]] && echo "Skipping that one bad file" && continue
      
 
-  MxAODparentName=$(cat $dataList | grep "$sampleType\ " | awk '{print $2}')
+  MxAODparentName=$(cat $dataList | grep -v "^#" | grep "$sampleType\ " | awk '{print $2}')
   MxAODparentName=${MxAODparentName%?}
   MxAODparentName=${MxAODparentName#*:}
   #[[ -z "$MxAODparentName" ]] && echo no Parent for $sampleType in mc.txt file $mcList, going on... | tee -a ../data/${htagNew}/temp.out  && continue
@@ -91,15 +93,19 @@ for sample in ${Samples[@]}; do
   if [[ "$MxAODparentName" =~ DAOD_HIGG1D1 ]]; then 
     DxAODname=${MxAODparentName}
     
-    nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" | grep ' DAOD_HIGG1D1' | awk '{if ($6=='0') print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
+    #echo "Running ami command..."
+    nEventsDxAOD_AMI=$(ami show dataset prov "$DxAODname" 2>>err.log | grep ' DAOD_HIGG1D1' | awk '{if ($6=='0') print $8}' ) # | grep -m 1 ' DAOD_HIGG1D1' | awk '{print $8}')
     #echo "got AMI DAOD"
     #echo echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" '|' root -l $filePath '2>>err.log'
+    #echo "Running first ROOT command..."
     nEventsDxAOD_Bookkeeper=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(2)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     
     nEventsDxAOD_Bookkeeper=$(printf '%.0f' $nEventsDxAOD_Bookkeeper)
     #echo got BK DAOD
 
-    nEventsAOD_AMI=$(ami show dataset prov $DxAODname | grep ' AOD ' | awk '{print $8}' | head -n 1)
+    #echo "Running second ami command..."
+    echo "ami show dataset prov $DxAODname "
+    nEventsAOD_AMI=$(ami show dataset prov "$DxAODname" 2>>err.log | grep ' AOD ' | awk '{print $8}' | head -n 1)
     #echo got AOD MI
     nEventsAOD_Bookkeeper=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent(1)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsAOD_Bookkeeper=$(printf '%.0f' $nEventsAOD_Bookkeeper)
@@ -109,9 +115,12 @@ for sample in ${Samples[@]}; do
     nEventsRunOverMxAOD=$(printf '%.0f' $nEventsRunOverMxAOD) # answer is in scientific notation, fix that!
     #echo got NERO MxAOD
 
+    #echo "Getting info from collectionTree..."
+    #echo "Command: echo \"CollectionTree->GetEntries(\"HGamEventInfoAuxDyn.isPassedBasic && HGamEventInfoAuxDyn.isPassedPreselection\")\" | root -l $filePath"
     nEventsIsPassedPre=$(echo "CollectionTree->GetEntries(\"HGamEventInfoAuxDyn.isPassedBasic && HGamEventInfoAuxDyn.isPassedPreselection\")" | root -l $filePath 2>>err.log | grep Long | sed 's/^(.*)//g')
     #echo got NEIPP
 
+    #echo "Getting final root things..."
     nEventsPreSelMxAOD=$(echo "((TH1F *)_file0->Get(\"CutFlow_${sampleType}\"))->GetBinContent($PRESELECTION_NUM)" | root -l $filePath 2>>err.log |  grep "Double" | awk '{print $2}' )
     nEventsPreSelMxAOD=$(printf '%.0f' $nEventsPreSelMxAOD)
     #echo got NEPSM 
@@ -120,14 +129,22 @@ for sample in ${Samples[@]}; do
     [[ "$nEventsDxAOD_AMI" -gt "$nEventsRunOverMxAOD"  ]] && extra='!!!!' && echo ${sample} >> $samplesMissingEventsOutput
     [[ ! "$nEventsPreSelMxAOD" -eq "${nEventsIsPassedPre}" ]] && extra='!!!!'
     
+    #echo "Printing results..."
     #echo ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $uncolumnizedOutput
     printf '%-36s %-9s %-16s %-10s %-17s %-19s %-28s %-12s\n' ${sampleType} $nEventsAOD_AMI $nEventsAOD_Bookkeeper $nEventsDxAOD_AMI $nEventsDxAOD_Bookkeeper ${nEventsRunOverMxAOD} $nEventsPreSelMxAOD ${nEventsIsPassedPre}$extra | tee -a $columnizedOutput
     if [[ ! -z "$extra" ]]; then
-      echo "EOSMOUNTDIR: $EOSMOUNTDIR"
-      echo "datasetDir: $datasetDir"
-      echo "DIR: $DIR"
-      echo "Sample: $sample"
-      echo "File path is: $filePath"
+      echo "  !!!!EOSMOUNTDIR: $EOSMOUNTDIR"
+      echo "  !!!!datasetDir: $datasetDir"
+      echo "  !!!!DIR: $DIR"
+      echo "  !!!!Sample: $sample"
+      echo "  !!!!File path is: $filePath"
+      echo "  --nEventsAOD_AMI: $nEventsAOD_AMI"
+      echo "  --nEventsAOD_Bkr: $nEventsAOD_Bookkeeper"
+      echo "  --nEventsDxAOD_AMI: $nEventsDxAOD_AMI"
+      echo "  --nEventsDxAOD_Bookkeeper: $nEventsDxAOD_Bookkeeper"
+      echo "  --nEventsRunOverMxAOD: $nEventsRunOverMxAOD"
+      echo "  --nEventsPreSelMxAOD: $nEventsPreSelMxAOD"
+      echo "  --nEventsIsPassedPre: $nEventsIsPassedPre"
     fi
     elif [[ "$MxAODparentName" =~ \.AOD\. ]]; then  
     AODname=$MxAODparentName

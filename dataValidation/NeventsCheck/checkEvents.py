@@ -28,18 +28,19 @@ def getAMIProv(sample):
     """
     amiEvents = {}
     # Get the provenance from AMI
-    sample.rstrip('/') #
+    sample = sample.rstrip('/') #Remove any trailing slashes
+    sample = sample.split(':',1)[-1] # Remove anything before a ':' if its there.
     prov = AtlasAPI.get_dataset_prov(client, sample)
     # Loop over all of the datasets in the provenance
     for dataset in prov['node']:
         # Get nevents from the AOD that this sample was produced from
         if dataset['dataType'] == 'AOD':
-            if dataset['distance'] == -1: # The file imediately before the derivation
-                amiEvents['AOD_AMI'] = dataset['events']
+            if dataset['distance'] == '-1': # The file imediately before the derivation
+                amiEvents['AOD_AMI'] = int(dataset['events'])
         # Get the nEvents from the derivation sample.
         if dataset['dataType'] == 'DAOD_HIGG1D1':
-            if dataset['distance'] == 0: # The actual sample. Any higher numbers are files made from this one.
-                amiEvents['DAOD_AMI'] = dataset['events']
+            if dataset['distance'] == '0': # The actual sample. Any higher numbers are files made from this one.
+                amiEvents['DAOD_AMI'] = int(dataset['events'])
 
     return amiEvents
 
@@ -68,16 +69,16 @@ def getROOTInfo(sample):
         hist = key.ReadObj()
         # Get events from the Cutflow histogram and add them to the totals.
         # Adding to the totals are for data where there are histos for each run in one file.
-        rootEvents['AOD_Bookkeeper'] += hist.GetBinContent(1)
-        rootEvents['DxAOD_Bookkeeper'] += hist.GetBinContent(2)
-        rootEvents['NevtsRunOverMxAOD'] += hist.GetBinContent(3)
+        rootEvents['AOD_Bookkeeper'] += int(hist.GetBinContent(1))
+        rootEvents['DxAOD_Bookkeeper'] += int(hist.GetBinContent(2))
+        rootEvents['NevtsRunOverMxAOD'] += int(hist.GetBinContent(3))
         # Preselection events from the cutflow histogram.
-        rootEvents['NevtsPassedPreCutflowMxAOD'] += hist.GetBinContent(10) # Ambiguity cut in the cutflow
+        rootEvents['NevtsPassedPreCutflowMxAOD'] += int(hist.GetBinContent(10)) # Ambiguity cut in the cutflow
 
     # Now get the preselection events from the flags in the tree.
     tree = rfile.Get("CollectionTree")
     nEvtsPre = tree.GetEntries("HGamEventInfoAuxDyn.isPassedBasic && HGamEventInfoAuxDyn.isPassedPreselection")
-    rootEvents['NevtsIsPassedPreFlagMxAOD'] = nEvtsPre
+    rootEvents['NevtsIsPassedPreFlagMxAOD'] = int(nEvtsPre)
 
     return rootEvents
 
@@ -91,14 +92,20 @@ def validColor(combInfo):
     """
     colorCode = ""
     error = ""
-    if not (DAOD_AMI == nEventsRunOverMxAOD): colorCode = "red"
-    if DAOD_AMI > nEventsRunOverMxAOD:
+    try:
+        if not (combInfo['DAOD_AMI'] == combInfo['NevtsRunOverMxAOD']): colorCode = "red"
+        if combInfo['DAOD_AMI'] > combInfo['NevtsRunOverMxAOD']:
+            colorCode = "red"
+            error = "Sample missing events in MxAOD"
+        if not (combInfo['NevtsPassedPreCutflowMxAOD'] == combInfo['NevtsIsPassedPreFlagMxAOD']):
+            colorCode = "red"
+            error = "Cutflow histogram preselection and IsPassedPreselection flags dissagree."
+    except:
         colorCode = "red"
-        error = "Sample missing events in MxAOD"
-    if not (nEventsPreSelMxAOD == nEventsIsPassedPre):
-        colorCode = "red"
-        error = "Cutflow histogram preselection and IsPassedPreselection flags dissagree."
+        error = "Entries missing in combined info."
+
     return colorCode, error
+
 
 def readInputFile(inFile):
     """Read the input file in and parse the text as a dictionary.
@@ -110,11 +117,12 @@ def readInputFile(inFile):
     """
     inputFiles = {}
     if not os.path.isfile(inFile):
-        print "Input file, %s does not exist".format(inFile)
+        print "Input file, {0} does not exist".format(inFile)
         raise
     with open(inFile) as f:
         for line in f:
             if line.startswith('#'): continue #Skip comment lines
+            if not line.strip(): continue #Skip empty lines
             (sample, DSname) = line.split()
             inputFiles[sample] = DSname
 
@@ -131,9 +139,9 @@ def makeEmail(args, errorSamples):
     message = "Data Validation Script Completed. Results below:\n"
     if not errorSamples: message += "No Errors detected!\n"
     for sample in errorSamples:
-        message += "Errors for sample %s:\n".format(sample)
+        message += "\nErrors for sample {0}:\n".format(sample)
         for error in errorSamples[sample]:
-            message += "    -- %s".format(error)
+            message += "    -- {0}\n".format(error)
 
     sendEmail(addrs, subject, message)
 
@@ -154,16 +162,17 @@ def runMC(args):
     # Make the htag directory to hold the output.
     outHtagDir = "../data/"+args.htag
     if not os.path.exists(outHtagDir):
+        if args.v: print "Output dir does not exist. Creating."
         os.makedirs(outHtagDir)
 
-    if agrs.v: print "Out directory:",outHtagDir
+    if args.v: print "Out directory:",outHtagDir
 
     # Get the dictionary made from the input file
     inputMC = readInputFile(args.inputMC)
 
     # Get a list of all directories that start with mc. This should only return one.
     # NOTE: glob returns full file paths!! e.g. for h014 this command returns:  ['./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/h014/mc15c/']
-    mxoadSamplesDir = glob(args.datasetDir+args.htag+'/mc*/')
+    mxaodSamplesDir = glob(args.datasetDir+args.htag+'/mc*/')
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
@@ -179,17 +188,23 @@ def runMC(args):
     #loop over samples and get information
     for sample in mxaodSamples:
         # Deal with the dirs of root files later. Skip for now.
-        if sample in mxaod_multi_samples: continue
+        if os.path.isdir(sample): continue 
 
         # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
         # will return 'Sherpa_ADDyy_MS3500_1800M'
-        sampleType = re.search('mc.*\.(.*)\.MxAOD.*').group(1) #The short name of the sample
+        sampleType = re.search('mc.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
+        if args.v: print "===>",sampleType
         # If we used the test arg, only run over that sample
-        if args.t and not (args.t == sampleType): continue
+        if args.test_sample and not (args.test_sample == sampleType): continue
 
         rootInfo = getROOTInfo(sample)
 
-        amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
+        amiInfo = {}
+        if sampleType in inputMC:
+            amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
+        else:
+            if not sampleType in errorSamples: errorSamples[sampleType] = []
+            errorSamples[sampleType].append("Sample missing from the input file.")
 
         # Combine these dictionaries into a single dictionary to write out.
         combInfo = dict(rootInfo.items() + amiInfo.items())
@@ -202,17 +217,20 @@ def runMC(args):
 
         # If there was a mismatch, put an error message in a dict to email later.
         if color == "red":
-            if not errorSamples[sampleType]: errorSamples[sampleType] = []
+            if not sampleType in errorSamples: errorSamples[sampleType] = []
             errorSamples[sampleType].append(error)
+            if args.v: print "   ---Error:",error
 
-        # email when done
-        makeEmail(args, errorSamples)
         # Append the dictionary to a list of samples
         jsonOutput.append(combInfo)
     pass ## end sample loop
 
+    # email when done
+    makeEmail(args, errorSamples)
+    with open("../data/{0}/errors_MC.json".format(args.htag),'w') as errfile:
+        json.dump(errorSamples, errfile, indent=2)
     #Output to file for use on website.
-    with open("../data/%s/ValidationTable_MC.json".format(args.htag)) as outfile:
+    with open("../data/{0}/ValidationTable_MC.json".format(args.htag),'w') as outfile:
         json.dump(jsonOutput, outfile, indent=2)
 
     ### End runMC() function
@@ -241,7 +259,7 @@ def validHTag(htag):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("htag", type=validHTag, help="The htag to run over")
-    parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
+    #parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
     parser.add_argument("-v", action='store_true', help="More verbose output.")
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
@@ -249,11 +267,11 @@ if __name__=="__main__":
 
     args = parser.parse_args()
     # set debug to true if t or v are are set. Check debug variable before verbose output.
-    if args.t:
+    if args.test_sample:
         args.v = True
 
     # setup a few directories, global vars etc...
-    args.email = "rob.fletcher@cern.ch" #email this address when done. Can be a list.
+    args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
         raise IOError("eos does not appear to be mounted. Did you run the setup script? (souce setup.sh)")
@@ -266,17 +284,19 @@ if __name__=="__main__":
 
     # Check and get the appropriate input files. If the files do not exist raise an error.
     if args.mc:
-        args.inputMC = glob("InputFiles/mc_%s.txt".format(args.htag))
-        if not args.inputMC:
-            print "MC input file does not exist. Input needs to be at './InputFiles/mc_%s.txt'".format(htag)
+        try:
+            args.inputMC = glob("./InputFiles/mc_{0}.txt".format(args.htag))[0]
+        except:
+            print "MC input file does not exist. Input needs to be at './InputFiles/mc_{0}.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."
-            raise
+            raise Exception("Input file error.")
     if args.data:
-        args.inputData = glob("InputFiles/data_%s.txt".format(htag))
-        if not args.inputMC:
-            print "Data input file does not exist. Input needs to be at './InputFiles/data_%s.txt'".format(htag)
+        try:
+            args.inputData = glob("./InputFiles/data_{0}.txt".format(args.htag))[0]
+        except:
+            print "Data input file does not exist. Input needs to be at './InputFiles/data_{0}.txt'".format(htag)
             print "If you didnt want to run over Data use the --mc option."
-            raise
+            raise Exception("Input file error.")
 
     #Run the samples that have args set to true.
     if args.mc:
