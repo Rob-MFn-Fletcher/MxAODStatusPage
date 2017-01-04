@@ -14,9 +14,10 @@ Author: Rob Fletcher
       </style>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script
-          src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+          src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
           integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
           crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
       <!-- Optional theme -->
@@ -42,32 +43,32 @@ Author: Rob Fletcher
 
 <div id="tabs">
     <ul>
-        <li><a href="data15-container">Data15</a></li>
-        <li><a href="data16-container">Data16</a></li>
-        <li><a href="mc-container">MC</a></li>
+        <li><a href="#data15-container">Data15</a></li>
+        <li><a href="#data16-container">Data16</a></li>
+        <li><a href="#mc-container">MC</a></li>
     </ul>
     <div id="data15-container">
-        <h2>Data</h2>
+        <h2>Data15</h2>
         <div id="data-table-container">
-            <table class="table table-hover" id="data-table" >
+            <table class="table table-hover" id="data15-table" >
             </table>
         </div>
-        <div id="data-missing-samples" class="col-sm-6">
-            <div id="data-missing-samples-content">
-            <h3> Missing data Samples </h3>
+        <div class="col-sm-6 data-missing-samples">
+            <div class="data-missing-samples-content">
+            <h3> Missing Data Samples </h3>
             </div>
         </div>
-        <div id="data-missing-input" class="col-sm-6">
-            <div id="data-missing-input-content">
+        <div class="col-sm-6 data-missing-input">
+            <div class="data-missing-input-content">
             <h3> Missing input</h3>
             </div>
         </div>
     </div>
 
     <div id="data16-container">
-        <h2>Data</h2>
+        <h2>Data16</h2>
         <div class="data-table-container">
-            <table class="table table-hover data-table" >
+            <table class="table table-hover data16-table" >
             </table>
         </div>
         <div class="col-sm-6 data-missing-samples">
@@ -76,7 +77,7 @@ Author: Rob Fletcher
             </div>
         </div>
         <div class="col-sm-6 data-missing-input">
-            <div id="data-missing-input-content">
+            <div class="data-missing-input-content">
             <h3> Missing input</h3>
             </div>
         </div>

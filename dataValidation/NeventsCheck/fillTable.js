@@ -1,7 +1,7 @@
 
 function fillTable(data, tableID){
     var header = '<thead><tr>';
-    header += '<th class="col-sm-3">Sample</th> <th class="col-sm-1">AOD AMI</th> <th class="col-sm-1">AOD Bookkeeper</th> <th class="col-sm-1">DAOD AMI</th> <th class="col-sm-1">DAOD Bookkeeper</th> <th class="col-sm-1">Evts Run MxAOD</th> <th class="col-sm-1">Pass Pre Cutflow MxAOD</th> <th class="col-sm-1">IsPassedPre Flag MxAOD</th>';
+    header += '<th class="col-sm-3">Sample/Run Number</th> <th class="col-sm-1">AOD AMI</th> <th class="col-sm-1">AOD Bookkeeper</th> <th class="col-sm-1">DAOD AMI</th> <th class="col-sm-1">DAOD Bookkeeper</th> <th class="col-sm-1">Evts Run MxAOD</th> <th class="col-sm-1">Pass Pre Cutflow MxAOD</th> <th class="col-sm-1">IsPassedPre Flag MxAOD</th>';
     header += '</tr></thead>';
     $(tableID).append(header);
     $(tableID).append('<tbody>');

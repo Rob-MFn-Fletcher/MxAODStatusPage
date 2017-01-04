@@ -33,6 +33,10 @@ li a:hover {
     background-color: #111;
 }
 
+#tabs {
+    height: 800px;
+}
+
 table {
     border: 1px solid black;
 }
