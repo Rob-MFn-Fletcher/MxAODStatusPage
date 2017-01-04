@@ -83,20 +83,20 @@ tr.my-danger {
     margin-right: 15px;
     padding: 15px 0px 15px 0px;
 }
-#data-table-container {
+.data-table-container {
     margin-left: 7%;
     width: 85%;
 }
 
-#data-missing-samples, #data-missing-input {
+.data-missing-samples, .data-missing-input {
     height: 50px;
     margin-bottom: 30px;
 }
-#data-missing-samples-content {
+.data-missing-samples-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }
-#data-missing-input-content {
+.data-missing-input-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }

@@ -13,12 +13,21 @@ Author: Rob Fletcher
       p {text-align:center;}
       </style>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script
+          src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+          integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+          crossorigin="anonymous"></script>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
       <!-- Optional theme -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
       <link rel="stylesheet" href="../css/mystyle.css" />
+      <script type="text/javascript">
+        $(function() {
+            $("#tabs").tabs();
+        });
+      </script>
   </head>
   <body bgcolor=white>
   <?php include_once('../html/navbar.php'); $currHtag=$_GET["h"]; ?>
@@ -31,56 +40,63 @@ Author: Rob Fletcher
   include("../html/vars.php");
 ?>
 
-<div id="data-container">
-    <h2>Data</h2>
-    <div id="data-table-container">
-        <table class="table table-hover" id="data-table" >
-        </table>
-    </div>
-    <div id="data-missing-samples" class="col-sm-6">
-        <div id="data-missing-samples-content">
-        <h3> Missing data Samples </h3>
+<div id="tabs">
+    <ul>
+        <li><a href="data15-container">Data15</a></li>
+        <li><a href="data16-container">Data16</a></li>
+        <li><a href="mc-container">MC</a></li>
+    </ul>
+    <div id="data15-container">
+        <h2>Data</h2>
+        <div id="data-table-container">
+            <table class="table table-hover" id="data-table" >
+            </table>
+        </div>
+        <div id="data-missing-samples" class="col-sm-6">
+            <div id="data-missing-samples-content">
+            <h3> Missing data Samples </h3>
+            </div>
+        </div>
+        <div id="data-missing-input" class="col-sm-6">
+            <div id="data-missing-input-content">
+            <h3> Missing input</h3>
+            </div>
         </div>
     </div>
-    <div id="data-missing-input" class="col-sm-6">
-        <div id="data-missing-input-content">
-        <h3> Missing input</h3>
-        </div>
-    </div>
-</div>
 
-<div class="data-container">
-    <h2>Data</h2>
-    <div class="data-table-container">
-        <table class="table table-hover data-table" >
-        </table>
-    </div>
-    <div id="data-missing-samples" class="col-sm-6 data-missing-samples">
-        <div class="data-missing-samples-content">
-        <h3> Missing data Samples </h3>
+    <div id="data16-container">
+        <h2>Data</h2>
+        <div class="data-table-container">
+            <table class="table table-hover data-table" >
+            </table>
+        </div>
+        <div class="col-sm-6 data-missing-samples">
+            <div class="data-missing-samples-content">
+            <h3> Missing data Samples </h3>
+            </div>
+        </div>
+        <div class="col-sm-6 data-missing-input">
+            <div id="data-missing-input-content">
+            <h3> Missing input</h3>
+            </div>
         </div>
     </div>
-    <div id="data-missing-input" class="col-sm-6 data-missing-input">
-        <div id="data-missing-input-content">
-        <h3> Missing input</h3>
-        </div>
-    </div>
-</div>
 
-<div id="mc-container">
-    <h2>MC</h2>
-    <div id="mc-table-container">
-        <table class="table table-hover" id="mc-table" >
-        </table>
-    </div>
-    <div id="mc-missing-samples" class="col-sm-6">
-        <div id="mc-missing-samples-content">
-        <h3> Missing MC Samples </h3>
+    <div id="mc-container">
+        <h2>MC</h2>
+        <div id="mc-table-container">
+            <table class="table table-hover" id="mc-table" >
+            </table>
         </div>
-    </div>
-    <div id="mc-missing-input" class="col-sm-6">
-        <div id="mc-missing-input-content">
-        <h3> Missing input</h3>
+        <div id="mc-missing-samples" class="col-sm-6">
+            <div id="mc-missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div id="mc-missing-input" class="col-sm-6">
+            <div id="mc-missing-input-content">
+            <h3> Missing input</h3>
+            </div>
         </div>
     </div>
 </div>
