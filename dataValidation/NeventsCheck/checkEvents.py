@@ -6,7 +6,7 @@ from ROOT import TFile,TH1,TTree
 import pyAMI.client
 import pyAMI.atlas.api as AtlasAPI
 from sendEmail import sendEmail
-import json, os, re
+import json, os, re, time
 from glob import glob
 
 # Setup a few things that we only want to initialize once.
@@ -257,6 +257,7 @@ def validHTag(htag):
 
 
 if __name__=="__main__":
+    startTime = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("htag", type=validHTag, help="The htag to run over")
     #parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
@@ -303,3 +304,5 @@ if __name__=="__main__":
         runMC(args)
     if args.data:
         runData(args)
+    endTime = time.time()
+    print "checkEvents.py -- Run Time: ", (endTime - startTime)
