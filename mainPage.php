@@ -15,11 +15,17 @@
         <link rel="stylesheet" href="css/mystyle.css" />
     </head>
     <body bgcolor=white>
-        <?php include_once('html/navbar.php'); ?> 
+        <?php include_once('html/navbar.php'); ?>
 
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
-        <p><a href="dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>">Data Validation</a><p>
+        <?php
+            if ($currHtag == "h014"){
+                echo "<p><a href=\"dataValidation/sampleValidation.php?&h=<?php echo $currHtag;  ?>\">Data Validation</a><p>";
+            } else {
+                echo "<p><a href=\"dataValidation/old.sampleValidation.php?&h=<?php echo $currHtag;  ?>\">Data Validation</a><p>";
+            }
+        ?>
 
         <form>Search for your sample (click sample for specific sample page):
         <input type="text" size="30" onkeyup="showResult(this.value, '<?php echo "$currHtag"; ?>' )">

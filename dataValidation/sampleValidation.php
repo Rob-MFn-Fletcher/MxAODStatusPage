@@ -1,7 +1,6 @@
-<!-- 
+<!--
 HGam Status Site
-Author: Tony Thompson
-i fucking hate html
+Author: Rob Fletcher
 -->
 <html>
   <html lang="en">
@@ -14,6 +13,8 @@ i fucking hate html
       p {text-align:center;}
       </style>
       <link rel="stylesheet" href="../mystyle.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
   <body bgcolor=white>
   <?php include_once('../html/navbar.php'); $currHtag=$_GET["h"]; ?>
@@ -24,48 +25,23 @@ i fucking hate html
         <li>mc15c.Sherpa_2DP20_myy_100_165_3jets.MxAODDetailed.p2666.h014.root/</li>
         <li>mc15c.Sherpa_2DP20_myy_165_200_3jets.MxAODDetailed.p2812.h014.root/</li>
     </ul>
-<h2>Data</h2>
 <?php
   include("../html/vars.php");
-  $getTableFiles="for i in  $( ls " . $base . "/dataValidation/data/". $currHtag ."/Vali*data* ); do basename ".'$i'."; done;";
-  $getMissingEventsFiles="for i in  $( ls " . $base . "/dataValidation/data/". $currHtag ."/samplesMissingEvents*data* ); do basename ".'$i'."; done;";
-  $getMissingParentFiles="for i in  $( ls " . $base . "/dataValidation/data/". $currHtag ."/samplesMissingParents*data* ); do basename ".'$i'."; done;";
-  
-  $tableFiles=shell_exec($getTableFiles);
-  $tablesArray=explode("\n", $tableFiles);
-
-  $missingEventsFiles=shell_exec($getMissingEventsFiles);
-  $missingEventsArray=explode("\n",$missingEventsFiles);
-
-  $missingParentsFiles=shell_exec($getMissingParentFiles);
-  $missingParentsArray=explode("\n",$missingParentsFiles);
-  if (count($tablesArray) -1 == 0) {
-    echo "<p1>no data for this release</p1>";
-  }
-  else {
-    for($i=0; $i<(count($tablesArray) -1); $i++) {
-      echo "<object width=\"1320\" height=\"500\" type=\"text/plain\" data=\"" . $baseRel . "/dataValidation/data/". $currHtag ."/" . $tablesArray[$i] . "\"  border=\"0\"></object>";
-      echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/'. $missingEventsArray[$i]  .'" border="0"></object>'; 
-      echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/'. $missingParentsArray[$i]  .'" border="0"></object>'; 
-    }
-    echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/MissingSamples_data.txt" border="0"></object>';
-  }
-  echo '<h2>MC</h2>';
-  $getFilesCommand="basename $(ls " . $base . "/dataValidation/data/". $currHtag ."/Vali*MC* )";
-  $file=shell_exec($getFilesCommand);
-
-  if ($file == ""){
-    echo "<p1>no data for this release</p2>";
-  }
-  else {
-    echo "<object width=\"1320\" height=\"600\" type=\"text/plain\" data=\"" . $baseRel . "/dataValidation/data/". $currHtag."/" . $file . "\"  border=\"0\"></object>";
-    echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/MissingSamples_MC.txt" border="0"></object>';
-    echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/samplesMissingEvents_MC.txt" border="0"></object>';
-    echo '<object width="484" height="300" type="text/plain" data="data/'. $currHtag .'/samplesMissingParents_MC.txt" border="0"></object>';
-  }
-
 ?>
+<div id="data-container">
+    <h2>Data</h2>
 
+</div>
+<div id="mc-container">
+    <h2>MC</h2>
+    <div id="mc">
+        <table class="table table-hover" id="mc-table">
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="fillTable.js"></script>
 
 
   </body>
