@@ -249,7 +249,7 @@ def runData(args):
 
     for dataDir in mxaodSamplesDir:
 
-        if args.v: print "Running over data directory:", dataDir.split('/')[-1]
+        if args.v: print "Running over data directory:", dataDir.split('/')[-2]
         mxaodSamples = glob(dataDir+'/runs/*.root')
         # Some things in here can be directories containing multiple root files. Get a list of these.
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
@@ -261,9 +261,9 @@ def runData(args):
 
             # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
             # will return 'Sherpa_ADDyy_MS3500_1800M'
-            sampleType = re.search('data.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
+            sampleType = re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',sample).group(1) #The short name of the sample
             if args.v: print "===>",sampleType
-            return
+            break
             # If we used the test arg, only run over that sample
             if args.test_sample and not (args.test_sample == sampleType): continue
 
@@ -366,4 +366,7 @@ if __name__=="__main__":
     if args.data:
         runData(args)
     endTime = time.time()
-    print "checkEvents.py -- Run Time: ", (endTime - startTime)
+    totalSeconds = endTime - startTime
+    m, s = divmod(totalSeconds, 60)
+    h, m = divmod(m, 60)
+    print "checkevents.py --- Run Time: %d:%02d:%02d" % (h, m, s)
