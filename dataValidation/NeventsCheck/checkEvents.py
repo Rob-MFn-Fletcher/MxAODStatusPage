@@ -128,15 +128,15 @@ def readInputFile(inFile):
 
     return inputFiles
 
-def makeEmail(args, errorSamples):
+def makeEmail(args,directory, errorSamples):
     """Make an email message and send it using the sendEmail.py module in this directory.
 
     Expects a dictionary with samples as keys and a list of errors as
     values. Loop over samples and add the errors to the message then send.
     """
     addrs = args.email
-    subject = "Data Validation Script Result"
-    message = "Data Validation Script Completed. Results below:\n"
+    subject = "Data Validation Script Result for "+directory
+    message = "Data Validation Script Completed for {0}. Results below:\n".format(directory)
     if not errorSamples: message += "No Errors detected!\n"
     for sample in errorSamples:
         message += "\nErrors for sample {0}:\n".format(sample)
@@ -218,7 +218,7 @@ def runMC(args):
     pass ## end sample loop
 
     # email when done
-    makeEmail(args, errorSamples)
+    makeEmail(args, "MC", errorSamples)
     with open("../data/{0}/errors_MC.json".format(args.htag),'w') as errfile:
         json.dump(errorSamples, errfile, indent=2)
     #Output to file for use on website.
@@ -233,6 +233,11 @@ def runData(args):
     For data we need to look at files inside of the folder /data15, /data16, and also the
     /runs folder inside each of those. This is differnt than what MC looks like so
     we need a different function. For the most part this is the same as the runMC() function.
+
+    NOTE: There is a lot of code duplication here. Work on combining this with runMC() into a single
+    function. Might make the code a lot more messy though since data needs to calculate totals. If
+    it would end up impacting readablility do not do it. Someone is going to have to learn this code
+    eventually.
     """
     errorSamples = {} # keep track of samples with mismatches or errors
     jsonOutput = [] # Final Json output file.
@@ -249,10 +254,14 @@ def runData(args):
 
     for dataDir in mxaodSamplesDir:
 
-        if args.v: print "Running over data directory:", dataDir.split('/')[-2]
+        dataDirName = dataDir.split('/')[-2] # data15 or data16
+        if args.v: print "Running over data directory:", dataDirName
         mxaodSamples = glob(dataDir+'/runs/*.root')
         # Some things in here can be directories containing multiple root files. Get a list of these.
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
+
+        # Add the base directory to the list of directories to run over.
+        mxaodSamples.append(glob(dataDir))
 
         #loop over samples and get information
         for sample in mxaodSamples:
@@ -270,7 +279,7 @@ def runData(args):
             rootInfo = getROOTInfo(sample)
 
             amiInfo = {}
-            if sampleType in inputMC:
+            if sampleType in inputData:
                 amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
@@ -293,7 +302,15 @@ def runData(args):
 
             # Append the dictionary to a list of samples
             jsonOutput.append(combInfo)
-        pass ## end sample loop
+            pass ## end sample loop
+
+        # email when done.
+        makeEmail(args,dataDirName, errorSamples)
+        with open("../data/{0}/errors_{1}.json".format(args.htag, dataDirName),'w') as errfile:
+            json.dump(errorSamples, errfile, indent=2)
+        #Output to file for use on website.
+        with open("../data/{0}/ValidationTable_{1}.json".format(args.htag, dataDirName),'w') as outfile:
+            json.dump(jsonOutput, outfile, indent=2)
 
         pass ## End of dataDir loop
 
