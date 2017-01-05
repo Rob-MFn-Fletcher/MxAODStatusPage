@@ -49,7 +49,7 @@ Author: Rob Fletcher
     </ul>
     <div id="data15-container">
         <h2>Data15</h2>
-        <div id="data-table-container">
+        <div class="table-container container">
             <table class="table table-hover" id="data15-table" >
             </table>
         </div>
@@ -67,8 +67,8 @@ Author: Rob Fletcher
 
     <div id="data16-container">
         <h2>Data16</h2>
-        <div class="data-table-container">
-            <table class="table table-hover data16-table" >
+        <div class="table-container container">
+            <table class="table table-hover" id="data16-table" >
             </table>
         </div>
         <div class="col-sm-6 data-missing-samples">
@@ -85,16 +85,16 @@ Author: Rob Fletcher
 
     <div id="mc-container">
         <h2>MC</h2>
-        <div id="mc-table-container">
+        <div class="table-container container">
             <table class="table table-hover" id="mc-table" >
             </table>
         </div>
-        <div id="mc-missing-samples" class="col-sm-6">
+        <div class="mc-missing-samples col-sm-6">
             <div id="mc-missing-samples-content">
             <h3> Missing MC Samples </h3>
             </div>
         </div>
-        <div id="mc-missing-input" class="col-sm-6">
+        <div class="mc-missing-input col-sm-6">
             <div id="mc-missing-input-content">
             <h3> Missing input</h3>
             </div>

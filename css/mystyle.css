@@ -39,13 +39,14 @@ li a:hover {
 
 table {
     border: 1px solid black;
+    table-layout: fixed;
 }
 table thead, table tbody {
     display: block;
 }
 
-
 table tbody {
+    display: block;
     font-size: small;
     overflow-y: auto;
     height: 400px;
@@ -53,7 +54,7 @@ table tbody {
 }
 
 table thead {
-    max-width: 95%;
+    max-width: 100%;
     text-align: center;
 }
 tr.my-danger {
@@ -65,20 +66,20 @@ tr.my-danger {
     margin-right: 15px;
     padding: 15px 0px 15px 0px;
 }
-#mc-table-container {
+.table-container {
     margin-left: 7%;
     width: 85%;
 }
 
-#mc-missing-samples, #mc-missing-input {
+.mc-missing-samples, .mc-missing-input {
     height: 50px;
     margin-bottom: 30px;
 }
-#mc-missing-samples-content {
+.mc-missing-samples-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }
-#mc-missing-input-content {
+.mc-missing-input-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }
@@ -86,10 +87,6 @@ tr.my-danger {
     margin-left: 15px;
     margin-right: 15px;
     padding: 15px 0px 15px 0px;
-}
-.data-table-container {
-    margin-left: 7%;
-    width: 85%;
 }
 
 .data-missing-samples, .data-missing-input {
