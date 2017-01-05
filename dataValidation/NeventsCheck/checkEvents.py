@@ -2,7 +2,7 @@
 
 """
 import argparse
-from ROOT import TFile,TH1,TTree
+from ROOT import TFile,TH1,TTree, gErrorIgnoreLevel, kSysError
 import pyAMI.client
 import pyAMI.atlas.api as AtlasAPI
 from sendEmail import sendEmail
@@ -248,7 +248,7 @@ def runData(args):
     # Get a list of all directories that start with data. This should return data15, data16 and data16_iTS. We dont want this last one.
     mxaodSamplesDir = glob(args.datasetDir+args.htag+'/data*/')
     for directory in mxaodSamplesDir:
-        if '_iTS' in directory: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
+        if '_' in directory.split('/')[-2]: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
@@ -261,7 +261,8 @@ def runData(args):
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
 
         # Add the base directory to the list of directories to run over.
-        mxaodSamples.append(glob(dataDir))
+        mxaodSamples.append(glob(dataDir+'*.root'))
+        print glob(dataDir+'*.root')
 
         #loop over samples and get information
         for sample in mxaodSamples:
@@ -305,7 +306,7 @@ def runData(args):
             pass ## end sample loop
 
         # email when done.
-        makeEmail(args,dataDirName, errorSamples)
+        #makeEmail(args,dataDirName, errorSamples)
         with open("../data/{0}/errors_{1}.json".format(args.htag, dataDirName),'w') as errfile:
             json.dump(errorSamples, errfile, indent=2)
         #Output to file for use on website.
@@ -332,6 +333,7 @@ if __name__=="__main__":
     parser.add_argument("htag", type=validHTag, help="The htag to run over")
     #parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
     parser.add_argument("-v", action='store_true', help="More verbose output.")
+    parser.add_argument("-q", action='store_true', help="Quiet ROOT output.")
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
     parser.add_argument("--data", action='store_true', help="Run over data samples only.")
@@ -341,6 +343,8 @@ if __name__=="__main__":
     if args.test_sample:
         args.v = True
 
+    if args.q:
+        gErrorIgnoreLevel = kSysError
     # setup a few directories, global vars etc...
     args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
