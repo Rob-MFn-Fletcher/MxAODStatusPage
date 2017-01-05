@@ -159,14 +159,6 @@ def runMC(args):
     errorSamples = {} # keep track of samples with mismatches or errors
     jsonOutput = [] # Final Json output file.
 
-    # Make the htag directory to hold the output.
-    outHtagDir = "../data/"+args.htag
-    if not os.path.exists(outHtagDir):
-        if args.v: print "Output dir does not exist. Creating."
-        os.makedirs(outHtagDir)
-
-    if args.v: print "Out directory:",outHtagDir
-
     # Get the dictionary made from the input file
     inputMC = readInputFile(args.inputMC)
 
@@ -188,7 +180,7 @@ def runMC(args):
     #loop over samples and get information
     for sample in mxaodSamples:
         # Deal with the dirs of root files later. Skip for now.
-        if os.path.isdir(sample): continue 
+        if os.path.isdir(sample): continue
 
         # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
         # will return 'Sherpa_ADDyy_MS3500_1800M'
@@ -242,8 +234,19 @@ def runData(args):
     /runs folder inside each of those. This is differnt than what MC looks like so
     we need a different function. For the most part this is the same as the runMC() function.
     """
-    print "Run Data not yet implemented. Skipping."
-    pass
+    errorSamples = {} # keep track of samples with mismatches or errors
+    jsonOutput = [] # Final Json output file.
+
+    # Get the dictionary made from the input file
+    inputData = readInputFile(args.inputData)
+
+    # Get a list of all directories that start with data. This should return data15, data16 and data16_iTS. We dont want this last one.
+    mxaodSamplesDir = glob(args.datasetDir+args.htag+'/data*/')
+    for directory in mxaodSamplesDir:
+        if '_iTS' in directory: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
+
+    if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
+    ###  End of runData() function
 
 
 def validHTag(htag):
@@ -298,6 +301,14 @@ if __name__=="__main__":
             print "Data input file does not exist. Input needs to be at './InputFiles/data_{0}.txt'".format(htag)
             print "If you didnt want to run over Data use the --mc option."
             raise Exception("Input file error.")
+
+    # Make the htag directory to hold the output.
+    outHtagDir = "../data/"+args.htag
+    if not os.path.exists(outHtagDir):
+        if args.v: print "Output dir does not exist. Creating."
+        os.makedirs(outHtagDir)
+
+    if args.v: print "Out directory:",outHtagDir
 
     #Run the samples that have args set to true.
     if args.mc:
