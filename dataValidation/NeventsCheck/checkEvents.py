@@ -246,8 +246,58 @@ def runData(args):
         if '_iTS' in directory: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
-    ###  End of runData() function
 
+    for dataDir in mxaodSamplesDir:
+
+        if args.v: print "Running over data directory:", dataDir.split('/')[-1]
+        mxaodSamples = glob(dataDir+'/runs/*.root')
+        # Some things in here can be directories containing multiple root files. Get a list of these.
+        mxaod_multi_samples = glob(dataDir+'/runs/*/')
+
+        #loop over samples and get information
+        for sample in mxaodSamples:
+            # Deal with the dirs of root files later. Skip for now.
+            if os.path.isdir(sample): continue
+
+            # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
+            # will return 'Sherpa_ADDyy_MS3500_1800M'
+            sampleType = re.search('data.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
+            if args.v: print "===>",sampleType
+            return
+            # If we used the test arg, only run over that sample
+            if args.test_sample and not (args.test_sample == sampleType): continue
+
+            rootInfo = getROOTInfo(sample)
+
+            amiInfo = {}
+            if sampleType in inputMC:
+                amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
+            else:
+                if not sampleType in errorSamples: errorSamples[sampleType] = []
+                errorSamples[sampleType].append("Sample missing from the input file.")
+
+            # Combine these dictionaries into a single dictionary to write out.
+            combInfo = dict(rootInfo.items() + amiInfo.items())
+            combInfo['sampleType'] = sampleType
+
+            # If there are mismatches in the nEvents set the color to red. White otherwise.
+            # Also returns error string to explain which thing failed.
+            color, error = validColor(combInfo)
+            combInfo["color"] = color
+
+            # If there was a mismatch, put an error message in a dict to email later.
+            if color == "red":
+                if not sampleType in errorSamples: errorSamples[sampleType] = []
+                errorSamples[sampleType].append(error)
+                if args.v: print "   ---Error:",error
+
+            # Append the dictionary to a list of samples
+            jsonOutput.append(combInfo)
+        pass ## end sample loop
+
+        pass ## End of dataDir loop
+
+    ###  End of runData() function
 
 def validHTag(htag):
     """This is used in an argparse type to ensure that the htag argument is in the proper format.
