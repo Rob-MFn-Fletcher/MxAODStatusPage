@@ -29,33 +29,34 @@ li a {
     text-decoration: none;
 }
 
-li a:hover {
-    background-color: #111;
-}
-
 #tabs {
     height: 800px;
 }
 
 table {
     border: 1px solid black;
-    table-layout: fixed;
+ //   table-layout: fixed;
+//    overflow-y: hidden;
+  //  max-height: 400px;
 }
 table thead, table tbody {
-    display: block;
+    //display: block;
+    //overflow-y: hidden;
 }
 
 table tbody {
-    display: block;
+    //display: block;
     font-size: small;
-    overflow-y: auto;
-    height: 400px;
-    width: 100%;
+//    overflow-y: hidden;
+ //   height: 400px;
+ //   width: 100%;
 }
 
 table thead {
-    max-width: 100%;
-    text-align: center;
+    //width: 100%;
+    background-color: white;
+    padding-left: 50px;
+    
 }
 tr.my-danger {
     background-color: #ff4242;
@@ -69,10 +70,13 @@ tr.my-danger {
 .table-container {
     margin-left: 7%;
     width: 85%;
+    //height: 500px;
+    overflow-y: auto;
 }
 
 .mc-missing-samples, .mc-missing-input {
     height: 50px;
+    padding-top: 15px;
     margin-bottom: 30px;
 }
 .mc-missing-samples-content {
@@ -91,6 +95,7 @@ tr.my-danger {
 
 .data-missing-samples, .data-missing-input {
     height: 50px;
+    padding-top: 15px;
     margin-bottom: 30px;
 }
 .data-missing-samples-content {

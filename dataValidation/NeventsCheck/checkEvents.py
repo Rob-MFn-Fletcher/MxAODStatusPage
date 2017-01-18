@@ -2,7 +2,7 @@
 
 """
 import argparse
-from ROOT import TFile,TH1,TTree, gErrorIgnoreLevel, kSysError
+from ROOT import TFile,TH1,TTree,gROOT
 import pyAMI.client
 import pyAMI.atlas.api as AtlasAPI
 from sendEmail import sendEmail
@@ -114,6 +114,12 @@ def readInputFile(inFile):
     <sampleType> <Dataset Name>
     into a dictionary as {'sampleType' : 'Dataset Name'}
     It will skip lines begining with #
+
+    Data file are a bit different. They have the format:
+    periodXXXX <Dataset Name>
+    We have to extract the run number from the dataset name 
+    and then construct the dictionary as runNumber:DSName 
+    so it can easily be searched later.
     """
     inputFiles = {}
     if not os.path.isfile(inFile):
@@ -123,8 +129,13 @@ def readInputFile(inFile):
         for line in f:
             if line.startswith('#'): continue #Skip comment lines
             if not line.strip(): continue #Skip empty lines
-            (sample, DSname) = line.split()
-            inputFiles[sample] = DSname
+            if line.startswith('period'): #Handle the data file format
+                runNumber = re.search('.*TeV\.(.*)\.physics_Main.*',line).group(1) #The short name of the sample
+                (sample, DSname) = line.split()
+                inputFiles[runNumber] = DSname
+            else: #Handle the MC file format
+                (sample, DSname) = line.split()
+                inputFiles[sample] = DSname
 
     return inputFiles
 
@@ -177,26 +188,34 @@ def runMC(args):
     # Some things in here can be directories containing multiple root files. Get a list of these.
     mxaod_multi_samples = glob(mxaodSamplesDir[0]+'*/')
 
+    sampleNum = 1 
     #loop over samples and get information
     for sample in mxaodSamples:
+        sampleStart = time.time()
         # Deal with the dirs of root files later. Skip for now.
         if os.path.isdir(sample): continue
 
         # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
         # will return 'Sherpa_ADDyy_MS3500_1800M'
         sampleType = re.search('mc.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
-        if args.v: print "===>",sampleType
+        if args.v: print "===>",sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
         # If we used the test arg, only run over that sample
         if args.test_sample and not (args.test_sample == sampleType): continue
 
+        rootStart = time.time()
         rootInfo = getROOTInfo(sample)
+        rootEnd = time.time()
+        if args.v: print "   --- getROOTInfo ran in", rootEnd - rootStart, "seconds."
 
+        amiStart = time.time()
         amiInfo = {}
         if sampleType in inputMC:
             amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
         else:
             if not sampleType in errorSamples: errorSamples[sampleType] = []
             errorSamples[sampleType].append("Sample missing from the input file.")
+        amiEnd = time.time()
+        if args.v: print "   --- getAMIProv ran in", amiEnd - amiStart, "seconds."
 
         # Combine these dictionaries into a single dictionary to write out.
         combInfo = dict(rootInfo.items() + amiInfo.items())
@@ -215,6 +234,10 @@ def runMC(args):
 
         # Append the dictionary to a list of samples
         jsonOutput.append(combInfo)
+        sampleNum = sampleNum+1
+
+        sampleEnd = time.time()
+        if args.v: print "   --- sample loop ran in", sampleEnd - sampleStart, "seconds."
     pass ## end sample loop
 
     # email when done
@@ -239,10 +262,8 @@ def runData(args):
     it would end up impacting readablility do not do it. Someone is going to have to learn this code
     eventually.
     """
-    errorSamples = {} # keep track of samples with mismatches or errors
-    jsonOutput = [] # Final Json output file.
 
-    # Get the dictionary made from the input file
+    # Get the dictionary made from the input file. Since the data is a bit different than the MC we need to reorganize a bit.
     inputData = readInputFile(args.inputData)
 
     # Get a list of all directories that start with data. This should return data15, data16 and data16_iTS. We dont want this last one.
@@ -254,16 +275,16 @@ def runData(args):
 
     for dataDir in mxaodSamplesDir:
 
+        errorSamples = {} # keep track of samples with mismatches or errors
+        jsonOutput = [] # Final Json output file.
+
         dataDirName = dataDir.split('/')[-2] # data15 or data16
         if args.v: print "Running over data directory:", dataDirName
         mxaodSamples = glob(dataDir+'/runs/*.root')
         # Some things in here can be directories containing multiple root files. Get a list of these.
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
 
-        # Add the base directory to the list of directories to run over.
-        mxaodSamples.append(glob(dataDir+'*.root'))
-        print glob(dataDir+'*.root')
-
+        sampleNum = 1
         #loop over samples and get information
         for sample in mxaodSamples:
             # Deal with the dirs of root files later. Skip for now.
@@ -272,8 +293,7 @@ def runData(args):
             # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
             # will return 'Sherpa_ADDyy_MS3500_1800M'
             sampleType = re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',sample).group(1) #The short name of the sample
-            if args.v: print "===>",sampleType
-            break
+            if args.v: print "===>",sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
             # If we used the test arg, only run over that sample
             if args.test_sample and not (args.test_sample == sampleType): continue
 
@@ -281,7 +301,7 @@ def runData(args):
 
             amiInfo = {}
             if sampleType in inputData:
-                amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
+                amiInfo = getAMIProv(inputData[sampleType]) #needs AMI dataset name as input
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
                 errorSamples[sampleType].append("Sample missing from the input file.")
@@ -303,10 +323,11 @@ def runData(args):
 
             # Append the dictionary to a list of samples
             jsonOutput.append(combInfo)
+            sampleNum = sampleNum + 1
             pass ## end sample loop
 
         # email when done.
-        #makeEmail(args,dataDirName, errorSamples)
+        makeEmail(args,dataDirName, errorSamples)
         with open("../data/{0}/errors_{1}.json".format(args.htag, dataDirName),'w') as errfile:
             json.dump(errorSamples, errfile, indent=2)
         #Output to file for use on website.
@@ -331,9 +352,8 @@ if __name__=="__main__":
     startTime = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("htag", type=validHTag, help="The htag to run over")
-    #parser.add_argument("input", help="Input file to use. These are in the same format as the MxAOD sample input files.")
     parser.add_argument("-v", action='store_true', help="More verbose output.")
-    parser.add_argument("-q", action='store_true', help="Quiet ROOT output.")
+    parser.add_argument("-q", action='store_true', help="Less Root output.")
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
     parser.add_argument("--data", action='store_true', help="Run over data samples only.")
@@ -343,8 +363,9 @@ if __name__=="__main__":
     if args.test_sample:
         args.v = True
 
-    if args.q:
-        gErrorIgnoreLevel = kSysError
+    # Quiet root output
+    if args.q: gROOT.ProcessLine("gErrorIgnoreLevel = kFatal;")
+
     # setup a few directories, global vars etc...
     args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.

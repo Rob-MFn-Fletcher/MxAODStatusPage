@@ -23,6 +23,7 @@ Author: Rob Fletcher
       <!-- Optional theme -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/1.4.5/jquery.floatThead.min.js"></script>
       <link rel="stylesheet" href="../css/mystyle.css" />
       <script type="text/javascript">
         $(function() {
@@ -49,10 +50,6 @@ Author: Rob Fletcher
     </ul>
     <div id="data15-container">
         <h2>Data15</h2>
-        <div class="table-container container">
-            <table class="table table-hover" id="data15-table" >
-            </table>
-        </div>
         <div class="col-sm-6 data-missing-samples">
             <div class="data-missing-samples-content">
             <h3> Missing Data Samples </h3>
@@ -63,14 +60,14 @@ Author: Rob Fletcher
             <h3> Missing input</h3>
             </div>
         </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="data15-table" >
+            </table>
+        </div>
     </div>
 
     <div id="data16-container">
         <h2>Data16</h2>
-        <div class="table-container container">
-            <table class="table table-hover" id="data16-table" >
-            </table>
-        </div>
         <div class="col-sm-6 data-missing-samples">
             <div class="data-missing-samples-content">
             <h3> Missing data Samples </h3>
@@ -81,23 +78,27 @@ Author: Rob Fletcher
             <h3> Missing input</h3>
             </div>
         </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="data16-table" >
+            </table>
+        </div>
     </div>
 
     <div id="mc-container">
         <h2>MC</h2>
-        <div class="table-container container">
-            <table class="table table-hover" id="mc-table" >
-            </table>
-        </div>
         <div class="mc-missing-samples col-sm-6">
-            <div id="mc-missing-samples-content">
+            <div class="mc-missing-samples-content">
             <h3> Missing MC Samples </h3>
             </div>
         </div>
         <div class="mc-missing-input col-sm-6">
-            <div id="mc-missing-input-content">
+            <div class="mc-missing-input-content">
             <h3> Missing input</h3>
             </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="mc-table" >
+            </table>
         </div>
     </div>
 </div>
