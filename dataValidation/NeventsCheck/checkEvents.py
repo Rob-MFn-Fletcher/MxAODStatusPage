@@ -343,9 +343,9 @@ def validHTag(htag):
 
     """
     try:
-        return re.match("h[0-9][0-9][0-9]", htag).group(0)
+        return re.match("^h[0-9][0-9][0-9][a-z]?$", htag).group(0)
     except:
-        raise argparse.ArgumentTypeError("First argument must be an htag of the form h<number>. eg. h012")
+        raise argparse.ArgumentTypeError("First argument must be an htag of the form h<number>. eg. h012 or h014b")
 
 
 if __name__=="__main__":
@@ -382,6 +382,7 @@ if __name__=="__main__":
     if args.mc:
         try:
             args.inputMC = glob("./InputFiles/mc_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using input file: ", args.inputMC
         except:
             print "MC input file does not exist. Input needs to be at './InputFiles/mc_{0}.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."
@@ -389,8 +390,9 @@ if __name__=="__main__":
     if args.data:
         try:
             args.inputData = glob("./InputFiles/data_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using input file: ", args.inputData
         except:
-            print "Data input file does not exist. Input needs to be at './InputFiles/data_{0}.txt'".format(htag)
+            print "Data input file does not exist. Input needs to be at './InputFiles/data_{0}.txt'".format(args.htag)
             print "If you didnt want to run over Data use the --mc option."
             raise Exception("Input file error.")
 
@@ -404,9 +406,11 @@ if __name__=="__main__":
 
     #Run the samples that have args set to true.
     if args.mc:
-        runMC(args)
+        #runMC(args)
+        pass
     if args.data:
-        runData(args)
+        #runData(args)
+        pass
     endTime = time.time()
     totalSeconds = endTime - startTime
     m, s = divmod(totalSeconds, 60)
