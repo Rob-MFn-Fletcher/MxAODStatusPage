@@ -117,8 +117,8 @@ def readInputFile(inFile):
 
     Data file are a bit different. They have the format:
     periodXXXX <Dataset Name>
-    We have to extract the run number from the dataset name 
-    and then construct the dictionary as runNumber:DSName 
+    We have to extract the run number from the dataset name
+    and then construct the dictionary as runNumber:DSName
     so it can easily be searched later.
     """
     inputFiles = {}
@@ -188,7 +188,20 @@ def runMC(args):
     # Some things in here can be directories containing multiple root files. Get a list of these.
     mxaod_multi_samples = glob(mxaodSamplesDir[0]+'*/')
 
-    sampleNum = 1 
+
+    eosSamples=[]
+    for samplePath in mxaodSamples:
+        eosSamples.append(re.search('mc.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+    for samplePath in mxaod_multi_samples:
+        eosSamples.append(re.search('mc.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+
+    # Do the check for all inputs existing on eos and write to the error log if not.
+    for inputSample in inputMC:
+        if not inputSample in eosSamples:
+            if not inputSample in errorSamples: errorSamples[inputSample] = []:
+            errorSamples[inputSample].append("Sample in input file is missing from eos.")
+
+    sampleNum = 1
     #loop over samples and get information
     for sample in mxaodSamples:
         sampleStart = time.time()
@@ -266,10 +279,15 @@ def runData(args):
     # Get the dictionary made from the input file. Since the data is a bit different than the MC we need to reorganize a bit.
     inputData = readInputFile(args.inputData)
 
+    # Get the JSON file of previous output so we run only over new files.
+    #jsonFile = open("../data/{0}/ValidationTable_{1}.json".format(args.htag, dataDirName),'w')
+
     # Get a list of all directories that start with data. This should return data15, data16 and data16_iTS. We dont want this last one.
     mxaodSamplesDir = glob(args.datasetDir+args.htag+'/data*/')
-    for directory in mxaodSamplesDir:
-        if '_' in directory.split('/')[-2]: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
+
+    # dont want this anymore. We need to run over the iTS directory as well.
+    #for directory in mxaodSamplesDir:
+    #    if '_' in directory.split('/')[-2]: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
@@ -278,11 +296,25 @@ def runData(args):
         errorSamples = {} # keep track of samples with mismatches or errors
         jsonOutput = [] # Final Json output file.
 
-        dataDirName = dataDir.split('/')[-2] # data15 or data16
+        dataDirName = dataDir.split('/')[-2] # data15, data16 or the iTS direcotry
         if args.v: print "Running over data directory:", dataDirName
         mxaodSamples = glob(dataDir+'/runs/*.root')
         # Some things in here can be directories containing multiple root files. Get a list of these.
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
+
+        #Check that everything in the input file is found on eos.
+        #Get List of short names from files in the directories.
+        eosSamples=[]
+        for samplePath in mxaodSamples:
+            eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        for samplePath in mxaod_multi_samples:
+            eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+
+        # Do the check for all inputs existing on eos and write to the error log if not.
+        for inputSample in inputData:
+            if not inputSample in eosSamples:
+                if not inputSample in errorSamples: errorSamples[inputSample] = []:
+                errorSamples[inputSample].append("Sample in input file is missing from eos.")
 
         sampleNum = 1
         #loop over samples and get information
@@ -304,7 +336,7 @@ def runData(args):
                 amiInfo = getAMIProv(inputData[sampleType]) #needs AMI dataset name as input
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
-                errorSamples[sampleType].append("Sample missing from the input file.")
+                errorSamples[sampleType].append("Sample in eos is missing from the input file.")
 
             # Combine these dictionaries into a single dictionary to write out.
             combInfo = dict(rootInfo.items() + amiInfo.items())
