@@ -503,10 +503,10 @@ if __name__=="__main__":
 
     #Run the samples that have args set to true.
     if args.mc:
-        #runMC(args)
+        runMC(args)
         pass
     if args.data:
-        #runData(args)
+        runData(args)
         pass
     endTime = time.time()
     totalSeconds = endTime - startTime
