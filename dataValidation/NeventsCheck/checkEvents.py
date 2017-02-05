@@ -195,8 +195,8 @@ def runMC(args):
     if not args.overwrite:
         with open("../data/{0}/ValidationTable_MC.json".format(args.htag),'r') as outfile:
             jsonOutput = json.load(outfile) # Final Json output file.
-        with open("../data/{0}/errors_MC.json".format(args.htag),'r') as outfile:
-            errorSamples = json.load(efffile) # keep track of samples with mismatches or errors
+        with open("../data/{0}/errors_MC.json".format(args.htag),'r') as errfile:
+            errorSamples = json.load(errfile) # keep track of samples with mismatches or errors
 
     # Truncate and open the files again so we can write a fresh json doc out.
     outfile = open("../data/{0}/ValidationTable_MC.json".format(args.htag),'w')
@@ -224,9 +224,9 @@ def runMC(args):
     # Build a list of the short sample names that are on eos to check against the input file
     eosSamples=[]
     for samplePath in mxaodSamples:
-        eosSamples.append(re.search('mc.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
     for samplePath in mxaod_multi_samples:
-        eosSamples.append(re.search('mc.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
 
     # Do the check for all inputs existing on eos and write to the error log if not.
     for inputSample in inputMC:
@@ -239,7 +239,7 @@ def runMC(args):
     for sample in mxaodSamples:
         sampleStart = time.time()
         # Deal with the dirs of root files later. Skip for now.
-        if os.path.isdir(sample): continue
+        #if os.path.isdir(sample): continue
 
         # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
         # will return 'Sherpa_ADDyy_MS3500_1800M'
@@ -256,7 +256,7 @@ def runMC(args):
         rootStart = time.time()
         rootInfo = getROOTInfo(sample)
         rootEnd = time.time()
-        if args.v: print "   --- getROOTInfo ran in", rootEnd - rootStart, "seconds."
+        #if args.v: print "   --- getROOTInfo ran in", rootEnd - rootStart, "seconds."
 
         amiStart = time.time()
         amiInfo = {}
@@ -266,7 +266,7 @@ def runMC(args):
             if not sampleType in errorSamples: errorSamples[sampleType] = []
             errorSamples[sampleType].append("Sample missing from the input file.")
         amiEnd = time.time()
-        if args.v: print "   --- getAMIProv ran in", amiEnd - amiStart, "seconds."
+        #if args.v: print "   --- getAMIProv ran in", amiEnd - amiStart, "seconds."
 
         # Combine these dictionaries into a single dictionary to write out.
         combInfo = dict(rootInfo.items() + amiInfo.items())

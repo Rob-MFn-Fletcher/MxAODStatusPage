@@ -61,6 +61,9 @@ table thead {
 tr.my-danger {
     background-color: #ff4242;
 }
+.table tbody tr.my-danger:hover td, .table tbody tr.my-danger:hover th {
+    background-color: #ff0000;
+}
 
 #mc-container {
     margin-left: 15px;
