@@ -65,13 +65,16 @@ def getROOTInfo(sample):
     rootEvents['DxAOD_Bookkeeper'] = 0
     rootEvents['NevtsRunOverMxAOD'] = 0
     rootEvents['NevtsPassedPreCutflowMxAOD'] = 0  # Ambiguity cut in the cutflow
+    rootEvents['NevtsIsPassedPreFlagMxAOD'] = 0 
+
+    fileList = []
 
     #if the sample passed to this function is a directory, there will be a few
     # root files inside. Need to run over all of these and combine the results.
     if os.path.isdir(sample):
         fileList = glob(sample+'/*.root')
     else:
-        fileList = sample
+        fileList.append(sample)
 
     for f in fileList:
         rfile = TFile(f)
@@ -228,7 +231,7 @@ def runMC(args):
     # Do the check for all inputs existing on eos and write to the error log if not.
     for inputSample in inputMC:
         if not inputSample in eosSamples:
-            if not inputSample in errorSamples: errorSamples[inputSample] = []:
+            if not inputSample in errorSamples: errorSamples[inputSample] = []
             errorSamples[inputSample].append("Sample in input file is missing from eos.")
 
     sampleNum = 1
@@ -352,17 +355,18 @@ def runData(args):
 
         #Check that everything in the input file is found on eos.
         #Get List of short names from files in the directories.
-        eosSamples=[]
-        for samplePath in mxaodSamples:
-            eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
-        for samplePath in mxaod_multi_samples:
-            eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        #eosSamples=[]
+        #for samplePath in mxaodSamples:
+        #    eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        #for samplePath in mxaod_multi_samples:
+        #    eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
 
         # Do the check for all inputs existing on eos and write to the error log if not.
-        for inputSample in inputData:
-            if not inputSample in eosSamples:
-                if not inputSample in errorSamples: errorSamples[inputSample] = []:
-                errorSamples[inputSample].append("Sample in input file is missing from eos.")
+        #for inputSample in inputData:
+        #    if not inputSample in eosSamples:
+        #        print "!! Input sample:",inputSample
+        #        if not inputSample in errorSamples: errorSamples[inputSample] = []
+        #        errorSamples[inputSample].append("Sample in input file is missing from eos.")
 
         # Add the base dir containing the split up root files for the total dataset.
         # I put this here because we dont want to do the above eos check on these.
@@ -381,11 +385,12 @@ def runData(args):
         for sample in mxaodSamples:
             # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
             # will return 'Sherpa_ADDyy_MS3500_1800M'
-            sampleType = re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',sample).group(1) #The short name of the sample
             if sample == dataDir: sampleType = 'Total' #use the label 'Total' for the data samples in the base dir.
+            else: sampleType = re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',sample).group(1) #The short name of the sample
+
             if not sampleType:
                 print "!!=> SampleType is empty!!!! No valid name found in", sample
-            if args.v: print "===>",sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
+            if args.v: print "===>",dataDirName+":"+sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
             # If we used the test arg, only run over that sample
             if args.test_sample and not (args.test_sample == sampleType): continue
 
