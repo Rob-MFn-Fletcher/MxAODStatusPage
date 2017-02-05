@@ -65,7 +65,7 @@ def getROOTInfo(sample):
     rootEvents['DxAOD_Bookkeeper'] = 0
     rootEvents['NevtsRunOverMxAOD'] = 0
     rootEvents['NevtsPassedPreCutflowMxAOD'] = 0  # Ambiguity cut in the cutflow
-    rootEvents['NevtsIsPassedPreFlagMxAOD'] = 0 
+    rootEvents['NevtsIsPassedPreFlagMxAOD'] = 0
 
     fileList = []
 
@@ -353,6 +353,7 @@ def runData(args):
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
 
 
+        # TODO: Need to think of a good way to fix the below code. See https://github.com/Rob-MFn-Fletcher/MxAODStatusPage/issues/8 for more details.
         #Check that everything in the input file is found on eos.
         #Get List of short names from files in the directories.
         #eosSamples=[]
@@ -379,7 +380,9 @@ def runData(args):
             if jsonOutput[i]['sampleType'] == 'Total':
                 jsonOutput.pop(i)
 
-
+        # Running totals for all files in the dir. Used to compare to the totals in the base dir files.
+        xAODTotal = 0
+        DxAODTotal = 0
         sampleNum = 1
         #loop over samples and get information
         for sample in mxaodSamples:
@@ -405,6 +408,11 @@ def runData(args):
             amiInfo = {}
             if sampleType in inputData:
                 amiInfo = getAMIProv(inputData[sampleType]) #needs AMI dataset name as input
+                xAODTotal += amiInfo['AOD_AMI']
+                DxAODTotal += amiInfo['DAOD_AMI']
+            elif sampleType == 'Total':
+                amiInfo['AOD_AMI'] = xAODTotal # running Totals from all other files
+                amiInfo['DAOD_AMI'] = DxAODTotal
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
                 errorSamples[sampleType].append("Sample in eos is missing from the input file.")
