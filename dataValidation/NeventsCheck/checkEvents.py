@@ -167,8 +167,8 @@ def makeEmail(args,directory, errorSamples):
     values. Loop over samples and add the errors to the message then send.
     """
     addrs = args.email
-    subject = "Data Validation Script Result for "+directory
-    message = "Data Validation Script Completed for {0}. Results below:\n".format(directory)
+    subject = "Data Validation Script Result for "+args.htag+":"+directory
+    message = "Data Validation Script Completed for {0}:{1}. Results below:\n".format(directory, args.htag)
     if not errorSamples: message += "No Errors detected!\n"
     for sample in errorSamples:
         message += "\nErrors for sample {0}:\n".format(sample)
@@ -237,9 +237,10 @@ def runMC(args):
             if not inputSample in errorSamples: errorSamples[inputSample] = []
             errorSamples[inputSample].append("Sample in input file is missing from eos.")
 
-    sampleNum = 1
+    sampleNum = 0
     #loop over samples and get information
     for sample in mxaodSamples:
+        sampleNum += 1
         sampleStart = time.time()
         # Deal with the dirs of root files later. Skip for now.
         #if os.path.isdir(sample): continue
@@ -288,7 +289,6 @@ def runMC(args):
 
         # Append the dictionary to a list of samples
         jsonOutput.append(combInfo)
-        sampleNum = sampleNum+1
 
         sampleEnd = time.time()
         if args.v: print "   --- sample loop ran in", sampleEnd - sampleStart, "seconds."
@@ -386,9 +386,10 @@ def runData(args):
         # Running totals for all files in the dir. Used to compare to the totals in the base dir files.
         xAODTotal = 0
         DxAODTotal = 0
-        sampleNum = 1
+        sampleNum = 0
         #loop over samples and get information
         for sample in mxaodSamples:
+            sampleNum += 1
             # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
             # will return 'Sherpa_ADDyy_MS3500_1800M'
             if sample == dataDir: sampleType = 'Total' #use the label 'Total' for the data samples in the base dir.
@@ -437,7 +438,6 @@ def runData(args):
 
             # Append the dictionary to a list of samples
             jsonOutput.append(combInfo)
-            sampleNum = sampleNum + 1
             pass ## end sample loop
 
         # email when done.
