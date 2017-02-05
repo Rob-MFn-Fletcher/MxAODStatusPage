@@ -118,9 +118,12 @@ def validColor(combInfo):
         if not (combInfo['NevtsPassedPreCutflowMxAOD'] == combInfo['NevtsIsPassedPreFlagMxAOD']):
             colorCode = "red"
             error = "Cutflow histogram preselection and IsPassedPreselection flags dissagree."
+        if combInfo['DxAOD_Bookkeeper'] != combInfo['DAOD_AMI']:
+            colorCode = "red"
+            error = "AMI and Bookkeeper dissagree for DxAOD"
     except:
         colorCode = "red"
-        error = "Entries missing in combined info."
+        error = "Entries missing in combined info. AMI command might not have returned anything."
 
     return colorCode, error
 
