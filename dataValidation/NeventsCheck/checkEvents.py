@@ -217,7 +217,7 @@ def runMC(args):
     # There should only be one MC directory for now. If later more are added will need to change the code a bit.
     if len(mxaodSamplesDir) > 1:
         print "There are multiple MC directories in this tag!!! This should not happen."
-        raise
+        #raise
 
     mxaodSamples = glob(mxaodSamplesDir[0]+'*.root')
     # Some things in here can be directories containing multiple root files. Get a list of these.
