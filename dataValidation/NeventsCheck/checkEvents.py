@@ -153,13 +153,18 @@ def readInputFile(inFile):
             if line.startswith('period'): #Handle the data file format
                 year = re.search('period20([0-9][0-9])', line).group(1)
                 period = 'data'+year
-                if not 'data'+period in inputFiles:
+                if not period in inputFiles:
                     inputFiles[period] = {} # Split 2015 and 2016 up into two dicts.
                 runNumber = re.search('.*TeV\.(.*)\.physics_Main.*',line).group(1) #The short name of the sample
                 (sample, DSname) = line.split()
                 inputFiles[period][runNumber] = DSname
             else: #Handle the MC file format
-                (sample, DSname) = line.split()
+                try:
+                    (sample, DSname) = line.split()
+                except:
+                    sample = line
+                    DSname = ''
+
                 inputFiles[sample] = DSname
 
     return inputFiles
@@ -229,9 +234,9 @@ def runMC(args):
 
 
         # Check to make sure all file in the input are present on eos.
-        # Dont check the PhotonAllSys direcotry since that only seems to have a
-        # few files in it. It will just always produce a ton of errors.
-        if not mcDirName == 'PhotonAllSys':
+        # Dont check the Sys direcotries since they dont seem to have all
+        # of the files listed in the input in each of them. It will just always produce a ton of errors.
+        if not 'Sys' in mcDirName:
             # Build a list of the short sample names that are on eos to check against the input file
             eosSamples=[]
             for samplePath in mxaodSamples:
@@ -477,6 +482,7 @@ if __name__=="__main__":
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
     parser.add_argument("--data", action='store_true', help="Run over data samples only.")
+    parser.add_argument("--email", nargs='+',dest='add_email', help="Additional email adresses to send logs to. Space separated list. MUST COME LAST")
 
     args = parser.parse_args()
     # set debug to true if t or v are are set. Check debug variable before verbose output.
@@ -488,6 +494,10 @@ if __name__=="__main__":
 
     # setup a few directories, global vars etc...
     args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
+    if args.add_email:
+        args.email += args.add_email
+    if args.v: print "Email address to send to:", args.email
+
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
         raise IOError("eos does not appear to be mounted. Did you run the setup script? (souce setup.sh)")
@@ -509,7 +519,7 @@ if __name__=="__main__":
             raise Exception("Input file error.")
     if args.mc:
         try:
-            args.inputSYS = glob(".InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
+            args.inputSYS = glob("./InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
             if args.v: print "Using PhotonSys input file: ", args.inputSYS
         except:
             print "PhotonSYS input file does not exist. Input needs to be at './InputFiles/PhotonSys_{0}.txt'".format(args.htag)
