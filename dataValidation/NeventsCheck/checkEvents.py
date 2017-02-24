@@ -151,9 +151,13 @@ def readInputFile(inFile):
             if line.startswith('#'): continue #Skip comment lines
             if not line.strip(): continue #Skip empty lines
             if line.startswith('period'): #Handle the data file format
+                year = re.search('period20([0-9][0-9])', line).group(1)
+                period = 'data'+year
+                if not 'data'+period in inputFiles:
+                    inputFiles[period] = {} # Split 2015 and 2016 up into two dicts.
                 runNumber = re.search('.*TeV\.(.*)\.physics_Main.*',line).group(1) #The short name of the sample
                 (sample, DSname) = line.split()
-                inputFiles[runNumber] = DSname
+                inputFiles[period][runNumber] = DSname
             else: #Handle the MC file format
                 (sample, DSname) = line.split()
                 inputFiles[sample] = DSname
@@ -188,118 +192,125 @@ def runMC(args):
     TODO: Handle the cases where the sample name is actually a directory with
     multiple root files in it.
     """
-
-    jsonOutput = [] # Final Json output file.
-    errorSamples = {} # keep track of samples with mismatches or errors
-
-    # If we are not overwriting everything then open the json files and load
-    # them into memory. This will be used to check if we have run over a sample
-    # before.
-    if not args.overwrite:
-        with open("../data/{0}/ValidationTable_MC.json".format(args.htag),'r') as outfile:
-            jsonOutput = json.load(outfile) # Final Json output file.
-        with open("../data/{0}/errors_MC.json".format(args.htag),'r') as errfile:
-            errorSamples = json.load(errfile) # keep track of samples with mismatches or errors
-
-    # Truncate and open the files again so we can write a fresh json doc out.
-    outfile = open("../data/{0}/ValidationTable_MC.json".format(args.htag),'w')
-    errfile = open("../data/{0}/errors_MC.json".format(args.htag),'w')
-
     # Get the dictionary made from the input file
     inputMC = readInputFile(args.inputMC)
+    inputSYS = readInputFile(args.inputSYS)
 
     # Get a list of all directories that start with mc. This should only return one.
     # NOTE: glob returns full file paths!! e.g. for h014 this command returns:  ['./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/h014/mc15c/']
     mxaodSamplesDir = glob(args.datasetDir+args.htag+'/mc*/')
+    mxaodSamplesDir += glob(args.datasetDir+args.htag+'/*Sys/')
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
-    # There should only be one MC directory for now. If later more are added will need to change the code a bit.
-    if len(mxaodSamplesDir) > 1:
-        print "There are multiple MC directories in this tag!!! This should not happen."
-        #raise
+    for mcDir in mxaodSamplesDir:
+        jsonOutput = [] # Final Json output file.
+        errorSamples = {} # keep track of samples with mismatches or errors
 
-    mxaodSamples = glob(mxaodSamplesDir[0]+'*.root')
-    # Some things in here can be directories containing multiple root files. Get a list of these.
-    mxaod_multi_samples = glob(mxaodSamplesDir[0]+'*/')
+        mcDirName = mcDir.split('/')[-2] #mc15c, PhotonSys, etc...
+        if args.v: print "Running of directory:", mcDir
+
+        # If we are not overwriting everything then open the json files and load
+        # them into memory. This will be used to check if we have run over a sample
+        # before.
+        if not args.overwrite:
+            with open("../data/{0}/ValidationTable_{1}.json".format(args.htag, mcDirName),'r') as outfile:
+                jsonOutput = json.load(outfile) # Final Json output file.
+            with open("../data/{0}/errors_{1}.json".format(args.htag, mcDirName),'r') as errfile:
+                errorSamples = json.load(errfile) # keep track of samples with mismatches or errors
+
+        # Truncate and open the files again so we can write a fresh json doc out.
+        outfile = open("../data/{0}/ValidationTable_{1}.json".format(args.htag, mcDirName),'w')
+        errfile = open("../data/{0}/errors_{1}.json".format(args.htag, mcDirName),'w')
+
+        mxaodSamples = glob(mcDir+'/*.root')
+        # Some things in here can be directories containing multiple root files. Get a list of these.
+        mxaod_multi_samples = glob(mcDir+'/*/')
 
 
-    # Build a list of the short sample names that are on eos to check against the input file
-    eosSamples=[]
-    for samplePath in mxaodSamples:
-        eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
-    for samplePath in mxaod_multi_samples:
-        eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        # Check to make sure all file in the input are present on eos.
+        # Dont check the PhotonAllSys direcotry since that only seems to have a
+        # few files in it. It will just always produce a ton of errors.
+        if not mcDirName == 'PhotonAllSys':
+            # Build a list of the short sample names that are on eos to check against the input file
+            eosSamples=[]
+            for samplePath in mxaodSamples:
+                eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
 
-    # Do the check for all inputs existing on eos and write to the error log if not.
-    for inputSample in inputMC:
-        if not inputSample in eosSamples:
-            if not inputSample in errorSamples: errorSamples[inputSample] = []
-            errorSamples[inputSample].append("Sample in input file is missing from eos.")
+            # look in the proper input file.
+            if 'Sys' in mcDirName:
+                inputCheck = inputSYS
+            else:
+                inputCheck = inputMC
+            # Do the check for all inputs existing on eos and write to the error log if not.
+            for inputSample in inputCheck:
+                if not inputSample in eosSamples:
+                    if not inputSample in errorSamples: errorSamples[inputSample] = []
+                    errorSamples[inputSample].append("Sample in input file is missing from eos.")
+            pass # End of eos file checking.
 
-    sampleNum = 0
-    #loop over samples and get information
-    for sample in mxaodSamples:
-        sampleNum += 1
-        sampleStart = time.time()
-        # Deal with the dirs of root files later. Skip for now.
-        #if os.path.isdir(sample): continue
+        sampleNum = 0
+        #loop over samples and get information
+        for sample in mxaodSamples:
+            sampleNum += 1
+            sampleStart = time.time()
 
-        # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
-        # will return 'Sherpa_ADDyy_MS3500_1800M'
-        sampleType = re.search('mc.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
-        if args.v: print "===>",sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
-        # If we used the test arg, only run over that sample
-        if args.test_sample and not (args.test_sample == sampleType): continue
+            # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
+            # will return 'Sherpa_ADDyy_MS3500_1800M'
+            sampleType = re.search('mc.*\.(.*)\.MxAOD.*',sample).group(1) #The short name of the sample
+            if args.v: print "===>",sampleType, "({0}/{1})".format(sampleNum, len(mxaodSamples))
+            # If we used the test arg, only run over that sample
+            if args.test_sample and not (args.test_sample == sampleType): continue
 
-        # Check if the sample already exists in the output dictionary. If it does skip the sample.
-        if any(entry['sampleType']==sampleType for entry in jsonOutput):
-            if args.v: print "   --- Sample found in output. Skipping..."
-            continue
+            # Check if the sample already exists in the output dictionary. If it does skip the sample.
+            if any(entry['sampleType']==sampleType for entry in jsonOutput):
+                if args.v: print "   --- Sample found in output. Skipping..."
+                continue
 
-        rootStart = time.time()
-        rootInfo = getROOTInfo(sample)
-        rootEnd = time.time()
-        #if args.v: print "   --- getROOTInfo ran in", rootEnd - rootStart, "seconds."
+            rootStart = time.time()
+            rootInfo = getROOTInfo(sample)
+            rootEnd = time.time()
+            #if args.v: print "   --- getROOTInfo ran in", rootEnd - rootStart, "seconds."
 
-        amiStart = time.time()
-        amiInfo = {}
-        if sampleType in inputMC:
-            amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
-        else:
-            if not sampleType in errorSamples: errorSamples[sampleType] = []
-            errorSamples[sampleType].append("Sample missing from the input file.")
-        amiEnd = time.time()
-        #if args.v: print "   --- getAMIProv ran in", amiEnd - amiStart, "seconds."
+            amiStart = time.time()
+            amiInfo = {}
+            if sampleType in inputMC:
+                amiInfo = getAMIProv(inputMC[sampleType]) #needs AMI dataset name as input
+            else:
+                if not sampleType in errorSamples: errorSamples[sampleType] = []
+                errorSamples[sampleType].append("Sample missing from the input file.")
+            amiEnd = time.time()
+            #if args.v: print "   --- getAMIProv ran in", amiEnd - amiStart, "seconds."
 
-        # Combine these dictionaries into a single dictionary to write out.
-        combInfo = dict(rootInfo.items() + amiInfo.items())
-        combInfo['sampleType'] = sampleType
+            # Combine these dictionaries into a single dictionary to write out.
+            combInfo = dict(rootInfo.items() + amiInfo.items())
+            combInfo['sampleType'] = sampleType
 
-        # If there are mismatches in the nEvents set the color to red. White otherwise.
-        # Also returns error string to explain which thing failed.
-        color, error = validColor(combInfo)
-        combInfo["color"] = color
+            # If there are mismatches in the nEvents set the color to red. White otherwise.
+            # Also returns error string to explain which thing failed.
+            color, error = validColor(combInfo)
+            combInfo["color"] = color
 
-        # If there was a mismatch, put an error message in a dict to email later.
-        if color == "red":
-            if not sampleType in errorSamples: errorSamples[sampleType] = []
-            errorSamples[sampleType].append(error)
-            if args.v: print "   ---Error:",error
+            # If there was a mismatch, put an error message in a dict to email later.
+            if color == "red":
+                if not sampleType in errorSamples: errorSamples[sampleType] = []
+                errorSamples[sampleType].append(error)
+                if args.v: print "   ---Error:",error
 
-        # Append the dictionary to a list of samples
-        jsonOutput.append(combInfo)
+            # Append the dictionary to a list of samples
+            jsonOutput.append(combInfo)
 
-        sampleEnd = time.time()
-        if args.v: print "   --- sample loop ran in", sampleEnd - sampleStart, "seconds."
-    pass ## end sample loop
+            sampleEnd = time.time()
+            if args.v: print "   --- sample loop ran in", sampleEnd - sampleStart, "seconds."
+        pass ## end sample loop
 
-    # email when done
-    makeEmail(args, "MC", errorSamples)
-    #Output error and sample info to file for use on website.
-    json.dump(errorSamples, errfile, indent=2)
-    json.dump(jsonOutput, outfile, indent=2)
+        # email when done
+        makeEmail(args, mcDirName, errorSamples)
+        #Output error and sample info to file for use on website.
+        json.dump(errorSamples, errfile, indent=2)
+        json.dump(jsonOutput, outfile, indent=2)
 
+        pass ## End of dataDir loop
     ### End runMC() function
 
 def runData(args):
@@ -324,9 +335,6 @@ def runData(args):
     # Get a list of all directories that start with data. This should return data15, data16 and data16_iTS. We dont want this last one.
     mxaodSamplesDir = glob(args.datasetDir+args.htag+'/data*/')
 
-    # dont want this anymore. We need to run over the iTS directory as well.
-    #for directory in mxaodSamplesDir:
-    #    if '_' in directory.split('/')[-2]: mxaodSamplesDir.remove(directory) #get rid of the data16_iTS directory
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
@@ -355,22 +363,20 @@ def runData(args):
         # Some things in here can be directories containing multiple root files. Get a list of these.
         mxaod_multi_samples = glob(dataDir+'/runs/*/')
 
-
-        # TODO: Need to think of a good way to fix the below code. See https://github.com/Rob-MFn-Fletcher/MxAODStatusPage/issues/8 for more details.
         #Check that everything in the input file is found on eos.
         #Get List of short names from files in the directories.
-        #eosSamples=[]
-        #for samplePath in mxaodSamples:
-        #    eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
-        #for samplePath in mxaod_multi_samples:
-        #    eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        dataDirName_striped = dataDirName.rstrip('_iTS') # The data16_iTS directory should use the data16 entry in the input file.
+
+        eosSamples = []
+        for samplePath in mxaodSamples:
+            eosSamples.append(re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',samplePath).group(1))#The short name of the sample
 
         # Do the check for all inputs existing on eos and write to the error log if not.
-        #for inputSample in inputData:
-        #    if not inputSample in eosSamples:
-        #        print "!! Input sample:",inputSample
-        #        if not inputSample in errorSamples: errorSamples[inputSample] = []
-        #        errorSamples[inputSample].append("Sample in input file is missing from eos.")
+        for inputSample in inputData[dataDirName_striped]:
+            if not inputSample in eosSamples:
+                print "!! Input sample:",inputSample
+                if not inputSample in errorSamples: errorSamples[inputSample] = []
+                errorDir['data'].append("Sample in input file is missing from eos.")
 
         # Add the base dir containing the split up root files for the total dataset.
         # I put this here because we dont want to do the above eos check on these.
@@ -410,8 +416,8 @@ def runData(args):
             rootInfo = getROOTInfo(sample)
 
             amiInfo = {}
-            if sampleType in inputData:
-                amiInfo = getAMIProv(inputData[sampleType]) #needs AMI dataset name as input
+            if sampleType in inputData[dataDirName_striped]:
+                amiInfo = getAMIProv(inputData[dataDirName_striped][sampleType]) #needs AMI dataset name as input
                 xAODTotal += amiInfo['AOD_AMI']
                 DxAODTotal += amiInfo['DAOD_AMI']
             elif sampleType == 'Total':
@@ -438,6 +444,7 @@ def runData(args):
 
             # Append the dictionary to a list of samples
             jsonOutput.append(combInfo)
+
             pass ## end sample loop
 
         # email when done.
@@ -495,11 +502,20 @@ if __name__=="__main__":
     if args.mc:
         try:
             args.inputMC = glob("./InputFiles/mc_{0}.txt".format(args.htag))[0]
-            if args.v: print "Using input file: ", args.inputMC
+            if args.v: print "Using MC input file: ", args.inputMC
         except:
             print "MC input file does not exist. Input needs to be at './InputFiles/mc_{0}.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."
             raise Exception("Input file error.")
+    if args.mc:
+        try:
+            args.inputSYS = glob(".InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using PhotonSys input file: ", args.inputSYS
+        except:
+            print "PhotonSYS input file does not exist. Input needs to be at './InputFiles/PhotonSys_{0}.txt'".format(args.htag)
+            print "If you didnt want to run over MC use the --data option."
+            raise Exception("Input file error.")
+
     if args.data:
         try:
             args.inputData = glob("./InputFiles/data_{0}.txt".format(args.htag))[0]
