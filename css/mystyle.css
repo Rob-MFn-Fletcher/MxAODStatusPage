@@ -56,7 +56,7 @@ table thead {
     //width: 100%;
     background-color: white;
     padding-left: 50px;
-    
+
 }
 tr.my-danger {
     background-color: #ff4242;
@@ -65,7 +65,7 @@ tr.my-danger {
     background-color: #ff0000;
 }
 
-#mc-container {
+.tab-container {
     margin-left: 15px;
     margin-right: 15px;
     padding: 15px 0px 15px 0px;
@@ -77,35 +77,16 @@ tr.my-danger {
     overflow-y: auto;
 }
 
-.mc-missing-samples, .mc-missing-input {
+.missing-samples, .missing-input {
     height: 50px;
     padding-top: 15px;
     margin-bottom: 30px;
 }
-.mc-missing-samples-content {
+.missing-samples-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }
-.mc-missing-input-content {
-    border: 1px solid black;
-    margin: 0px 0px 0px 0px;
-}
-#data-container {
-    margin-left: 15px;
-    margin-right: 15px;
-    padding: 15px 0px 15px 0px;
-}
-
-.data-missing-samples, .data-missing-input {
-    height: 50px;
-    padding-top: 15px;
-    margin-bottom: 30px;
-}
-.data-missing-samples-content {
-    border: 1px solid black;
-    margin: 0px 0px 0px 0px;
-}
-.data-missing-input-content {
+.missing-input-content {
     border: 1px solid black;
     margin: 0px 0px 0px 0px;
 }

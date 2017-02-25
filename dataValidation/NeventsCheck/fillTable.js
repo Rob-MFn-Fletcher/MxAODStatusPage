@@ -12,7 +12,7 @@ function fillTable(data, tableID){
     header += '</tr></thead>';
     $(tableID).append(header);
     $(tableID).append('<tbody>');
-    
+
     for (var entry in data){
         var sample = data[entry];
         var colorClass = 'default';
@@ -51,9 +51,6 @@ $(document).ready(function(e){
         fillTable(result, "#mc-table");
         $("#mc-table").floatThead({
             position: 'fixed'
-            //scrollContainer: function($table){
-            //return $table.closest(".table-container");
-            //}
         });
         $("#mc-table").floatThead('reflow');
     });
@@ -61,9 +58,6 @@ $(document).ready(function(e){
         fillTable(result, "#data15-table");
         $("#data15-table").floatThead({
             position: 'fixed'
-            //scrollContainer: function($table){
-            //return $table.closest(".table-container");
-            //}
         });
         $("#data15-table").floatThead('reflow');
     });
@@ -71,10 +65,42 @@ $(document).ready(function(e){
         fillTable(result, "#data16-table");
         $("#data16-table").floatThead({
             position: 'fixed'
-            //scrollContainer: function($table){
-            //return $table.closest(".table-container");
-            //}
         });
         $("#data16-table").floatThead('reflow');
+    });
+    $.getJSON("data/"+htag+"/ValidationTable_data16_iTS.json", function(result){
+        fillTable(result, "#data16_iTS-table");
+        $("#data16_iTS-table").floatThead({
+            position: 'fixed'
+        });
+        $("#data16_iTS-table").floatThead('reflow');
+    });
+    $.getJSON("data/"+htag+"/ValidationTable_PhotonSys.json", function(result){
+        fillTable(result, "#data16_iTS-table");
+        $("#data16_iTS-table").floatThead({
+            position: 'fixed'
+        });
+        $("#data16_iTS-table").floatThead('reflow');
+    });
+    $.getJSON("data/"+htag+"/ValidationTable_JetSys.json", function(result){
+        fillTable(result, "#data16_iTS-table");
+        $("#data16_iTS-table").floatThead({
+            position: 'fixed'
+        });
+        $("#data16_iTS-table").floatThead('reflow');
+    });
+    $.getJSON("data/"+htag+"/ValidationTable_LeptonMETSys.json", function(result){
+        fillTable(result, "#data16_iTS-table");
+        $("#data16_iTS-table").floatThead({
+            position: 'fixed'
+        });
+        $("#data16_iTS-table").floatThead('reflow');
+    });
+    $.getJSON("data/"+htag+"/ValidationTable_PhotonAllSys.json", function(result){
+        fillTable(result, "#data16_iTS-table");
+        $("#data16_iTS-table").floatThead({
+            position: 'fixed'
+        });
+        $("#data16_iTS-table").floatThead('reflow');
     });
 });

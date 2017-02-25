@@ -46,17 +46,22 @@ Author: Rob Fletcher
     <ul>
         <li><a href="#data15-container">Data15</a></li>
         <li><a href="#data16-container">Data16</a></li>
+        <li><a href="#data16_iTS-container">Data16 iTS</a></li>
         <li><a href="#mc-container">MC</a></li>
+        <li><a href="#PhotonSys-container">PhotonSys</a></li>
+        <li><a href="#PhotonAllSys-container">PhotonAllSys</a></li>
+        <li><a href="#JetSys-container">JetSys</a></li>
+        <li><a href="#LeptonMETSys-container">LeptonMETSys</a></li>
     </ul>
-    <div id="data15-container">
+    <div id="data15-container" class="tab-container">
         <h2>Data15</h2>
-        <div class="col-sm-6 data-missing-samples">
-            <div class="data-missing-samples-content">
+        <div class="col-sm-6 missing-samples">
+            <div class="missing-samples-content">
             <h3> Missing Data Samples </h3>
             </div>
         </div>
-        <div class="col-sm-6 data-missing-input">
-            <div class="data-missing-input-content">
+        <div class="col-sm-6 missing-input">
+            <div class="missing-input-content">
             <h3> Missing input</h3>
             </div>
         </div>
@@ -66,15 +71,15 @@ Author: Rob Fletcher
         </div>
     </div>
 
-    <div id="data16-container">
+    <div id="data16-container" class="tab-container">
         <h2>Data16</h2>
-        <div class="col-sm-6 data-missing-samples">
-            <div class="data-missing-samples-content">
+        <div class="col-sm-6 missing-samples">
+            <div class="missing-samples-content">
             <h3> Missing data Samples </h3>
             </div>
         </div>
-        <div class="col-sm-6 data-missing-input">
-            <div class="data-missing-input-content">
+        <div class="col-sm-6 missing-input">
+            <div class="missing-input-content">
             <h3> Missing input</h3>
             </div>
         </div>
@@ -84,15 +89,33 @@ Author: Rob Fletcher
         </div>
     </div>
 
-    <div id="mc-container">
+    <div id="data16_iTS-container" class="tab-container">
         <h2>MC</h2>
-        <div class="mc-missing-samples col-sm-6">
-            <div class="mc-missing-samples-content">
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
             <h3> Missing MC Samples </h3>
             </div>
         </div>
-        <div class="mc-missing-input col-sm-6">
-            <div class="mc-missing-input-content">
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
+            <h3> Missing input</h3>
+            </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="data16_iTS-table" >
+            </table>
+        </div>
+    </div>
+
+    <div id="mc-container" class="tab-container">
+        <h2>MC</h2>
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
             <h3> Missing input</h3>
             </div>
         </div>
@@ -101,6 +124,79 @@ Author: Rob Fletcher
             </table>
         </div>
     </div>
+
+    <div id="PhotonSys-container" class="tab-container">
+        <h2>MC</h2>
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
+            <h3> Missing input</h3>
+            </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="PhotonSys-table" >
+            </table>
+        </div>
+    </div>
+
+    <div id="PhotonAllSys-container" class="tab-container">
+        <h2>MC</h2>
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
+            <h3> Missing input</h3>
+            </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="PhotonAllSys-table" >
+            </table>
+        </div>
+    </div>
+
+    <div id="JetSys-container" class="tab-container">
+        <h2>MC</h2>
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
+            <h3> Missing input</h3>
+            </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="JetSys-table" >
+            </table>
+        </div>
+    </div>
+
+    <div id="LeptonMETSys-container" class="tab-container">
+        <h2>MC</h2>
+        <div class="missing-samples col-sm-6">
+            <div class="missing-samples-content">
+            <h3> Missing MC Samples </h3>
+            </div>
+        </div>
+        <div class="missing-input col-sm-6">
+            <div class="missing-input-content">
+            <h3> Missing input</h3>
+            </div>
+        </div>
+        <div class="table-container container">
+            <table class="table table-hover" id="LeptonMETSys-table" >
+            </table>
+        </div>
+    </div>
+
 </div>
 
 

@@ -496,7 +496,7 @@ if __name__=="__main__":
     args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     if args.add_email:
         args.email += args.add_email
-    if args.v: print "Email address to send to:", args.email
+    if args.v: print "Email address to send report:", args.email
 
     args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
