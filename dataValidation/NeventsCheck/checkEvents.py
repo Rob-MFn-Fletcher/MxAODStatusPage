@@ -198,8 +198,6 @@ def runMC(args):
     multiple root files in it.
     """
     # Get the dictionary made from the input file
-    inputMC = readInputFile(args.inputMC)
-    inputSYS = readInputFile(args.inputSYS)
 
     # Get a list of all directories that start with mc. This should only return one.
     # NOTE: glob returns full file paths!! e.g. for h014 this command returns:  ['./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/h014/mc15c/']
@@ -209,6 +207,8 @@ def runMC(args):
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
     for mcDir in mxaodSamplesDir:
+        inputMC = readInputFile(args.inputMC)
+
         jsonOutput = [] # Final Json output file.
         errorSamples = {} # keep track of samples with mismatches or errors
 
@@ -233,26 +233,31 @@ def runMC(args):
         mxaod_multi_samples = glob(mcDir+'/*/')
 
 
-        # Check to make sure all file in the input are present on eos.
-        # Dont check the Sys direcotries since they dont seem to have all
-        # of the files listed in the input in each of them. It will just always produce a ton of errors.
-        if not 'Sys' in mcDirName:
-            # Build a list of the short sample names that are on eos to check against the input file
-            eosSamples=[]
-            for samplePath in mxaodSamples:
-                eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
+        # Build a list of the short sample names that are on eos to check against the input file
+        eosSamples=[]
+        for samplePath in mxaodSamples:
+            eosSamples.append(re.search('mc.*\.(.*)\.MxAOD.*',samplePath).group(1))#The short name of the sample
 
-            # look in the proper input file.
-            if 'Sys' in mcDirName:
-                inputCheck = inputSYS
-            else:
-                inputCheck = inputMC
-            # Do the check for all inputs existing on eos and write to the error log if not.
-            for inputSample in inputCheck:
-                if not inputSample in eosSamples:
-                    if not inputSample in errorSamples: errorSamples[inputSample] = []
-                    errorSamples[inputSample].append("Sample in input file is missing from eos.")
-            pass # End of eos file checking.
+        # look in the proper input file. Im not a super huge fan of doing it this way
+        # but we only need the sys inputs for this check.
+        if mcDirName == 'PhotonSys':
+            inputCheck = readInputFile(args.inputPhotonSys)
+        if mcDirName == 'PhotonAllSys':
+            inputCheck = readInputFile(args.inputPhotonAllSys)
+        if mcDirName == 'LeptonMETSys':
+            inputCheck = readInputFile(args.inputLeptonMETSys)
+        if mcDirName == 'JetSys':
+            inputCheck = readInputFile(args.inputJetSys)
+        if mcDirName == 'FlavorSys':
+            inputCheck = readInputFile(args.inputFlavorSys)
+        if mcDirName == 'mc15c':
+            inputCheck = inputMC
+        # Do the check for all inputs existing on eos and write to the error log if not.
+        for inputSample in inputCheck:
+            if not inputSample in eosSamples:
+                if not inputSample in errorSamples: errorSamples[inputSample] = []
+                errorSamples[inputSample].append("Sample in input file is missing from eos.")
+        pass # End of eos file checking.
 
         sampleNum = 0
         #loop over samples and get information
@@ -391,19 +396,25 @@ def runData(args):
         #need to find the 'Total' entry in the JSON if it exists and delete it. The totals should Always
         #be updated, since any files added should change the totals.
         for i in range(len(jsonOutput)):
-            if jsonOutput[i]['sampleType'] == 'Total':
+            if jsonOutput[i]['sampleType'] == 'Merged':
                 jsonOutput.pop(i)
 
         # Running totals for all files in the dir. Used to compare to the totals in the base dir files.
-        xAODTotal = 0
-        DxAODTotal = 0
+        xAODAMITotal = 0
+        DxAODAMITotal = 0
+        xAODBookkeeperTotal = 0
+        DxAODBookkeeperTotal = 0
+        NevtsRunOverMxAODTotal = 0
+        NevtsPassedPreCutflowMxAODTotal = 0  # Ambiguity cut in the cutflow
+        NevtsIsPassedPreFlagMxAODTotal = 0
+
         sampleNum = 0
         #loop over samples and get information
         for sample in mxaodSamples:
             sampleNum += 1
             # get the sampleType from the path. e.g. /path/to/mc15a.Sherpa_ADDyy_MS3500_1800M.MxAOD.p2610.h013x.root
             # will return 'Sherpa_ADDyy_MS3500_1800M'
-            if sample == dataDir: sampleType = 'Total' #use the label 'Total' for the data samples in the base dir.
+            if sample == dataDir: sampleType = 'Merged' #use the label 'Total' for the data samples in the base dir.
             else: sampleType = re.search('data.*\.(.*)\.physics_Main\.MxAOD.*',sample).group(1) #The short name of the sample
 
             if not sampleType:
@@ -421,13 +432,32 @@ def runData(args):
             rootInfo = getROOTInfo(sample)
 
             amiInfo = {}
+            mergedInfo = {}
             if sampleType in inputData[dataDirName_striped]:
                 amiInfo = getAMIProv(inputData[dataDirName_striped][sampleType]) #needs AMI dataset name as input
-                xAODTotal += amiInfo['AOD_AMI']
-                DxAODTotal += amiInfo['DAOD_AMI']
-            elif sampleType == 'Total':
-                amiInfo['AOD_AMI'] = xAODTotal # running Totals from all other files
-                amiInfo['DAOD_AMI'] = DxAODTotal
+                #Add to the running total of all tracked numbers.
+                xAODAMITotal += amiInfo['AOD_AMI']
+                DxAODAMITotal += amiInfo['DAOD_AMI']
+                xAODBookkeeperTotal += rootInfo['AOD_Bookkeeper']
+                DxAODBookkeeperTotal += rootInfo['DxAOD_Bookkeeper']
+                NevtsRunOverMxAODTotal += rootInfo['NevtsRunOverMxAOD']
+                NevtsPassedPreCutflowMxAODTotal += rootInfo['NevtsPassedPreCutflowMxAOD']  # Ambiguity cut in the cutflow
+                NevtsIsPassedPreFlagMxAODTotal += rootInfo['NevtsIsPassedPreFlagMxAOD']
+
+            elif sampleType == 'Merged':
+                amiInfo['AOD_AMI'] = xAODAMITotal # running Totals from all other files
+                amiInfo['DAOD_AMI'] = DxAODAMITotal
+                #Merged row to be added for the merged files
+                totalInfo['AOD_AMI'] = xAODAMITotal
+                totalInfo['DAOD_AMI'] = DxAODAMITotal
+                totalInfo['AOD_Bookkeeper'] = AOD_BookkeeperTotal
+                totalInfo['DxAOD_Bookkeeper'] = DxAODBookkeeperTotal
+                totalInfo['NevtsRunOverMxAOD'] = NevtsRunOverMxAODTotal
+                totalInfo['NevtsPassedPreCutflowMxAOD'] = NevtsPassedPreCutflowMxAODTotal  # Ambiguity cut in the cutflow
+                totalInfo['NevtsIsPassedPreFlagMxAOD'] = NevtsIsPassedPreFlagMxAODTotal
+                totalInfo['sampleType'] = 'Total'
+                totalInfo['color'] = ''
+                jsontOutput.append(totalInfo)
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
                 errorSamples[sampleType].append("Sample in eos is missing from the input file.")
@@ -435,6 +465,7 @@ def runData(args):
             # Combine these dictionaries into a single dictionary to write out.
             combInfo = dict(rootInfo.items() + amiInfo.items())
             combInfo['sampleType'] = sampleType
+
 
             # If there are mismatches in the nEvents set the color to red. White otherwise.
             # Also returns error string to explain which thing failed.
@@ -519,10 +550,18 @@ if __name__=="__main__":
             raise Exception("Input file error.")
     if args.mc:
         try:
-            args.inputSYS = glob("./InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
-            if args.v: print "Using PhotonSys input file: ", args.inputSYS
+            args.inputPhotonSys = glob("./InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using PhotonSys input file: ", args.inputPhotonSys
+            args.inputJetSys = glob("./InputFiles/JetSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using JetSys input file: ", args.inputJetSys
+            args.inputLeptonMETSys = glob("./InputFiles/LeptonMETSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using LeptonMETSys input file: ", args.inputLeptonMETSys
+            args.inputFlavorSys = glob("./InputFiles/FlavorSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using FlavorSys input file: ", args.inputFlavorSys
+            args.inputPhotonAllSys = glob("./InputFiles/PhotonAllSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using PhotonAllSys input file: ", args.inputPhotonAllSys
         except:
-            print "PhotonSYS input file does not exist. Input needs to be at './InputFiles/PhotonSys_{0}.txt'".format(args.htag)
+            print "Systematic input file does not exist. Input needs to be at './InputFiles/<sys Name>_{0}.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."
             raise Exception("Input file error.")
 
