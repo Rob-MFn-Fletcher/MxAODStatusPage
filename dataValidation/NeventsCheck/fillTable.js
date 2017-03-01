@@ -47,19 +47,6 @@ function fillTable(data, tableID){
 $(document).ready(function(e){
     console.log(htag);
 
-/*
-    for (var sample in samples) {
-      $.getJSON("data/"+htag+"/ValidationTable_"+sample+".json", function(result){
-        var id = "#"+sample+"-table";
-        fillTable(result,id);
-        $(id).floatThead({
-          position: 'fixed'
-        });
-        $(id).floatThead('reflow');
-      });
-    }
-*/
-
 
     $.getJSON("data/"+htag+"/ValidationTable_MC.json", function(result){
         fillTable(result, "#mc-table");

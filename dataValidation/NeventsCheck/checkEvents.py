@@ -493,7 +493,7 @@ if __name__=="__main__":
     if args.q: gROOT.ProcessLine("gErrorIgnoreLevel = kFatal;")
 
     # setup a few directories, global vars etc...
-    args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
+    args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
     if args.add_email:
         args.email += args.add_email
     if args.v: print "Email address to send report:", args.email

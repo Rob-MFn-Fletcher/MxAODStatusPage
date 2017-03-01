@@ -25,7 +25,6 @@ Author: Rob Fletcher
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/1.4.5/jquery.floatThead.min.js"></script>
       <link rel="stylesheet" href="../css/mystyle.css" />
-      <script src="../../mustache.js/mustache.min.js" type="text/javascript"></script>
       <script type="text/javascript">
         $(function() {
             $("#tabs").tabs();
@@ -197,18 +196,21 @@ Author: Rob Fletcher
 
 </div>
 
-
 <script type="text/javascript">
+     var htag = "<?php echo $currHtag; ?>"
     <?php
-        $paths = glob("data/"+$currHtag+"/Validation_*.json");
+        //$paths = glob("./data/"+$currHtag+"/Validation_*.json");
+        $paths[] = glob("./data/".$currHtag."/Validation*");
         foreach($paths as $paths){
-          $samples = str_replace("ValidationTable_","",basename($paths, '.json'))
+          $paths = str_replace("ValidationTable_","",basename($paths, '.json'));
         }
-        echo "var samples = " . json_encode($samples) . ";"
-        echo "var htag = " . $currHtag . ";"
+        echo "var samples = " . json_encode($samples) . ";";
+        echo "var paths = ".json_encode($paths).";";
      ?>
+     console.log("paths are: "+ paths);
      console.log(samples);
 </script>
+
 <script type="text/javascript" src="NeventsCheck/fillTable.js"></script>
 
 
