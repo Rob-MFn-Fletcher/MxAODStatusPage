@@ -1,0 +1,19 @@
+<script id="tabs-list" type="text/html">
+    <ul>
+        {{#samples}}
+          <li><a href="#{{.}}-container">{{.}}</li>
+        {{/samples}}
+    </ul>
+    {{#samples}}
+      <div id="{{.}}-container" class="tab-container">
+        <h2>{{.}}</h2>
+        <div class="table-container container">
+          <table class="table table-hover" id="{{.}}-table">
+
+          </table>
+
+        </div>
+
+      </div>
+    {{/samples}}
+</script>

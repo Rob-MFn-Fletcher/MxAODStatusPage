@@ -1,3 +1,10 @@
+var tabs = [
+  "data15",
+  "data16",
+  "data16_iTS",
+  "mc",
+  "PhotonSys",
+]
 
 function fillTable(data, tableID){
     var header = '<thead><tr>';
@@ -20,14 +27,6 @@ function fillTable(data, tableID){
             colorClass = "my-danger";
         }
         var tableRow = '<tr class="'+colorClass+'">';
-       // tableRow += '<td class="col-md-3 col-lg-4">'+ sample['sampleType'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['AOD_AMI'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['AOD_Bookkeeper'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['DAOD_AMI'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['DxAOD_Bookkeeper'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['NevtsRunOverMxAOD'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['NevtsPassedPreCutflowMxAOD'] + '</td>';
-       // tableRow += '<td class="col-md-1 col-lg-1">'+ sample['NevtsIsPassedPreFlagMxAOD'] + '</td>';
 
         tableRow += '<td>'+ sample['sampleType'] + '</td>';
         tableRow += '<td>'+ sample['AOD_AMI'] + '</td>';
@@ -47,6 +46,21 @@ function fillTable(data, tableID){
 }
 $(document).ready(function(e){
     console.log(htag);
+
+/*
+    for (var sample in samples) {
+      $.getJSON("data/"+htag+"/ValidationTable_"+sample+".json", function(result){
+        var id = "#"+sample+"-table";
+        fillTable(result,id);
+        $(id).floatThead({
+          position: 'fixed'
+        });
+        $(id).floatThead('reflow');
+      });
+    }
+*/
+
+
     $.getJSON("data/"+htag+"/ValidationTable_MC.json", function(result){
         fillTable(result, "#mc-table");
         $("#mc-table").floatThead({
