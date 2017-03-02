@@ -169,7 +169,7 @@ def readInputFile(inFile):
 
     return inputFiles
 
-def makeEmail(args,directory, errorSamples):
+def makeEmail(args,directory, errorSamples, missingSamples):
     """Make an email message and send it using the sendEmail.py module in this directory.
 
     Expects a dictionary with samples as keys and a list of errors as
@@ -178,6 +178,10 @@ def makeEmail(args,directory, errorSamples):
     addrs = args.email
     subject = "Data Validation Script Result for "+args.htag+":"+directory
     message = "Data Validation Script Completed for {0}:{1}. Results below:\n".format(directory, args.htag)
+    message += "\nSamples Missing from eos:\n"
+    for sample in missingSamples:
+        message += "  -{0}\n".format(sample)
+    message += "\n---== Detailed Results: ==---\n"
     if not errorSamples: message += "No Errors detected!\n"
     for sample in errorSamples:
         message += "\nErrors for sample {0}:\n".format(sample)
@@ -211,6 +215,7 @@ def runMC(args):
 
         jsonOutput = [] # Final Json output file.
         errorSamples = {} # keep track of samples with mismatches or errors
+        missingSamples = []
 
         mcDirName = mcDir.split('/')[-2] #mc15c, PhotonSys, etc...
         if args.v: print "Running of directory:", mcDir
@@ -260,6 +265,7 @@ def runMC(args):
                 if not inputSample in errorSamples: errorSamples[inputSample] = []
                 if args.v: print inputSample, " -- Missing from eos"
                 errorSamples[inputSample].append("Sample in input file is missing from eos.")
+                missingSamples.append(inputSample)
         pass # End of eos file checking.
 
         sampleNum = 0
@@ -318,7 +324,7 @@ def runMC(args):
         pass ## end sample loop
 
         # email when done
-        makeEmail(args, mcDirName, errorSamples)
+        makeEmail(args, mcDirName, errorSamples, missingSamples)
         #Output error and sample info to file for use on website.
         json.dump(errorSamples, errfile, indent=2)
         json.dump(jsonOutput, outfile, indent=2)
@@ -355,6 +361,7 @@ def runData(args):
 
         errorSamples = {} # keep track of samples with mismatches or errors
         jsonOutput = [] # Final Json output file.
+        missingSamples = []
 
         dataDirName = dataDir.split('/')[-2] # data15, data16 or the iTS direcotry
         if args.v: print "Running over data directory:", dataDirName
@@ -387,9 +394,9 @@ def runData(args):
         # Do the check for all inputs existing on eos and write to the error log if not.
         for inputSample in inputData[dataDirName_striped]:
             if not inputSample in eosSamples:
-                print "!! Input sample:",inputSample
                 if not inputSample in errorSamples: errorSamples[inputSample] = []
-                errorDir['data'].append("Sample in input file is missing from eos.")
+                errorSamples[inputSample].append("Sample in input file is missing from eos.")
+                missingSamples.append(inputSample)
 
         # Add the base dir containing the split up root files for the total dataset.
         # I put this here because we dont want to do the above eos check on these.
@@ -487,7 +494,7 @@ def runData(args):
             pass ## end sample loop
 
         # email when done.
-        makeEmail(args,dataDirName, errorSamples)
+        makeEmail(args,dataDirName, errorSamples, missingSamples)
         #Output to file for use on website.
         json.dump(errorSamples, errfile, indent=2)
         json.dump(jsonOutput, outfile, indent=2)
