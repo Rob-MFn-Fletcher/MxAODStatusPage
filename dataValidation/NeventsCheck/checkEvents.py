@@ -162,7 +162,7 @@ def readInputFile(inFile):
                 try:
                     (sample, DSname) = line.split()
                 except:
-                    sample = line
+                    sample = line.rstrip()
                     DSname = ''
 
                 inputFiles[sample] = DSname
@@ -250,12 +250,15 @@ def runMC(args):
             inputCheck = readInputFile(args.inputJetSys)
         if mcDirName == 'FlavorSys':
             inputCheck = readInputFile(args.inputFlavorSys)
+        if mcDirName == 'FlavorAllSys':
+            inputCheck = readInputFile(args.inputFlavorAllSys)
         if mcDirName == 'mc15c':
             inputCheck = inputMC
         # Do the check for all inputs existing on eos and write to the error log if not.
         for inputSample in inputCheck:
             if not inputSample in eosSamples:
                 if not inputSample in errorSamples: errorSamples[inputSample] = []
+                if args.v: print inputSample, " -- Missing from eos"
                 errorSamples[inputSample].append("Sample in input file is missing from eos.")
         pass # End of eos file checking.
 
@@ -432,7 +435,7 @@ def runData(args):
             rootInfo = getROOTInfo(sample)
 
             amiInfo = {}
-            mergedInfo = {}
+            totalInfo = {}
             if sampleType in inputData[dataDirName_striped]:
                 amiInfo = getAMIProv(inputData[dataDirName_striped][sampleType]) #needs AMI dataset name as input
                 #Add to the running total of all tracked numbers.
@@ -450,14 +453,14 @@ def runData(args):
                 #Merged row to be added for the merged files
                 totalInfo['AOD_AMI'] = xAODAMITotal
                 totalInfo['DAOD_AMI'] = DxAODAMITotal
-                totalInfo['AOD_Bookkeeper'] = AOD_BookkeeperTotal
+                totalInfo['AOD_Bookkeeper'] = xAODBookkeeperTotal
                 totalInfo['DxAOD_Bookkeeper'] = DxAODBookkeeperTotal
                 totalInfo['NevtsRunOverMxAOD'] = NevtsRunOverMxAODTotal
                 totalInfo['NevtsPassedPreCutflowMxAOD'] = NevtsPassedPreCutflowMxAODTotal  # Ambiguity cut in the cutflow
                 totalInfo['NevtsIsPassedPreFlagMxAOD'] = NevtsIsPassedPreFlagMxAODTotal
                 totalInfo['sampleType'] = 'Total'
                 totalInfo['color'] = ''
-                jsontOutput.append(totalInfo)
+                jsonOutput.append(totalInfo)
             else:
                 if not sampleType in errorSamples: errorSamples[sampleType] = []
                 errorSamples[sampleType].append("Sample in eos is missing from the input file.")
@@ -524,7 +527,8 @@ if __name__=="__main__":
     if args.q: gROOT.ProcessLine("gErrorIgnoreLevel = kFatal;")
 
     # setup a few directories, global vars etc...
-    args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
+    #args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
+    args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     if args.add_email:
         args.email += args.add_email
     if args.v: print "Email address to send report:", args.email
@@ -560,6 +564,8 @@ if __name__=="__main__":
             if args.v: print "Using FlavorSys input file: ", args.inputFlavorSys
             args.inputPhotonAllSys = glob("./InputFiles/PhotonAllSys_{0}.txt".format(args.htag))[0]
             if args.v: print "Using PhotonAllSys input file: ", args.inputPhotonAllSys
+            args.inputFlavorAllSys = glob("./InputFiles/FlavorAllSys_{0}.txt".format(args.htag))[0]
+            if args.v: print "Using FlavorAllSys input file: ", args.inputFlavorAllSys
         except:
             print "Systematic input file does not exist. Input needs to be at './InputFiles/<sys Name>_{0}.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."

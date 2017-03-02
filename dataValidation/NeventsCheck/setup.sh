@@ -12,3 +12,4 @@ svn export svn+ssh://rfletche@svn.cern.ch/reps/atlasoff/PhysicsAnalysis/HiggsPhy
 svn export svn+ssh://rfletche@svn.cern.ch/reps/atlasoff/PhysicsAnalysis/HiggsPhys/Run2/HGamma/xAOD/HGamTools/branches/HGamTools-00-00-51-branch/data/input/LeptonMETSys.txt ./InputFiles/LeptonMETSys_h015.txt
 svn export svn+ssh://rfletche@svn.cern.ch/reps/atlasoff/PhysicsAnalysis/HiggsPhys/Run2/HGamma/xAOD/HGamTools/branches/HGamTools-00-00-51-branch/data/input/JetSys.txt ./InputFiles/JetSys_h015.txt
 svn export svn+ssh://rfletche@svn.cern.ch/reps/atlasoff/PhysicsAnalysis/HiggsPhys/Run2/HGamma/xAOD/HGamTools/branches/HGamTools-00-00-51-branch/data/input/FlavorSys.txt ./InputFiles/FlavorSys_h015.txt
+svn export svn+ssh://rfletche@svn.cern.ch/reps/atlasoff/PhysicsAnalysis/HiggsPhys/Run2/HGamma/xAOD/HGamTools/branches/HGamTools-00-00-51-branch/data/input/FlavorAllSys1.txt ./InputFiles/FlavorAllSys_h015.txt
