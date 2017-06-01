@@ -220,8 +220,8 @@ def runMC(args):
         mcDirName = mcDir.split('/')[-2] #mc15c, PhotonSys, etc...
         if args.v: print "Running of directory:", mcDir
 
-        # Only run over directories defined in args.mcdir ir it is filled. 
-        if args.mcdir and (not mcDirName in args.mcdir): 
+        # Only run over directories defined in args.mcdir ir it is filled.
+        if args.mcdir and (not mcDirName in args.mcdir):
             if args.v: print "Skipping directory:",mcDirName,"..."
             continue
 
@@ -265,8 +265,10 @@ def runMC(args):
             inputCheck = readInputFile(args.inputJetSys)
         if mcDirName == 'FlavorSys':
             inputCheck = readInputFile(args.inputFlavorSys)
-        if mcDirName == 'FlavorAllSys1' or mcDirName == 'FlavorAllSys2':
+        if 'FlavorAllSys' in mcDirName:
             inputCheck = readInputFile(args.inputFlavorAllSys)
+        #if mcDirName == 'FlavorAllSys1' or mcDirName == 'FlavorAllSys2':
+        #    inputCheck = readInputFile(args.inputFlavorAllSys)
         if mcDirName == 'mc15c':
             inputCheck = inputMC
         # Do the check for all inputs existing on eos and write to the error log if not.
