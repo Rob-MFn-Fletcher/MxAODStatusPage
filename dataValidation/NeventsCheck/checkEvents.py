@@ -180,7 +180,7 @@ def makeEmail(args,directory, errorSamples, missingSamples):
     message = "Data Validation Script Completed for {0}:{1}. Results below:\n".format(directory, args.htag)
     message += "\nSamples Missing from eos:\n"
     for sample in missingSamples:
-        message += "  -{0}\n".format(sample)
+        message += "   {0}\n".format(sample)
     message += "\n---== Detailed Results: ==---\n"
     if not errorSamples: message += "No Errors detected!\n"
     for sample in errorSamples:
@@ -206,7 +206,7 @@ def runMC(args):
     # Get a list of all directories that start with mc. This should only return one.
     # NOTE: glob returns full file paths!! e.g. for h014 this command returns:  ['./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/h014/mc15c/']
     mxaodSamplesDir = glob(args.datasetDir+args.htag+'/mc*/')
-    mxaodSamplesDir += glob(args.datasetDir+args.htag+'/*Sys/')
+    mxaodSamplesDir += glob(args.datasetDir+args.htag+'/*Sys*/')
 
     if args.v: print "MxAOD Samples Directories to run over:", mxaodSamplesDir
 
@@ -219,6 +219,16 @@ def runMC(args):
 
         mcDirName = mcDir.split('/')[-2] #mc15c, PhotonSys, etc...
         if args.v: print "Running of directory:", mcDir
+
+        # Only run over directories defined in args.mcdir ir it is filled. 
+        if args.mcdir and (not mcDirName in args.mcdir): 
+            if args.v: print "Skipping directory:",mcDirName,"..."
+            continue
+
+        # Skip over directories defined in args.skpmcdir
+        if args.skipmcdir and (mcDirName in args.skipmcdir):
+            if args.v: print "Skipping directory:",mcDirName,"..."
+            continue
 
         # If we are not overwriting everything then open the json files and load
         # them into memory. This will be used to check if we have run over a sample
@@ -255,7 +265,7 @@ def runMC(args):
             inputCheck = readInputFile(args.inputJetSys)
         if mcDirName == 'FlavorSys':
             inputCheck = readInputFile(args.inputFlavorSys)
-        if mcDirName == 'FlavorAllSys':
+        if mcDirName == 'FlavorAllSys1' or mcDirName == 'FlavorAllSys2':
             inputCheck = readInputFile(args.inputFlavorAllSys)
         if mcDirName == 'mc15c':
             inputCheck = inputMC
@@ -523,7 +533,9 @@ if __name__=="__main__":
     parser.add_argument("-t", "--test-sample", help="Run only over this sample name to test. Wont write output to the website.")
     parser.add_argument("--mc", action='store_true', help="Run over MC samples only.")
     parser.add_argument("--data", action='store_true', help="Run over data samples only.")
-    parser.add_argument("--email", nargs='+',dest='add_email', help="Additional email adresses to send logs to. Space separated list. MUST COME LAST")
+    parser.add_argument("--mcdir", nargs='+', help="List - Only run over these mc directories")
+    parser.add_argument("--skipmcdir", nargs='+', help="List - DO NOT run over these mc directories")
+    parser.add_argument("--email", nargs='+',dest='add_email', help="List - Additional email adresses to send logs to. Space separated list. MUST COME LAST")
 
     args = parser.parse_args()
     # set debug to true if t or v are are set. Check debug variable before verbose output.
@@ -536,11 +548,12 @@ if __name__=="__main__":
     # setup a few directories, global vars etc...
     #args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
     args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
+    #args.email = ["rob.fletcher@cern.ch","robflet@sas.upenn.edu","robroy.fletcher@gmail.com"] #email this address when done. Must be a list.
     if args.add_email:
         args.email += args.add_email
     if args.v: print "Email address to send report:", args.email
 
-    args.datasetDir = "./eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
+    args.datasetDir = "/eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/" # assumes eos is mounted on the folder ./eos This should be done in setup.sh.
     if not glob(args.datasetDir): #make sure eos is mounted
         raise IOError("eos does not appear to be mounted. Did you run the setup script? (souce setup.sh)")
 

@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 import email.Utils
 import smtplib
 
-def sendEmail(emailList, sub, msg):
+def sendEmail(emailList, sub, message):
     #emailList = ["robroy.fletcher@gmail.com"]
 
     for emailID in emailList:
@@ -16,7 +16,7 @@ def sendEmail(emailList, sub, msg):
             ## Setup the message details needed by the server.
             FROM = "MxAODValidation@gmail.com"
             TO = emailID
-            message = msg
+            #message = msg
             msg = MIMEText(message)
             msg["Subject"] = sub
             msg["Message-id"] = email.Utils.make_msgid()

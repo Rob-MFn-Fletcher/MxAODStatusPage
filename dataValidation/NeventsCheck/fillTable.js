@@ -48,7 +48,7 @@ $(document).ready(function(e){
     console.log(htag);
 
 
-    $.getJSON("data/"+htag+"/ValidationTable_MC.json", function(result){
+    $.getJSON("data/"+htag+"/ValidationTable_mc15c.json", function(result){
         fillTable(result, "#mc-table");
         $("#mc-table").floatThead({
             position: 'fixed'
