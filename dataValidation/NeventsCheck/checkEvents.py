@@ -94,6 +94,7 @@ def getROOTInfo(sample):
 
         # Now get the preselection events from the flags in the tree.
         tree = rfile.Get("CollectionTree")
+        print "  -- On File:", f
         nEvtsPre = tree.GetEntries("HGamEventInfoAuxDyn.isPassedBasic && HGamEventInfoAuxDyn.isPassedPreselection")
         rootEvents['NevtsIsPassedPreFlagMxAOD'] += int(nEvtsPre)
         rfile.Close()
