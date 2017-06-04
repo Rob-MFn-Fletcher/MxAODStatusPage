@@ -46,7 +46,29 @@ function fillTable(data, tableID){
 }
 $(document).ready(function(e){
     console.log(htag);
+    var fileList = [];
+    // Get the list of files that start with 'ValidationTable' from the proper directory.
+    $.getJSON("/html/fileList.php?h="+htag, function(result){
+          fileList = result;
+          console.log(fileList);
+      }
+    });
 
+    /*
+    //loop over all of the files returned and create the all of the HTML elements we need to fill.
+    for (var vfile in fileList){
+      $.getJSON(vfile, function(result){
+          // Need to create divs and tables here.
+          $("#tabs ul").append("<li> <a href="+containerID+">"+tabName+"</a> </li>");
+          // Fill the table we just created.
+          fillTable(result, tableID);
+          $(tableID).floatThead({
+              position: 'fixed'
+          });
+          $(tableID).floatThead('reflow');
+      });
+    }
+    */
 
     $.getJSON("data/"+htag+"/ValidationTable_mc15c.json", function(result){
         fillTable(result, "#mc-table");
