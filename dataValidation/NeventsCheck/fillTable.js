@@ -48,10 +48,11 @@ $(document).ready(function(e){
     console.log(htag);
     var fileList = [];
     // Get the list of files that start with 'ValidationTable' from the proper directory.
-    $.getJSON("/html/fileList.php?h="+htag, function(result){
-          fileList = result;
-          console.log(fileList);
-      }
+    console.log("Trying to get file list");
+    $.getJSON("../html/fileList.php?h="+htag, function(result){
+          //fileList = result;
+          console.log("Getting File List  "+result);
+          //console.log(fileList);
     });
 
     /*
