@@ -198,17 +198,17 @@ Author: Rob Fletcher
 
 <script type="text/javascript">
      var htag = "<?php echo $currHtag; ?>"
-    <?php
+    //<?php
         //$paths = glob("./data/"+$currHtag+"/Validation_*.json");
-        $paths[] = glob("./data/".$currHtag."/Validation*");
-        foreach($paths as $paths){
-          $paths = str_replace("ValidationTable_","",basename($paths, '.json'));
-        }
-        echo "var samples = " . json_encode($samples) . ";";
-        echo "var paths = ".json_encode($paths).";";
-     ?>
-     console.log("paths are: "+ paths);
-     console.log(samples);
+    //    $paths[] = glob("./data/".$currHtag."/Validation*");
+    //    foreach($paths as $paths){
+    //      $paths = str_replace("ValidationTable_","",basename($paths, '.json'));
+    //    }
+    //    echo "var samples = " . json_encode($samples) . ";";
+    //    echo "var paths = ".json_encode($paths).";";
+    // ?>
+     //console.log("paths are: "+ paths);
+     //console.log(samples);
 </script>
 
 <script type="text/javascript" src="NeventsCheck/fillTable.js"></script>
