@@ -25,11 +25,6 @@ Author: Rob Fletcher
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/1.4.5/jquery.floatThead.min.js"></script>
       <link rel="stylesheet" href="../css/mystyle.css" />
-      <script type="text/javascript">
-        $(function() {
-            $("#tabs").tabs();
-        });
-      </script>
   </head>
   <body bgcolor=white>
   <?php include_once('../html/navbar.php'); $currHtag=$_GET["h"]; ?>
@@ -40,160 +35,6 @@ Author: Rob Fletcher
 ?>
 
 <div id="tabs">
-    <ul>
-        <li><a href="#data15-container">Data15</a></li>
-        <li><a href="#data16-container">Data16</a></li>
-        <li><a href="#data16_iTS-container">Data16 iTS</a></li>
-        <li><a href="#mc-container">MC</a></li>
-        <li><a href="#PhotonSys-container">PhotonSys</a></li>
-        <li><a href="#PhotonAllSys-container">PhotonAllSys</a></li>
-        <li><a href="#JetSys-container">JetSys</a></li>
-        <li><a href="#LeptonMETSys-container">LeptonMETSys</a></li>
-    </ul>
-    <div id="data15-container" class="tab-container">
-        <h2>Data15</h2>
-        <div class="col-sm-6 missing-samples">
-            <div class="missing-samples-content">
-            <h3> Missing Data Samples </h3>
-            </div>
-        </div>
-        <div class="col-sm-6 missing-input">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="data15-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="data16-container" class="tab-container">
-        <h2>Data16</h2>
-        <div class="col-sm-6 missing-samples">
-            <div class="missing-samples-content">
-            <h3> Missing data Samples </h3>
-            </div>
-        </div>
-        <div class="col-sm-6 missing-input">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="data16-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="data16_iTS-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="data16_iTS-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="mc-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="mc-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="PhotonSys-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="PhotonSys-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="PhotonAllSys-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="PhotonAllSys-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="JetSys-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="JetSys-table" >
-            </table>
-        </div>
-    </div>
-
-    <div id="LeptonMETSys-container" class="tab-container">
-        <h2>MC</h2>
-        <div class="missing-samples col-sm-6">
-            <div class="missing-samples-content">
-            <h3> Missing MC Samples </h3>
-            </div>
-        </div>
-        <div class="missing-input col-sm-6">
-            <div class="missing-input-content">
-            <h3> Missing input</h3>
-            </div>
-        </div>
-        <div class="table-container container">
-            <table class="table table-hover" id="LeptonMETSys-table" >
-            </table>
-        </div>
-    </div>
-
 </div>
 
 <script type="text/javascript">
@@ -213,6 +54,12 @@ Author: Rob Fletcher
 
 <script type="text/javascript" src="NeventsCheck/fillTable.js"></script>
 
-
+<!--
+<script type="text/javascript">
+$(function() {
+    $("#tabs").tabs();
+});
+</script>
+-->
   </body>
 </html>
