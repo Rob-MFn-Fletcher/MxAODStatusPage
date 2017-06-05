@@ -20,7 +20,7 @@
         <p> Selected htag: <?php echo $currHtag;  ?> </p>
 
         <?php
-            if ($currHtag == "h014" || $currHtag == "h014a" || $currHtag == "h014b" || $currHtag == "h013" || $currHtag== "h013a" || $currHtag == "h015"){
+            if ($currHtag == "h014" || $currHtag == "h014a" || $currHtag == "h014b" || $currHtag == "h013" || $currHtag== "h013a" || $currHtag == "h015" || $currHtag == "h015b"){
                 echo "<p><a href=\"dataValidation/sampleValidation.php?&h=$currHtag\">Data Validation</a><p>";
             } else {
                 echo "<p><a href=\"dataValidation/old.sampleValidation.php?&h=$currHtag\">Data Validation</a><p>";
