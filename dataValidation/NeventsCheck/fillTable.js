@@ -46,14 +46,18 @@ function fillTable(data, tableID){
 }
 $(document).ready(function(e){
     console.log(htag);
-    var fileList = [];
+    var fileList;
     // Get the list of files that start with 'ValidationTable' from the proper directory.
     console.log("Trying to get file list");
     $.getJSON("../html/fileList.php?h="+htag, function(result){
-          //fileList = result;
-          console.log("Getting File List  "+result);
-          //console.log(fileList);
+          // result will be a json encoded string with file paths to all
+          // validation table results in the form  ../dataValidation/data/h015b/ValidationTable_FlavorAllSys1.json
+          fileList = result;
     });
+    
+    for (var entry in fileList){
+      console.log(entry);
+    }
 
     /*
     //loop over all of the files returned and create the all of the HTML elements we need to fill.
