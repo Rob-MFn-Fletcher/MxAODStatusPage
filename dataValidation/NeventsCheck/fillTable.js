@@ -1,11 +1,3 @@
-var tabs = [
-  "data15",
-  "data16",
-  "data16_iTS",
-  "mc",
-  "PhotonSys",
-]
-
 function fillTable(data, tableID){
     var header = '<thead><tr>';
     header += '<th class="col-md-3 col-lg-4">Sample/Run Number</th> ';
@@ -45,34 +37,74 @@ function fillTable(data, tableID){
 
 }
 
+function createTable(tabs){
+  // Function to create all of the html elements needed for each tab on the
+  // validation page.
+  // tabs should be a list of tab names to include. i.e. data15
+  var tabsList = '<ul>';
+  for(var tabName in tabs){
+    tabsList += '<li><a href="#'+ tabName +'-container">'+tabName+'</a></li>';
+  }
+  tabsList += '</ul>';
+  $('#tabs').append(tabsList);
+
+  for(var tabeName in tabs){
+    var tabDiv = '<div id="'+ tabName +'-container" class="tab-container">';
+    tabDiv += '<h2>Data15</h2> \\
+           <div class="col-sm-6 missing-samples">  \\
+              <div class="missing-samples-content"> \\
+              <h3> Missing Data Samples </h3>  \\
+              </div>  \\
+          </div>  \\
+          <div class="col-sm-6 missing-input">  \\
+              <div class="missing-input-content">  \\
+              <h3> Missing input</h3>  \\
+              </div>  \\
+          </div>  \\
+          <div class="table-container container">  \\
+              <table class="table table-hover" id="'+tabName+'-table" >  \\
+              </table>  \\
+          </div>  \\
+      </div>';
+
+    $('#tabs').append(tabDiv);
+  }
+}
 
 $(document).ready(function(e){
     console.log(htag);
-    var fileList;
     // Get the list of files that start with 'ValidationTable' from the proper directory.
     $.getJSON("../html/fileList.php?h="+htag, function(result){
           // result will be a json encoded string with file paths to all
           // validation table results in the form  ../dataValidation/data/h015b/ValidationTable_FlavorAllSys1.json
-          fileList = result;
-          console.log(fileList);
+          var tabNames = [];
+          for(var filepath in result){
+            tabName.push(filepath.match(".*ValidationTable_(.*)\.json")[0]);
+          }
+          console.log(tabNames);
+
+          // Create the needed HTML elements on the page.
+          createTable(tabNames);
+
+          // Fill the proper elements.
+          for (var vfile in result){
+            // Need to make this file path relative to this one.
+            var file_url = vfile.replace('../dataValidation/','');
+            var tableID = vfile.match(".*ValidationTable_(.*)\.json")[0]+'-table';
+            console.log("TableID: "+tableID)
+            $.getJSON(file_url, function(result){
+                // Fill the table we just created.
+                fillTable(result, tableID);
+                $(tableID).floatThead({
+                    position: 'fixed'
+                });
+                $(tableID).floatThead('reflow');
+            });
+          }
     });
-    
+
 
     /*
-    //loop over all of the files returned and create the all of the HTML elements we need to fill.
-    for (var vfile in fileList){
-      $.getJSON(vfile, function(result){
-          // Need to create divs and tables here.
-          $("#tabs ul").append("<li> <a href="+containerID+">"+tabName+"</a> </li>");
-          // Fill the table we just created.
-          fillTable(result, tableID);
-          $(tableID).floatThead({
-              position: 'fixed'
-          });
-          $(tableID).floatThead('reflow');
-      });
-    }
-    */
 
     $.getJSON("data/"+htag+"/ValidationTable_mc15c.json", function(result){
         fillTable(result, "#mc-table");
@@ -130,4 +162,5 @@ $(document).ready(function(e){
         });
         $("#PhotonAllSys-table").floatThead('reflow');
     });
+    */
 });
