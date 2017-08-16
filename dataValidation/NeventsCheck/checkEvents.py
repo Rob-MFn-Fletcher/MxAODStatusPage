@@ -258,7 +258,9 @@ def runMC(args):
         # but we only need the sys inputs for this check.
         if mcDirName == 'PhotonSys':
             inputCheck = readInputFile(args.inputPhotonSys)
-        if mcDirName == 'PhotonAllSys':
+        #if mcDirName == 'PhotonAllSys':
+        #    inputCheck = readInputFile(args.inputPhotonAllSys)
+        if 'PhotonAllSys' in mcDirName:
             inputCheck = readInputFile(args.inputPhotonAllSys)
         if mcDirName == 'LeptonMETSys':
             inputCheck = readInputFile(args.inputLeptonMETSys)
@@ -268,6 +270,8 @@ def runMC(args):
             inputCheck = readInputFile(args.inputFlavorSys)
         if 'FlavorAllSys' in mcDirName:
             inputCheck = readInputFile(args.inputFlavorAllSys)
+        if mcDirName == 'Detailed':
+            inputCheck = readInputFile(args.inputDetailed)
         #if mcDirName == 'FlavorAllSys1' or mcDirName == 'FlavorAllSys2':
         #    inputCheck = readInputFile(args.inputFlavorAllSys)
         if mcDirName == 'mc15c':
@@ -549,8 +553,8 @@ if __name__=="__main__":
     if args.q: gROOT.ProcessLine("gErrorIgnoreLevel = kFatal;")
 
     # setup a few directories, global vars etc...
-    #args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
-    args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
+    args.email = ["rob.fletcher@cern.ch","chris.meyer@cern.ch","jared.vasquez@cern.ch"] #email this address when done. Must be a list.
+    #args.email = ["rob.fletcher@cern.ch"] #email this address when done. Must be a list.
     #args.email = ["rob.fletcher@cern.ch","robflet@sas.upenn.edu","robroy.fletcher@gmail.com"] #email this address when done. Must be a list.
     if args.add_email:
         args.email += args.add_email
@@ -569,7 +573,7 @@ if __name__=="__main__":
     # Check and get the appropriate input files. If the files do not exist raise an error.
     if args.mc:
         try:
-            args.inputMC = glob("./InputFiles/mc_{0}.txt".format(args.htag))[0]
+            args.inputMC = glob("./InputFiles/{0}/mc15_13TeV.txt".format(args.htag))[0]
             if args.v: print "Using MC input file: ", args.inputMC
         except:
             print "MC input file does not exist. Input needs to be at './InputFiles/mc_{0}.txt'".format(args.htag)
@@ -577,29 +581,31 @@ if __name__=="__main__":
             raise Exception("Input file error.")
     if args.mc:
         try:
-            args.inputPhotonSys = glob("./InputFiles/PhotonSys_{0}.txt".format(args.htag))[0]
+            args.inputPhotonSys = glob("./InputFiles/{0}/PhotonSys.txt".format(args.htag))[0]
             if args.v: print "Using PhotonSys input file: ", args.inputPhotonSys
-            args.inputJetSys = glob("./InputFiles/JetSys_{0}.txt".format(args.htag))[0]
+            args.inputJetSys = glob("./InputFiles/{0}/JetSys.txt".format(args.htag))[0]
             if args.v: print "Using JetSys input file: ", args.inputJetSys
-            args.inputLeptonMETSys = glob("./InputFiles/LeptonMETSys_{0}.txt".format(args.htag))[0]
+            args.inputLeptonMETSys = glob("./InputFiles/{0}/LeptonMETSys.txt".format(args.htag))[0]
             if args.v: print "Using LeptonMETSys input file: ", args.inputLeptonMETSys
-            args.inputFlavorSys = glob("./InputFiles/FlavorSys_{0}.txt".format(args.htag))[0]
+            args.inputFlavorSys = glob("./InputFiles/{0}/FlavorSys.txt".format(args.htag))[0]
             if args.v: print "Using FlavorSys input file: ", args.inputFlavorSys
-            args.inputPhotonAllSys = glob("./InputFiles/PhotonAllSys_{0}.txt".format(args.htag))[0]
+            args.inputPhotonAllSys = glob("./InputFiles/{0}/PhotonAllSys1.txt".format(args.htag))[0]
             if args.v: print "Using PhotonAllSys input file: ", args.inputPhotonAllSys
-            args.inputFlavorAllSys = glob("./InputFiles/FlavorAllSys_{0}.txt".format(args.htag))[0]
+            args.inputFlavorAllSys = glob("./InputFiles/{0}/FlavorAllSys1.txt".format(args.htag))[0]
             if args.v: print "Using FlavorAllSys input file: ", args.inputFlavorAllSys
+            args.inputDetailed = glob("./InputFiles/{0}/Detailed.txt".format(args.htag))[0]
+            if args.v: print "Using Detailed input file: ", args.inputDetailed
         except:
-            print "Systematic input file does not exist. Input needs to be at './InputFiles/<sys Name>_{0}.txt'".format(args.htag)
+            print "Systematic input file does not exist. Input needs to be at './InputFiles/{0}/<sys Name>.txt'".format(args.htag)
             print "If you didnt want to run over MC use the --data option."
             raise Exception("Input file error.")
 
     if args.data:
         try:
-            args.inputData = glob("./InputFiles/data_{0}.txt".format(args.htag))[0]
+            args.inputData = glob("./InputFiles/{0}/data.txt".format(args.htag))[0]
             if args.v: print "Using input file: ", args.inputData
         except:
-            print "Data input file does not exist. Input needs to be at './InputFiles/data_{0}.txt'".format(args.htag)
+            print "Data input file does not exist. Input needs to be at './InputFiles/{0}/data.txt'".format(args.htag)
             print "If you didnt want to run over Data use the --mc option."
             raise Exception("Input file error.")
 
