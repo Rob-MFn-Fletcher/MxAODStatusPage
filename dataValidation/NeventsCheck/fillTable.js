@@ -53,14 +53,14 @@ function createTable(tabs){
   for(var i in tabs){
     var tabName = tabs[i];
     var tabDiv = '<div id="'+ tabName +'-container" class="tab-container">';
-    tabDiv += '<h2>'+tabName+'</h2>'; 
+    tabDiv += '<h2>'+tabName+'</h2>';
     tabDiv+=  '     <div class="col-sm-6 missing-samples">  ';
     tabDiv+='          <div class="missing-samples-content"> ';
     tabDiv+='          <h3> Missing Data Samples </h3>  ';
     tabDiv+='          </div>  ';
     tabDiv+='      </div>  ';
     tabDiv+='      <div class="col-sm-6 missing-input">  ';
-    tabDiv+='          <div class="missing-input-content"> '; 
+    tabDiv+='          <div class="missing-input-content"> ';
     tabDiv+='          <h3> Missing input</h3>  ';
     tabDiv+='          </div>  ';
     tabDiv+='      </div>  ';
@@ -102,6 +102,9 @@ $(document).ready(function(e){
             var tableID = '#'+vfile.match(".*ValidationTable_(.*)\.json")[1]+'-table';
             //console.log("TableID: "+tableID)
             $.getJSON(file_url, (function(tableID){
+                //Need this additional closure here because the callback function
+                // is called asynchronously. This means that the loop will continue
+                // to run before this function is called so the tableID variable might not be right.
                 return function(thing){
                     // Fill the table we just created.
                     console.log("Calling fillTable with: "+tableID);
@@ -118,63 +121,4 @@ $(document).ready(function(e){
     });
 
 
-    /*
-
-    $.getJSON("data/"+htag+"/ValidationTable_mc15c.json", function(result){
-        fillTable(result, "#mc-table");
-        $("#mc-table").floatThead({
-            position: 'fixed'
-        });
-        $("#mc-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_data15.json", function(result){
-        fillTable(result, "#data15-table");
-        $("#data15-table").floatThead({
-            position: 'fixed'
-        });
-        $("#data15-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_data16.json", function(result){
-        fillTable(result, "#data16-table");
-        $("#data16-table").floatThead({
-            position: 'fixed'
-        });
-        $("#data16-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_data16_iTS.json", function(result){
-        fillTable(result, "#data16_iTS-table");
-        $("#data16_iTS-table").floatThead({
-            position: 'fixed'
-        });
-        $("#data16_iTS-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_PhotonSys.json", function(result){
-        fillTable(result, "#PhotonSys-table");
-        $("#PhotonSys-table").floatThead({
-            position: 'fixed'
-        });
-        $("#PhotonSys-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_JetSys.json", function(result){
-        fillTable(result, "#JetSys-table");
-        $("#JetSys-table").floatThead({
-            position: 'fixed'
-        });
-        $("#JetSys-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_LeptonMETSys.json", function(result){
-        fillTable(result, "#LeptonMETSys-table");
-        $("#LeptonMETSys-table").floatThead({
-            position: 'fixed'
-        });
-        $("#LeptonMETSys-table").floatThead('reflow');
-    });
-    $.getJSON("data/"+htag+"/ValidationTable_PhotonAllSys.json", function(result){
-        fillTable(result, "#PhotonAllSys-table");
-        $("#PhotonAllSys-table").floatThead({
-            position: 'fixed'
-        });
-        $("#PhotonAllSys-table").floatThead('reflow');
-    });
-    */
 });
